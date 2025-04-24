@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  apache:
+    image: php:8.2-apache
+    container_name: ecoride_apache
+    ports:
+      - "8080:80"
+    volumes:
+      - ./app:/var/www/html
+      - ./apache/vhost.conf:/etc/apache2/sites-enabled/000-default.conf
+    depends_on:
+      - mysql
+      - mongo
+    networks:
+      - ecoride
+    working_dir: /var/www/html
+    command: >
+      bash -c "docker-php-ext-install pdo pdo_mysql && apache2-foreground"
+
+  mysql:
+    image: mysql:8.0
+    container_name: ecoride_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ecoride
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpass
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - ecoride
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: ecoride_phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+    networks:
+      - ecoride
+
+  mongo:
+    image: mongo
+    container_name: ecoride_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - ecoride
+
+networks:
+  ecoride:
+
+volumes:
+  mysql_data:
+  mongo_data:
