@@ -15,10 +15,16 @@ class Ride
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $departure = null;
+    private ?string $departure_city = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $arrival = null;
+    private ?string $departure_address = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $arrival_city = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $arrival_address = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $departure_time = null;
@@ -51,26 +57,50 @@ class Ride
         return $this->id;
     }
 
-    public function getDeparture(): ?string
+    public function getDepartureCity(): ?string
     {
-        return $this->departure;
+        return $this->departure_city;
     }
 
-    public function setDeparture(string $departure): static
+    public function setDepartureCity(string $departure): static
     {
-        $this->departure = $departure;
+        $this->departure_city = $departure;
+
+        return $this;
+    }
+    
+    public function getDepartureAddress(): ?string
+    {
+        return $this->departure_address;
+    }
+
+    public function setDepartureAddress(string $departure): static
+    {
+        $this->departure_address = $departure;
 
         return $this;
     }
 
-    public function getArrival(): ?string
+    public function getArrivalCity(): ?string
     {
-        return $this->arrival;
+        return $this->arrival_city;
     }
 
-    public function setArrival(string $arrival): static
+    public function setArrivalCity(string $arrival): static
     {
-        $this->arrival = $arrival;
+        $this->arrival_city = $arrival;
+
+        return $this;
+    }
+
+public function getArrivalAddress(): ?string
+    {
+        return $this->arrival_address;
+    }
+
+public function setArrivalAddress(string $arrival): static
+    {
+        $this->arrival_address = $arrival;
 
         return $this;
     }
