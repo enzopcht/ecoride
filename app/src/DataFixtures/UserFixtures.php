@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\CreditTransaction;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -34,6 +35,13 @@ class UserFixtures extends Fixture
             $user->setPassword($hashedPassword);
 
             $manager->persist($user);
+
+            $welcome = new CreditTransaction();
+            $welcome->setUser($user);
+            $welcome->setAmount(20);
+            $welcome->setReason('Bonus de bienvenue');
+            $welcome->setCreatedAt(new \DateTimeImmutable());
+            $manager->persist($welcome);
 
             echo "Ajouté : $email | Pseudo : $pseudo | Mot de passe : password\n";
         }
