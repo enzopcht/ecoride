@@ -19,123 +19,123 @@ class CarModelFixtures extends Fixture implements DependentFixtureInterface
     {
         $brands = [
             'Tesla' => [
-                ['label' => 'Model 3', 'energy' => 'électrique'],
-                ['label' => 'Model S', 'energy' => 'électrique'],
-                ['label' => 'Model X', 'energy' => 'électrique'],
-                ['label' => 'Model Y', 'energy' => 'électrique']
+                ['label' => 'Model 3', 'energy' => 'electric'],
+                ['label' => 'Model S', 'energy' => 'electric'],
+                ['label' => 'Model X', 'energy' => 'electric'],
+                ['label' => 'Model Y', 'energy' => 'electric']
             ],
             'Peugeot' => [
-                ['label' => '208', 'energy' => 'thermique'],
-                ['label' => '308', 'energy' => 'thermique'],
-                ['label' => 'e-208', 'energy' => 'électrique'],
-                ['label' => 'e-308', 'energy' => 'électrique']
+                ['label' => '208', 'energy' => 'thermal'],
+                ['label' => '308', 'energy' => 'thermal'],
+                ['label' => 'e-208', 'energy' => 'electric'],
+                ['label' => 'e-308', 'energy' => 'electric']
             ],
             'Renault' => [
-                ['label' => 'Clio', 'energy' => 'thermique'],
-                ['label' => 'Mégane', 'energy' => 'thermique'],
-                ['label' => 'Zoé', 'energy' => 'électrique'],
-                ['label' => 'Scenic E-Tech', 'energy' => 'électrique']
+                ['label' => 'Clio', 'energy' => 'thermal'],
+                ['label' => 'Mégane', 'energy' => 'thermal'],
+                ['label' => 'Zoé', 'energy' => 'electric'],
+                ['label' => 'Scenic E-Tech', 'energy' => 'electric']
             ],
             'Toyota' => [
-                ['label' => 'Corolla', 'energy' => 'thermique'],
-                ['label' => 'Yaris', 'energy' => 'thermique'],
-                ['label' => 'Prius', 'energy' => 'électrique'],
-                ['label' => 'bZ4X', 'energy' => 'électrique']
+                ['label' => 'Corolla', 'energy' => 'thermal'],
+                ['label' => 'Yaris', 'energy' => 'thermal'],
+                ['label' => 'Prius', 'energy' => 'electric'],
+                ['label' => 'bZ4X', 'energy' => 'electric']
             ],
             'Volkswagen' => [
-                ['label' => 'Golf', 'energy' => 'thermique'],
-                ['label' => 'Passat', 'energy' => 'thermique'],
-                ['label' => 'ID.3', 'energy' => 'électrique'],
-                ['label' => 'ID.4', 'energy' => 'électrique']
+                ['label' => 'Golf', 'energy' => 'thermal'],
+                ['label' => 'Passat', 'energy' => 'thermal'],
+                ['label' => 'ID.3', 'energy' => 'electric'],
+                ['label' => 'ID.4', 'energy' => 'electric']
             ],
             'BMW' => [
-                ['label' => 'Série 1', 'energy' => 'thermique'],
-                ['label' => 'Série 3', 'energy' => 'thermique'],
-                ['label' => 'i3', 'energy' => 'électrique'],
-                ['label' => 'i4', 'energy' => 'électrique']
+                ['label' => 'Série 1', 'energy' => 'thermal'],
+                ['label' => 'Série 3', 'energy' => 'thermal'],
+                ['label' => 'i3', 'energy' => 'electric'],
+                ['label' => 'i4', 'energy' => 'electric']
             ],
             'Mercedes-Benz' => [
-                ['label' => 'Classe A', 'energy' => 'thermique'],
-                ['label' => 'Classe C', 'energy' => 'thermique'],
-                ['label' => 'EQA', 'energy' => 'électrique'],
-                ['label' => 'EQC', 'energy' => 'électrique']
+                ['label' => 'Classe A', 'energy' => 'thermal'],
+                ['label' => 'Classe C', 'energy' => 'thermal'],
+                ['label' => 'EQA', 'energy' => 'electric'],
+                ['label' => 'EQC', 'energy' => 'electric']
             ],
             'Audi' => [
-                ['label' => 'A3', 'energy' => 'thermique'],
-                ['label' => 'A4', 'energy' => 'thermique'],
-                ['label' => 'e-tron', 'energy' => 'électrique'],
-                ['label' => 'Q4 e-tron', 'energy' => 'électrique']
+                ['label' => 'A3', 'energy' => 'thermal'],
+                ['label' => 'A4', 'energy' => 'thermal'],
+                ['label' => 'e-tron', 'energy' => 'electric'],
+                ['label' => 'Q4 e-tron', 'energy' => 'electric']
             ],
             'Ford' => [
-                ['label' => 'Focus', 'energy' => 'thermique'],
-                ['label' => 'Fiesta', 'energy' => 'thermique'],
-                ['label' => 'Mustang Mach-E', 'energy' => 'électrique'],
-                ['label' => 'Kuga PHEV', 'energy' => 'électrique']
+                ['label' => 'Focus', 'energy' => 'thermal'],
+                ['label' => 'Fiesta', 'energy' => 'thermal'],
+                ['label' => 'Mustang Mach-E', 'energy' => 'electric'],
+                ['label' => 'Kuga PHEV', 'energy' => 'electric']
             ],
             'Citroën' => [
-                ['label' => 'C3', 'energy' => 'thermique'],
-                ['label' => 'C5 Aircross', 'energy' => 'thermique'],
-                ['label' => 'ë-C4', 'energy' => 'électrique'],
-                ['label' => 'AMI', 'energy' => 'électrique']
+                ['label' => 'C3', 'energy' => 'thermal'],
+                ['label' => 'C5 Aircross', 'energy' => 'thermal'],
+                ['label' => 'ë-C4', 'energy' => 'electric'],
+                ['label' => 'AMI', 'energy' => 'electric']
             ],
             'Opel' => [
-                ['label' => 'Corsa', 'energy' => 'thermique'],
-                ['label' => 'Astra', 'energy' => 'thermique'],
-                ['label' => 'Corsa-e', 'energy' => 'électrique'],
-                ['label' => 'Mokka-e', 'energy' => 'électrique']
+                ['label' => 'Corsa', 'energy' => 'thermal'],
+                ['label' => 'Astra', 'energy' => 'thermal'],
+                ['label' => 'Corsa-e', 'energy' => 'electric'],
+                ['label' => 'Mokka-e', 'energy' => 'electric']
             ],
             'Hyundai' => [
-                ['label' => 'i20', 'energy' => 'thermique'],
-                ['label' => 'i30', 'energy' => 'thermique'],
-                ['label' => 'Kona EV', 'energy' => 'électrique'],
-                ['label' => 'IONIQ 5', 'energy' => 'électrique']
+                ['label' => 'i20', 'energy' => 'thermal'],
+                ['label' => 'i30', 'energy' => 'thermal'],
+                ['label' => 'Kona EV', 'energy' => 'electric'],
+                ['label' => 'IONIQ 5', 'energy' => 'electric']
             ],
             'Kia' => [
-                ['label' => 'Rio', 'energy' => 'thermique'],
-                ['label' => 'Ceed', 'energy' => 'thermique'],
-                ['label' => 'e-Niro', 'energy' => 'électrique'],
-                ['label' => 'EV6', 'energy' => 'électrique']
+                ['label' => 'Rio', 'energy' => 'thermal'],
+                ['label' => 'Ceed', 'energy' => 'thermal'],
+                ['label' => 'e-Niro', 'energy' => 'electric'],
+                ['label' => 'EV6', 'energy' => 'electric']
             ],
             'Nissan' => [
-                ['label' => 'Micra', 'energy' => 'thermique'],
-                ['label' => 'Juke', 'energy' => 'thermique'],
-                ['label' => 'Leaf', 'energy' => 'électrique'],
-                ['label' => 'Ariya', 'energy' => 'électrique']
+                ['label' => 'Micra', 'energy' => 'thermal'],
+                ['label' => 'Juke', 'energy' => 'thermal'],
+                ['label' => 'Leaf', 'energy' => 'electric'],
+                ['label' => 'Ariya', 'energy' => 'electric']
             ],
             'Mazda' => [
-                ['label' => 'Mazda2', 'energy' => 'thermique'],
-                ['label' => 'Mazda3', 'energy' => 'thermique'],
-                ['label' => 'MX-30', 'energy' => 'électrique'],
-                ['label' => 'CX-30 EV', 'energy' => 'électrique']
+                ['label' => 'Mazda2', 'energy' => 'thermal'],
+                ['label' => 'Mazda3', 'energy' => 'thermal'],
+                ['label' => 'MX-30', 'energy' => 'electric'],
+                ['label' => 'CX-30 EV', 'energy' => 'electric']
             ],
             'Fiat' => [
-                ['label' => 'Panda', 'energy' => 'thermique'],
-                ['label' => 'Tipo', 'energy' => 'thermique'],
-                ['label' => '500e', 'energy' => 'électrique'],
-                ['label' => '600e', 'energy' => 'électrique']
+                ['label' => 'Panda', 'energy' => 'thermal'],
+                ['label' => 'Tipo', 'energy' => 'thermal'],
+                ['label' => '500e', 'energy' => 'electric'],
+                ['label' => '600e', 'energy' => 'electric']
             ],
             'Skoda' => [
-                ['label' => 'Fabia', 'energy' => 'thermique'],
-                ['label' => 'Octavia', 'energy' => 'thermique'],
-                ['label' => 'Enyaq', 'energy' => 'électrique'],
-                ['label' => 'Citigo-e', 'energy' => 'électrique']
+                ['label' => 'Fabia', 'energy' => 'thermal'],
+                ['label' => 'Octavia', 'energy' => 'thermal'],
+                ['label' => 'Enyaq', 'energy' => 'electric'],
+                ['label' => 'Citigo-e', 'energy' => 'electric']
             ],
             'Honda' => [
-                ['label' => 'Civic', 'energy' => 'thermique'],
-                ['label' => 'Jazz', 'energy' => 'thermique'],
-                ['label' => 'Honda e', 'energy' => 'électrique'],
-                ['label' => 'CR-V Hybrid', 'energy' => 'électrique']
+                ['label' => 'Civic', 'energy' => 'thermal'],
+                ['label' => 'Jazz', 'energy' => 'thermal'],
+                ['label' => 'Honda e', 'energy' => 'electric'],
+                ['label' => 'CR-V Hybrid', 'energy' => 'electric']
             ],
             'Volvo' => [
-                ['label' => 'V40', 'energy' => 'thermique'],
-                ['label' => 'XC60', 'energy' => 'thermique'],
-                ['label' => 'XC40 Recharge', 'energy' => 'électrique'],
-                ['label' => 'C40 Recharge', 'energy' => 'électrique']
+                ['label' => 'V40', 'energy' => 'thermal'],
+                ['label' => 'XC60', 'energy' => 'thermal'],
+                ['label' => 'XC40 Recharge', 'energy' => 'electric'],
+                ['label' => 'C40 Recharge', 'energy' => 'electric']
             ],
             'Dacia' => [
-                ['label' => 'Sandero', 'energy' => 'thermique'],
-                ['label' => 'Duster', 'energy' => 'thermique'],
-                ['label' => 'Spring', 'energy' => 'électrique']
+                ['label' => 'Sandero', 'energy' => 'thermal'],
+                ['label' => 'Duster', 'energy' => 'thermal'],
+                ['label' => 'Spring', 'energy' => 'electric']
             ]
         ];
 
