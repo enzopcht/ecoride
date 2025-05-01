@@ -1,0 +1,13 @@
+
+.gradient {
+    min-height: 320px;
+    background: linear-gradient($primary, $secondary);
+
+    h1 {
+        font-size: $headline;
+
+        @media (min-width: 767px) {
+            font-size: $headline-desktop;
+        }
+    }
+}
