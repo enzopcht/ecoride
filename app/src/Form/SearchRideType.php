@@ -25,7 +25,9 @@ class SearchRideType extends AbstractType
                 'widget' => 'single_text',
                 'html5' => true,
             ])
-            ->add('rechercher', SubmitType::class);
+            ->add('rechercher', SubmitType::class, [
+                'label' => 'Rechercher',
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
