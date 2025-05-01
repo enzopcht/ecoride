@@ -1,0 +1,27 @@
+@import 'variables';
+@import 'layout';
+@import 'buttons';
+@import 'components/hero';
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    font-family: var(--bs-font-sans-serif);
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+
+article {
+    text-align: justify;
+
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+}
