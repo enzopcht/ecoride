@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ecoride - Rechercher un trajet{% endblock %}
+
+{% block body %}
+	<main class="container-xl mt-4">
+		<div class="container rounded-4 bg-white p-3 shadow col-9 col-lg-12">
+			<form autocomplete="off" action="" method="get" class="text-light-emphasis row justify-content-center my-2" id="addressForm">
+
+				<div class="searchContainer mb-3 mb-lg-0 col-12 col-lg-3">
+					<label for="departureInput">Départ</label>
+					<input id="departureInput" class="searchInput form-control" name="departure" list="departureList" required>
+					<datalist id="departureList"></datalist>
+				</div>
+
+				<div class="searchContainer mb-3 mb-lg-0 col-12 col-lg-3">
+					<label for="arrivalInput">Arrivé</label>
+					<input id="arrivalInput" class="searchInput form-control" name="destination" list="arrivalList" required>
+					<datalist id="arrivalList"></datalist>
+				</div>
+				<div class="searchContainer mb-3 mb-lg-0 col-12 col-lg-3">
+					<label for="date">Date</label>
+					<input type="date" id="date" class="searchInput form-control error" name="date" required>
+				</div>
+
+				<div class="text-center col-lg-2 align-self-end">
+					<button type="submit" id="validateButton" class="btn btn-primary" value="Rechercher">Rechercher</button>
+				</div>
+			</form>
+		</div>
+	</main>
+{% endblock %}
