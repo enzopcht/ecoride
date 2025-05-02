@@ -25,18 +25,42 @@ final class SearchController extends AbstractController
     {
         $form = $this->createForm(SearchRideType::class);
         $form->handleRequest($request);
-        
-        dd([
-            'POST brut' => $request->request->all(),
-            'Données filtrées' => $form->getData(),
-        ]);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
+            // 🔧 TRAJETS SIMULÉS
+            $rides = [
+                [
+                    'departure' => 'Paris',
+                    'arrival' => 'Lyon',
+                    'date1' => new \DateTime('+1 day 14:00'),
+                    'date2' => new \DateTime('+1 day 18:00'),
+                    'driver' => 'Alice',
+                    'vehicle' => 'Peugeot 208',
+                    'energy' => 'thermique',
+                    'eco' => false,
+                    'price' => 8,
+                    'seats' => 2
+                ],
+                [
+                    'departure' => 'Paris',
+                    'arrival' => 'Lyon',
+                    'date1' => new \DateTime('+1 day 18:00'),
+                    'date2' => new \DateTime('+1 day 21:00'),
+                    'driver' => 'Julien',
+                    'vehicle' => 'Tesla Model 3',
+                    'energy' => 'électrique',
+                    'eco' => true,
+                    'price' => 10,
+                    'seats' => 1
+                ]
+            ];
+
             return $this->render('search/results.html.twig', [
                 'searchForm' => $form->createView(),
                 'data' => $data,
+                'rides' => $rides,
             ]);
         }
 
