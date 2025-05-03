@@ -182,19 +182,23 @@
 						{% endfor %}
 
 						{% if exact_match == 0 and alternateRide is not null %}
-							<h3 class="text-center">Pas de covoiturage disponible pour cette date... Mais à une autre date oui !</h3>
+							<h3 class="text-center">Pas de covoiturage disponible pour cette date... Mais le {{ alternateRide.departureTime|date('d/m/Y') }} oui !</h3>
 
-							<form method="POST" action="{{ path('app_search_results') }}">
-								<input type="hidden" name="search_ride[departure]" value="{{ data.departure }}">
-								<input type="hidden" name="search_ride[arrival]" value="{{ data.arrival }}">
-								<input type="hidden" name="search_ride[date]" value="{{ alternateRide.departureTime|date('Y-m-d') }}">
-
-								<div class="text-center mt-3">
-									<button type="submit" class="btn btn-outline-primary">
-										Voir les trajets du {{ alternateRide.departureTime|date('d/m/Y') }}
-									</button>
-								</div>
-							</form>
+							{{ form_start(alternateForm, {
+    action: path('app_search_results'),
+    method: 'POST'
+}) }}
+							{{ form_widget(alternateForm.departure, {'type': 'hidden'}) }}
+							{{ form_widget(alternateForm.arrival, {'type': 'hidden'}) }}
+							{{ form_widget(alternateForm.date, {'type': 'hidden'}) }}
+							<div class="text-center mt-3">
+								
+								{{ form_row(alternateForm.rechercher, {
+									'attr': {'class': 'btn btn-outline-primary'},
+									'label': 'Voir les trajets pour cette date'
+								}) }}
+							</div>
+							{{ form_end(alternateForm) }}
 						{% elseif exact_match == 0 %}
 							<h3 class="text-center">Pas de covoiturage disponible pour ce trajet...</h3>
 						{% endif %}
@@ -203,5 +207,5 @@
 
 				</div>
 			</main>
-            <script src="/js/modules/filterRangeValue.js"></script>
+			<script src="/js/modules/filterRangeValue.js"></script>
 		{% endblock %}

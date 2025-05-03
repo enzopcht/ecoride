@@ -34,11 +34,18 @@ final class SearchController extends AbstractController
 
             $alternateRide = $rideRepository->findNextRideAfterDate($data['departure'], $data['arrival'], $data['date']);
 
+            $alternateForm = $this->createForm(SearchRideType::class, [
+                'departure' => $data['departure'],
+                'arrival' => $data['arrival'],
+                'date' => $alternateRide?->getDepartureTime(),
+            ]);
+
             return $this->render('search/results.html.twig', [
                 'searchForm' => $form->createView(),
                 'data' => $data,
                 'rides' => $rides,
                 'alternateRide' => $alternateRide,
+                'alternateForm' => $alternateForm->createView(),
             ]);
         }
 
