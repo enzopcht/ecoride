@@ -133,17 +133,16 @@
 					<div id="carpooling-results" class="col-12 col-md-10 col-lg-7">
 
 						{% set exact_match = 0 %}
-						{% set other_day_match = 0 %}
 
 						{% for ride in rides %}
-							{% if ride.departure is same as(data.departure) and ride.arrival is same as(data.arrival) %}
-								{% if ride.date1|date('Y-m-d') == data.date|date('Y-m-d') %}
+							{% if ride.departureCity is same as(data.departure) and ride.arrivalCity is same as(data.arrival) %}
+								{% if ride.departureTime|date('Y-m-d') == data.date|date('Y-m-d') %}
 									{% set exact_match = exact_match + 1 %}
 									<a class="text-black" href="#">
 										<div class="carpooling-item bg-white shadow rounded  p-3 mb-3">
-											<h3 class="text-primary">{{ ride.departure }}
+											<h3 class="text-primary">{{ ride.departureCity }}
 												→
-												{{ ride.arrival }}</h3>
+												{{ ride.arrivalCity }}</h3>
 											<hr>
 											<div class="row align-items-center">
 												<div class="align-items-center d-flex col">
@@ -154,23 +153,23 @@
 													4.5/5
 													<i class='bi bi-star-fill text-warning'></i>
 												</div>
-											</div>
+											</div>r
 											<hr>
 											<div class="row align-items-center mx-auto">
-												<div class="col fs-5 text-dark text-end">{{ ride.date1|date('d/m/Y H:i') }}</div>
+												<div class="col fs-5 text-dark text-end">{{ ride.departureTime|date('d/m/Y H:i') }}</div>
 												<div class="col-6 line"></div>
-												<div class="col fs-5 text-dark">{{ ride.date2|date('d/m/Y H:i') }}</div>
+												<div class="col fs-5 text-dark">{{ ride.arrivalTime|date('d/m/Y H:i') }}</div>
 											</div>
 											<hr>
 											<div class="row align-items-center mx-auto">
 												<div class="col-8">
-													{% if ride.eco %}
+													{% if ride.ecological %}
 														<p class="text-secondary mb-0">Voyage écologique
 															<i class="bi bi-lightning-charge"></i>
 														</p>
 													{% endif %}
 													<p class="mb-0">Places restante(s) :
-														{{ ride.seats }}</p>
+														{{ ride.seatsAvailable }}</p>
 												</div>
 												<div class="text-dark col text-end fs-2">{{ ride.price }}
 													<i class="bi bi-coin text-warning"></i>
@@ -178,40 +177,25 @@
 											</div>
 										</div>
 									</a>
-								{% elseif ride.date1|date('Y-m-d') > data.date|date('Y-m-d') %}
-									{% set other_day_match = other_day_match + 1 %}
 								{% endif %}
 							{% endif %}
 						{% endfor %}
 
-						{% if exact_match == 0 and other_day_match > 0 %}
+						{% if exact_match == 0 and alternateRide is not null %}
 							<h3 class="text-center">Pas de covoiturage disponible pour cette date... Mais à une autre date oui !</h3>
 
+							<form method="POST" action="{{ path('app_search_results') }}">
+								<input type="hidden" name="search_ride[departure]" value="{{ data.departure }}">
+								<input type="hidden" name="search_ride[arrival]" value="{{ data.arrival }}">
+								<input type="hidden" name="search_ride[date]" value="{{ alternateRide.departureTime|date('Y-m-d') }}">
 
-							{% set closestDate = null %}
-							{% for ride in rides %}
-								{% if ride.departure == data.departure and ride.arrival == data.arrival and ride.date1 > data.date %}
-									{% if closestDate is null or ride.date1 < closestDate %}
-										{% set closestDate = ride.date1 %}
-									{% endif %}
-								{% endif %}
-							{% endfor %}
-
-							{% if closestDate %}
-								<form method="POST" action="{{ url('app_search_results') }}">
-									<input type="hidden" name="search_ride[departure]" value="{{ data.departure }}">
-									<input type="hidden" name="search_ride[arrival]" value="{{ data.arrival }}">
-									<input type="hidden" name="search_ride[date]" value="{{ closestDate|date('Y-m-d') }}">
-
-									<div class="text-center mt-3">
-										<button type="submit" name="submit_alternate" value="1" class="btn btn-outline-primary">
-											Voir les trajets du {{ closestDate|date('d/m/Y') }}
-										</button>
-									</div>
-								</form>
-							{% endif %}
-
-						{% elseif exact_match == 0 and other_day_match == 0 %}
+								<div class="text-center mt-3">
+									<button type="submit" class="btn btn-outline-primary">
+										Voir les trajets du {{ alternateRide.departureTime|date('d/m/Y') }}
+									</button>
+								</div>
+							</form>
+						{% elseif exact_match == 0 %}
 							<h3 class="text-center">Pas de covoiturage disponible pour ce trajet...</h3>
 						{% endif %}
 

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Form\SearchRideType;
+use App\Repository\RideRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +22,7 @@ final class SearchController extends AbstractController
     }
 
     #[Route('/search/results', name: 'app_search_results', methods: ['GET', 'POST'])]
-    public function results(Request $request): Response
+    public function results(Request $request, RideRepository $rideRepository): Response
     {
         $form = $this->createForm(SearchRideType::class);
         $form->handleRequest($request);
@@ -29,38 +30,15 @@ final class SearchController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            // 🔧 TRAJETS SIMULÉS
-            $rides = [
-                [
-                    'departure' => 'Paris',
-                    'arrival' => 'Lyon',
-                    'date1' => new \DateTime('+1 day 14:00'),
-                    'date2' => new \DateTime('+1 day 18:00'),
-                    'driver' => 'Alice',
-                    'vehicle' => 'Peugeot 208',
-                    'energy' => 'thermique',
-                    'eco' => false,
-                    'price' => 8,
-                    'seats' => 2
-                ],
-                [
-                    'departure' => 'Paris',
-                    'arrival' => 'Lyon',
-                    'date1' => new \DateTime('+1 day 18:00'),
-                    'date2' => new \DateTime('+1 day 21:00'),
-                    'driver' => 'Julien',
-                    'vehicle' => 'Tesla Model 3',
-                    'energy' => 'électrique',
-                    'eco' => true,
-                    'price' => 10,
-                    'seats' => 1
-                ]
-            ];
+            $rides = $rideRepository->findRidesBySearchData($data['departure'], $data['arrival'], $data['date']);
+
+            $alternateRide = $rideRepository->findNextRideAfterDate($data['departure'], $data['arrival'], $data['date']);
 
             return $this->render('search/results.html.twig', [
                 'searchForm' => $form->createView(),
                 'data' => $data,
                 'rides' => $rides,
+                'alternateRide' => $alternateRide,
             ]);
         }
 

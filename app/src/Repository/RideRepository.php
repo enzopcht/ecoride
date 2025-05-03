@@ -40,4 +40,36 @@ class RideRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function findRidesBySearchData(string $departure, string $arrival, \DateTime $date): array
+    {
+        $start = (clone $date)->setTime(0, 0);
+        $end = (clone $date)->setTime(23, 59, 59);
+
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.departure_city = :departure')
+            ->andWhere('r.arrival_city = :arrival')
+            ->andWhere('r.departure_time BETWEEN :start AND :end')
+            ->setParameter('departure', $departure)
+            ->setParameter('arrival', $arrival)
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->orderBy('r.departure_time', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findNextRideAfterDate(string $departure, string $arrival, \DateTime $date): ?Ride
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.departure_city = :departure')
+            ->andWhere('r.arrival_city = :arrival')
+            ->andWhere('r.departure_time > :date')
+            ->setParameter('departure', $departure)
+            ->setParameter('arrival', $arrival)
+            ->setParameter('date', $date)
+            ->orderBy('r.departure_time', 'ASC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
