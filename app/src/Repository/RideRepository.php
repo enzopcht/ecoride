@@ -42,6 +42,14 @@ class RideRepository extends ServiceEntityRepository
     //    }
     public function findRidesBySearchData(string $departure, string $arrival, \DateTime $date): array
     {
+        $now = new \DateTime();
+        $today = (clone $now)->setTime(0, 0);
+
+        // Si la date demandée est dans le passé, retourne une liste vide
+        if ($date < $today) {
+            return [];
+        }
+
         $start = (clone $date)->setTime(0, 0);
         $end = (clone $date)->setTime(23, 59, 59);
 

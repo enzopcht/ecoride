@@ -29,6 +29,17 @@ final class SearchController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
+        
+            if ($data['date'] < (new \DateTime())->setTime(0, 0)) {
+                $this->addFlash('warning', 'Impossible de rechercher un trajet dans le passé.');
+                return $this->redirectToRoute('app_search'); // ou n'importe quelle route de ton choix
+            }
+        
+            $rides = $rideRepository->findRidesBySearchData(
+                $data['departure'],
+                $data['arrival'],
+                $data['date']
+            );
 
             $rides = $rideRepository->findRidesBySearchData($data['departure'], $data['arrival'], $data['date']);
 

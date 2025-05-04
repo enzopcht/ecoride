@@ -5,6 +5,11 @@
 
 {% block body %}
 	<main class="container-xl mt-4">
+	{% for message in app.flashes('warning') %}
+		<div class='alert alert-danger'>
+			{{ message }}
+		</div>
+	{% endfor %}
 		<div class="container rounded-4 bg-white p-3 shadow col-12 col-lg-12">
 			{{ form_start(searchForm, {
 			    'action': path('app_search_results'),
@@ -18,7 +23,7 @@
 				{{ form_row(searchForm.arrival, {'attr': {'class': 'form-control'}}) }}
 			</div>
 			<div class="col-12 col-lg-3">
-				{{ form_row(searchForm.date, {'attr': {'class': 'form-control'}}) }}
+				{{ form_row(searchForm.date, {'attr': {'class': 'form-control', 'min': (date()|date('Y-m-d'))}}) }}
 			</div>
 			<div class="text-center col-lg-2 align-self-end">
 				{{ form_row(searchForm.rechercher, {'attr': {'class': 'btn btn-primary w-100'}}) }}
