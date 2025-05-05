@@ -40,4 +40,50 @@ class RideRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function findRidesBySearchData(string $departure, string $arrival, \DateTime $date): array
+    {
+        $now = new \DateTime();
+        $today = (clone $now)->setTime(0, 0);
+
+        // Si la date demandée est dans le passé, retourne une liste vide
+        if ($date < $today) {
+            return [];
+        }
+
+        $start = (clone $date)->setTime(0, 0);
+        $end = (clone $date)->setTime(23, 59, 59);
+
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.departure_city = :departure')
+            ->andWhere('r.arrival_city = :arrival')
+            ->andWhere('r.departure_time BETWEEN :start AND :end')
+            ->andWhere('r.seats_available > 0')
+            ->andWhere('r.status = :status')
+            ->setParameter('departure', $departure)
+            ->setParameter('arrival', $arrival)
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->setParameter('status', 'pending')
+            ->orderBy('r.departure_time', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findNextRideAfterDate(string $departure, string $arrival, \DateTime $date): ?Ride
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.departure_city = :departure')
+            ->andWhere('r.arrival_city = :arrival')
+            ->andWhere('r.departure_time > :date')
+            ->andWhere('r.seats_available > 0')
+            ->andWhere('r.status = :status')
+            ->setParameter('departure', $departure)
+            ->setParameter('arrival', $arrival)
+            ->setParameter('date', $date)
+            ->setParameter('status', 'pending')
+            ->orderBy('r.departure_time', 'ASC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
