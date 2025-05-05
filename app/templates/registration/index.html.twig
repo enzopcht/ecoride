@@ -10,31 +10,55 @@
 		<div class="container-xl justify-text pt-5 text-center"></div>
 
 		<div class="container-xl mx-auto">
-			{{ form_start(registrationForm) }}
+			{{ form_start(registrationForm, {'attr': {'id': 'registration-form'}}) }}
 			<div class="mb-3">
 				{{ form_label(registrationForm.email) }}
 				{{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
-				{{ form_errors(registrationForm.email) }}
+				{% for error in registrationForm.email.vars.errors %}
+					<div id="errorMail" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+				<div id="mailFormat" class="invalid-feedback">
+					Votre email doit être au format mail@mail.com
+				</div>
 			</div>
 			<div class="mb-3">
 				{{ form_label(registrationForm.pseudo) }}
 				{{ form_widget(registrationForm.pseudo, {'attr': {'class': 'form-control'}}) }}
-				{{ form_errors(registrationForm.pseudo) }}
+				{% for error in registrationForm.pseudo.vars.errors %}
+					<div id="errorPseudo" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+				<div id="pseudoFormat" class="invalid-feedback">
+					Votre pseudo doit avoir au moins 3 caractères.
+				</div>
 			</div>
 			<div class="mb-3">
 				{{ form_label(registrationForm.plainPassword.first) }}
 				{{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
 				{{ form_errors(registrationForm.plainPassword.first) }}
+				<div class="invalid-feedback">
+					Votre mot de passe ne respecte pas les conditions nécéssaires de sécurité : 
+					<ul>
+						<li>8 caractères minimum</li>
+						<li>1 majuscule</li>
+						<li>1 minuscule</li>
+						<li>1 chiffre</li>
+						<li>1 caractère spécial</li>
+					</ul>
+				</div>
 			</div>
 			<div class="mb-3">
 				{{ form_label(registrationForm.plainPassword.second) }}
 				{{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
 				{{ form_errors(registrationForm.plainPassword.second) }}
+				<div class="invalid-feedback">
+					Les mots de passes ne correspondent pas.
+				</div>
 			</div>
 			<div class='mb-3 text-center'>
-				<button type="submit" class="btn btn-primary justify-content-center">Créer un compte</button>
+				<button id='validateButton' type="submit" class="btn btn-primary justify-content-center">Créer un compte</button>
 			</div>
 			{{ form_end(registrationForm) }}
 		</div>
 	</main>
+	<script src="{{ asset('js/modules/registrationValidation.js') }}"></script>
 {% endblock %}
