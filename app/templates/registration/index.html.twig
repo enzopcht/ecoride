@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - EcoRide
+{% endblock %}
+
+{% block body %}
+	<main class="container-xl">
+		<h1 class="text-dark">Créer un compte</h1>
+
+		<div class="container-xl justify-text pt-5 text-center"></div>
+
+		<div class="container-xl mx-auto">
+			{{ form_start(registrationForm) }}
+			<div class="mb-3">
+				{{ form_label(registrationForm.email) }}
+				{{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
+				{{ form_errors(registrationForm.email) }}
+			</div>
+			<div class="mb-3">
+				{{ form_label(registrationForm.pseudo) }}
+				{{ form_widget(registrationForm.pseudo, {'attr': {'class': 'form-control'}}) }}
+				{{ form_errors(registrationForm.pseudo) }}
+			</div>
+			<div class="mb-3">
+				{{ form_label(registrationForm.plainPassword.first) }}
+				{{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
+				{{ form_errors(registrationForm.plainPassword.first) }}
+			</div>
+			<div class="mb-3">
+				{{ form_label(registrationForm.plainPassword.second) }}
+				{{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
+				{{ form_errors(registrationForm.plainPassword.second) }}
+			</div>
+			<div class='mb-3 text-center'>
+				<button type="submit" class="btn btn-primary justify-content-center">Créer un compte</button>
+			</div>
+			{{ form_end(registrationForm) }}
+		</div>
+	</main>
+{% endblock %}

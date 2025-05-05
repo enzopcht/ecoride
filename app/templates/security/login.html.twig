@@ -14,11 +14,14 @@
 				{% if error %}
 					<div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
 				{% endif %}
-
-				<label for="inputEmail">Email :</label>
-				<input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
-				<label for="inputPassword">Mot de passe :</label>
-				<input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+				<div class='mb-3'>
+					<label for="inputEmail">Email :</label>
+					<input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+				</div>
+				<div class='mb-3'>
+					<label for="inputPassword">Mot de passe :</label>
+					<input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+				</div>
 
 				<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
@@ -29,15 +32,15 @@
 					</label>
 				</div>
 				<div class="mb-3 text-center">
-				<button class="btn btn-lg btn-primary justify-content-center" type="submit">
-					Se connecter
-				</button>
+					<button class="btn btn-lg btn-primary justify-content-center" type="submit">
+						Se connecter
+					</button>
 				</div>
 			</form>
 
 			<p class="text-center">
 				Vous n'êtes pas encore membre EcoRide ?
-				<a class="text-decoration-none" href="<?= $router->url('sign-up') ?>">Inscrivez-vous ici !</a>
+				<a class="text-decoration-none" href="{{ path('app_registration') }}">Inscrivez-vous ici !</a>
 			</p>
 		</div>
 	</main>
