@@ -5,33 +5,38 @@
 
 {% block body %}
 
-		<div class="gradient pb-3 mb-2">
-			<div class="box-hero">
-				<h1 class="text-white text-center col-10 mx-auto py-4">
-					<span class="fw-bold">EcoRide</span>
-					: Covoiturage Responsable : Moins de CO₂, Plus de Partage !</h1>
-				<div class="container rounded-4 bg-white p-3 shadow col-12 col-lg-12">
-			{{ form_start(searchForm, {
+	{% for message in app.flashes('warning') %}
+		<div class='alert alert-danger'>
+			{{ message }}
+		</div>
+	{% endfor %}
+	<div class="gradient pb-3 mb-2">
+		<div class="box-hero">
+			<h1 class="text-white text-center col-10 mx-auto py-4">
+				<span class="fw-bold">EcoRide</span>
+				: Covoiturage Responsable : Moins de CO₂, Plus de Partage !</h1>
+			<div class="container rounded-4 bg-white p-3 shadow col-12 col-lg-12">
+				{{ form_start(searchForm, {
 			    'action': path('app_search_results'),
 			    'method': 'POST',
 			    'attr': {'class': 'row g-3 justify-content-center'}
 			}) }}
-			<div class="col-12 col-lg-3">
-				{{ form_row(searchForm.departure, {'attr': {'class': 'form-control'}}) }}
+				<div class="col-12 col-lg-3">
+					{{ form_row(searchForm.departure, {'attr': {'class': 'form-control'}}) }}
+				</div>
+				<div class="col-12 col-lg-3">
+					{{ form_row(searchForm.arrival, {'attr': {'class': 'form-control'}}) }}
+				</div>
+				<div class="col-12 col-lg-3">
+					{{ form_row(searchForm.date, {'attr': {'class': 'form-control', 'min': (date()|date('Y-m-d'))}}) }}
+				</div>
+				<div class="text-center col-lg-2 align-self-end">
+					{{ form_row(searchForm.rechercher, {'attr': {'class': 'btn btn-primary w-100'}}) }}
+				</div>
+				{{ form_end(searchForm) }}
 			</div>
-			<div class="col-12 col-lg-3">
-				{{ form_row(searchForm.arrival, {'attr': {'class': 'form-control'}}) }}
-			</div>
-			<div class="col-12 col-lg-3">
-				{{ form_row(searchForm.date, {'attr': {'class': 'form-control', 'min': (date()|date('Y-m-d'))}}) }}
-			</div>
-			<div class="text-center col-lg-2 align-self-end">
-				{{ form_row(searchForm.rechercher, {'attr': {'class': 'btn btn-primary w-100'}}) }}
-			</div>
-			{{ form_end(searchForm) }}
 		</div>
-			</div>
-		</div>
+	</div>
 
 
 	<main class="container-xl">
@@ -47,7 +52,7 @@
 
 				<div class="col-12 col-lg-8 order-lg-1 text-body-tertiary">
 					<p>EcoRide est une plateforme de covoiturage écoresponsable conçue pour rendre les déplacements plus durables et accessibles à tous.
-												                    Nous mettons en relation des conducteurs et des passagers partageant un même trajet, avec un objectif clair : réduire les émissions de CO₂ et favoriser une mobilité plus économique et écologique.</p>
+																		                    Nous mettons en relation des conducteurs et des passagers partageant un même trajet, avec un objectif clair : réduire les émissions de CO₂ et favoriser une mobilité plus économique et écologique.</p>
 					<h3 class="text-primary fs-3 mb-2">Nos valeurs</h3>
 					<ul>
 						<li class="mb-3">
