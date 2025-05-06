@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang='fr'>
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>
-			{% block title %}Welcome!
+			{% block title %}Ecoride
 			{% endblock %}
 		</title>
 		<link
@@ -37,14 +37,28 @@
 							</li>
 						</ul>
 						<div class="text-end">
-							<a href="/login" class="btn btn-primary">Connexion</a>
-							<a href="/sign-up" class="btn btn-dark">S'inscrire</a>
+						{% if app.user %}
+							<a href="#" class="btn btn-primary">Tableau de bord</a>
+							<a href="{{ path('app_logout') }}" class="btn btn-danger">Déconnexion</a>
+						{% else %}
+							<a href="{{ path('app_login') }}" class="btn btn-primary">Connexion</a>
+							<a href="{{ path('app_registration') }}" class="btn btn-dark">S'inscrire</a>
+						{% endif %}
 						</div>
 					</div>
 				</div>
 			</nav>
 
 			<main class="flex-fill">
+				{% for label, messages in app.flashes %}
+					{% for message in messages %}
+						<div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+							{{ message }}
+							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+						</div>
+					{% endfor %}
+				{% endfor %}
+				
 				{% block body %}{% endblock %}
 			</main>
 

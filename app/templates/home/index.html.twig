@@ -5,6 +5,13 @@
 
 {% block body %}
 
+
+	{% for message in app.flashes('warning') %}
+		<div class='alert alert-danger'>
+			{{ message }}
+		</div>
+	{% endfor %}
+  
 	<div class="gradient pb-3 mb-2">
 		<div class="box-hero">
 			<h1 class="text-white text-center col-10 mx-auto py-4">
