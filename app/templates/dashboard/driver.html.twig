@@ -1,0 +1,55 @@
+<h3 class="text-primary">Covoiturages prévus (chauffeur) : (NBR)</h3>
+
+            <div class="accordion shadow-sm" id="next-carpool">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button " type="button" data-bs-toggle="collapse" data-bs-target="" aria-expanded="" aria-controls="">
+                                    DEPART -> ARRIVE
+                                    <span class="text-danger ms-3">STATUS</span>
+                                </button>
+                            </h2>
+                            <div id="" class="accordion-collapse collapse " data-bs-parent="#next-carpool">
+                                <div class="accordion-body">
+
+                                    <div class="row align-items-center">
+                                        <h3 class="text-primary text-center">DATE</h3>
+                                        <hr>
+                                    </div>
+                                    <div class="row align-items-center">
+                                        <div class="align-items-center d-flex col">
+                                            <img src="/assets/images/user.png" alt="" height="40" class="rounded-circle border border-dark me-2">
+                                            <div class="fs-5">DRIVER NAME</div>
+                                        </div>
+                                        <div class="col text-end">
+                                            NOTE/5<i class="bi bi-star-fill text-warning"></i>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row align-items-center mx-auto">
+                                        <div class="col fs-5 text-dark text-end">HEURE</div>
+                                        <div class="col-6 line"></div>
+                                        <div class="col fs-5 text-dark">HEURE</div>
+                                    </div>
+                                    <hr>
+                                    <div class="row align-items-center mx-auto">
+                                        <div class="col-8">
+                                            <p class="text-secondary mb-0">Voyage écologique <i class="bi bi-lightning-charge"></i></p>
+                                            <p class="mb-0">Places restante(s) : NOMBRE</p>
+                                        </div>
+                                        <div class="text-dark col text-end fs-2">PRIX<i class="bi bi-coin text-warning"></i></div>
+                                    </div>
+                                        <div>
+                                            <form action="" method="post" onsubmit="return confirm('Voulez-vous vraiment supprimer ce trajet ?')">
+                                                <input type="hidden" name="carpool_id" value="id">
+                                                <input type="hidden" name="price" value="price">
+                                                <div class="text-center">
+                                                    <button type="submit" class="btn btn-danger" name="deleteCarpool">Annuler covoiturage</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+            </div>
+            <p>Pas de covoiturages prévus</p>
+        </div>

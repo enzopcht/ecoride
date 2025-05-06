@@ -14,10 +14,13 @@
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
 		<!-- Bootstrap Icons -->
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-		<link rel="stylesheet" href="{{ asset('css/app.css') }}"> {% block stylesheets %}{% endblock %}{% block javascripts %}{% endblock %}
+		<link rel="stylesheet" href="{{ asset('css/app.css') }}">
+		<script defer src="/js/main.js"></script>
+		{% block stylesheets %}{% endblock %}
+		{% block javascripts %}{% endblock %}
 		</head>
 		<body class="d-flex flex-column min-vh-100">
-			<nav class="navbar navbar-expand-lg shadow">
+			<nav id="nav" class="navbar navbar-expand-lg shadow">
 				<div class="container-fluid">
 					<a href="{{ path('app_home') }}" class="navbar-brand">
 						<img src="/assets/images/logo.png" alt="Logo" height="40" class="d-inline-block align-text-top">
@@ -49,18 +52,20 @@
 				</div>
 			</nav>
 
-			<main class="flex-fill">
-				{% for label, messages in app.flashes %}
-					{% for message in messages %}
-						<div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
-							{{ message }}
-							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-						</div>
-					{% endfor %}
-				{% endfor %}
+			
 				
-				{% block body %}{% endblock %}
-			</main>
+				
+				{% block body %}
+					{% for label, messages in app.flashes %}
+						{% for message in messages %}
+							<div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+								{{ message }}
+								<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+							</div>
+						{% endfor %}
+					{% endfor %}
+				{% endblock %}
+			
 
 			<footer class="bg-primary py-4 mt-auto">
 				<div class="container text-center text-danger">
