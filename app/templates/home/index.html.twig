@@ -5,17 +5,19 @@
 
 {% block body %}
 
+
 	{% for message in app.flashes('warning') %}
 		<div class='alert alert-danger'>
 			{{ message }}
 		</div>
 	{% endfor %}
+  
 	<div class="gradient pb-3 mb-2">
 		<div class="box-hero">
 			<h1 class="text-white text-center col-10 mx-auto py-4">
 				<span class="fw-bold">EcoRide</span>
 				: Covoiturage Responsable : Moins de CO₂, Plus de Partage !</h1>
-			<div class="container rounded-4 bg-white p-3 shadow col-12 col-lg-12">
+			<div class="container rounded-4 bg-white p-3 shadow col-10 col-lg-12">
 				{{ form_start(searchForm, {
 			    'action': path('app_search_results'),
 			    'method': 'POST',
