@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Repository\CreditTransactionRepository;
+use App\Repository\ParticipationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -41,12 +43,21 @@ final class DashboardController extends AbstractController
     // =========================
     // DASHBOARD PAR RÔLE
     // =========================
-    #[Route('/dashboard/passager', name: 'app_dashboard_passager')]
+    #[Route('/dashboard/passager', name: 'app_dashboard_passager', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_PASSENGER')]
-    public function passager(): Response
+    public function passager(ParticipationRepository $participationRepository, CreditTransactionRepository $transactionRepository): Response
     {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        $participationsPending = $participationRepository->findParticipationsForPassengerByStatuses($user, ['pending'], ['confirmed', 'pending']);
+        $participationsActive = $participationRepository->findParticipationsForPassengerByStatuses($user, ['active', 'completed'], ['confirmed']);
+        $balance = $transactionRepository->calculateUserBalance($this->getUser());
+
         return $this->render('dashboard/passager.html.twig', [
             'user' => $this->getUser(),
+            'participations_pending' => $participationsPending,
+            'participations_active' => $participationsActive,
+            'balance' => $balance,
         ]);
     }
 

@@ -41,7 +41,7 @@
 						</ul>
 						<div class="text-end">
 						{% if app.user %}
-							<a href="#" class="btn btn-primary">Tableau de bord</a>
+							<a href="{{ path('app_dashboard') }}" class="btn btn-primary">Tableau de bord</a>
 							<a href="{{ path('app_logout') }}" class="btn btn-danger">Déconnexion</a>
 						{% else %}
 							<a href="{{ path('app_login') }}" class="btn btn-primary">Connexion</a>

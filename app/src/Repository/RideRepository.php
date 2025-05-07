@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Participation;
 use App\Entity\Ride;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -86,4 +87,6 @@ class RideRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    
 }

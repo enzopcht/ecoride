@@ -4,99 +4,194 @@
 {% endblock %}
 
 {% block body %}
-	<main class="container-xl">
 
-		<div class="alert alert-success alert-dismissible fade show" role="alert">
-			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<main class="container-xl">
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+
+	<div class="d-flex align-items-center">
+		<h1 class="text-dark">
+			Tableau de bord
+			<span class="text-primary">{{user}}</span>
+		</h1>
+		<div class="text-white text-center d-flex bg-dark fs-5 ms-auto shadow p-3 rounded">{{balance}}<i class="bi bi-coin text-warning"></i>
 		</div>
+	</div>
 
-		<div class="d-flex align-items-center">
-			<h1 class="text-dark">
-				Tableau de bord
-				<span class="text-primary">{{user}}</span>
-			</h1>
-			<div class="text-white text-center d-flex bg-dark fs-5 ms-auto shadow p-3 rounded">2<i class="bi bi-coin text-warning"></i>
-			</div>
-		</div>
+	<div class="list-nav-custom mb-3">
+		<ul>
+			<li><a href="#">Historique de covoiturages</a></li>
+		</ul>
+	</div>
 
-		<div class="list-nav-custom mb-3">
-			<ul>
+	<div class="text-center my-3">
+		<a href="#" class="btn btn-primary">Devenir un driver</a>
+	</div>
 
-				<li><a href="#">Historique de covoiturages</a></li>
-
-			</ul>
-		</div>
-
-		<div class="text-center my-3">
-
-			<a href="#" class="btn btn-primary">Devenir un driver</a>
-
-		</div>
-
-		<hr>
-
+	<hr>
+	{% if participations_active|length > 0 %}
 		<div class="mb-3">
-			<h3 class="text-primary">Covoiturages prévus :
-				<span class="text-secondary">Nbr</span>
-			</h3>
-
+			<h3 class="text-success">{{ participations_active|length > 1 ? 'Voyages' : 'Voyage'}}
+				en cours :</h3>
 			<div class="accordion shadow-sm" id="next-carpool">
-				<div class="accordion-item">
-					<h2 class="accordion-header">
-						<button class="accordion-button " type="button" data-bs-toggle="collapse" data-bs-target="#collapseFirstNextBooking" aria-expanded="true" aria-controls="1">
-							DEPART -> ARRIVE
-							<span class="text-primary ms-3">STATUS</span>
-						</button>
-					</h2>
-					<div id="1" class="accordion-collapse collapse show" data-bs-parent="#next-carpool">
-						<div class="accordion-body">
-
-							<div class="row align-items-center">
-								<h3 class="text-primary text-center">DATE</h3>
-								<hr>
-							</div>
-							<div class="row align-items-center">
-								<div class="align-items-center d-flex col">
-									<img src="/assets/images/user.png" alt="" height="40" class="rounded-circle border border-dark me-2">
-									<div class="fs-5">DRIVER NAME</div>
+				{% for participation in participations_active %}
+					{% set ride = participation.ride %}
+					<div class="accordion-item">
+						<h2 class="accordion-header" id="heading-{{ loop.index }}">
+							<button class="accordion-button {{ loop.index == 1 ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ loop.index }}" aria-expanded="false" aria-controls="collapse-{{ loop.index }}">
+								{{ ride.departureCity}}
+								->
+								{{ ride.arrivalCity }}
+								{% set statusColor = '' %}
+								{% set statusContent = '' %}
+								{% if ride.status == 'active' %}
+									{% set statusColor = 'primary' %}
+									{% set statusContent = 'En cours...' %}
+										{% elseif ride.status == 'completed' %}
+											{% set statusColor = 'success'%}
+											{% set statusContent = 'Terminé' %}
+									{% endif %}
+									<span class="text-{{statusColor}} ms-3">{{statusContent}}</span>
+							</button>
+						</h2>
+						<div id="collapse-{{ loop.index }}" class="accordion-collapse collapse  {{ loop.index == 1 ? 'show' : '' }}" aria-labelledby="heading-{{ loop.index }}" data-bs-parent="#next-carpool">
+							<div class="accordion-body">
+								<div class="row align-items-center">
+									<h3 class="text-primary text-center">{{ ride.departureTime|date('d/m/Y') }}</h3>
+									<hr>
 								</div>
-								<div class="col text-end">
-									NOTE/5<i class="bi bi-star-fill text-warning"></i>
-								</div>
-							</div>
-							<hr>
-							<div class="row align-items-center mx-auto">
-								<div class="col fs-5 text-dark text-end">HEURE</div>
-								<div class="col-6 line"></div>
-								<div class="col fs-5 text-dark">HEURE</div>
-							</div>
-							<hr>
-							<div class="row align-items-center mx-auto">
-								<div class="col-8">
-									<p class="text-secondary mb-0">Voyage écologique
-										<i class="bi bi-lightning-charge"></i>
-									</p>
-									<p class="mb-0">Places restante(s) : NOMBRE</p>
-								</div>
-								<div class="text-dark col text-end fs-2">PRIX<i class="bi bi-coin text-warning"></i>
-								</div>
-							</div>
-							<div>
-								<form action="" method="post" onsubmit="return confirm('Voulez-vous vraiment supprimer cette réservation ?')">
-									<input type="hidden" name="booking_id" value="">
-									<input type="hidden" name="carpool_id" value="">
-									<input type="hidden" name="price" value="">
-									<div class="text-center">
-										<button type="submit" class="btn btn-danger" name="deleteBooking">Annuler réservation</button>
+								<div class="row align-items-center">
+									<div class="align-items-center d-flex col">
+										<img src="/assets/images/user.png" alt="" height="40" class="rounded-circle border border-dark me-2">
+										<div class="fs-5">{{ ride.driver.pseudo }}</div>
 									</div>
-								</form>
+									<div class="col text-end">
+										Note/5<i class="bi bi-star-fill text-warning"></i>
+									</div>
+								</div>
+								<hr>
+								<div class="row align-items-center mx-auto">
+									<div class="col fs-5 text-dark text-end">{{ ride.departureTime|date('H:i') }}</div>
+									<div class="col-6 line"></div>
+									<div class="col fs-5 text-dark">{{ ride.arrivalTime|date('H:i') }}</div>
+								</div>
+								<hr>
+								<div class="row align-items-center mx-auto">
+									<div class="col-8">
+										{% if ride.ecological %}
+											<p class="text-secondary mb-0">Voyage écologique
+												<i class="bi bi-lightning-charge"></i>
+											</p>
+										{% endif %}
+										<p class="mb-0">Places restante(s) :
+											{{ ride.seatsAvailable }}</p>
+									</div>
+									<div class="text-dark col text-end fs-2">{{ ride.price }}
+										<i class="bi bi-coin text-warning"></i>
+									</div>
+								</div>
+								<hr>
+								<div class='text-center'>
+									{% if ride.status == 'active' %}
+									<p class='text-primary'>Un fois le trajet fini et valider par le chauffeur, vous serez invité à confirmer que tout s'est bien passé.</p>
+									{% else %}
+									<p>Votre voyage est fini ! Veuillez valider le bon déroulement du trajet</p>
+									<button type="submit" class="btn btn-primary" name="">Valider</button>
+									<button type="submit" class="btn btn-danger" name="">Signaler un soucis</button>
+									{% endif %}
+								</div>
 							</div>
-
 						</div>
 					</div>
-				</div>
+				{% endfor %}
 			</div>
-			<p>Pas de covoiturages prévus</p>
+		</div>
+		<hr>
+	{% endif %}
+
+	<div class="mb-3">
+		<h3 class="text-primary">Covoiturages prévus :
+			<span class="text-secondary">{{participations_pending|length}}</span>
+		</h3>
+		{% if participations_pending|length > 0 %}
+			<div class="accordion shadow-sm" id="next-carpool">
+				{% for participation in participations_pending %}
+					{% set ride = participation.ride %}
+					<div class="accordion-item">
+						<h2 class="accordion-header" id="heading-{{ loop.index }}">
+							<button class="accordion-button {{ loop.index == 1 ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ loop.index }}" aria-expanded="false" aria-controls="collapse-{{ loop.index }}">
+								{{ ride.departureCity}}
+								->
+								{{ ride.arrivalCity }}
+								{% set statusColor = '' %}
+								{% set statusContent = '' %}
+								{% if participation.status == 'pending' %}
+									{% set statusColor = 'warning' %}
+									{% set statusContent = 'Votre réservation n\'a pas encore été acceptée par ' ~ ride.driver.pseudo %}
+										{% elseif participation.status == 'confirmed' %}
+											{% set statusColor = 'success'%}
+											{% set statusContent = 'Votre réservation a été acceptée par ' ~ ride.driver.pseudo %}
+									{% endif %}
+									<span class="text-{{statusColor}} ms-3">{{statusContent}}</span>
+								</button>
+							</h2>
+							<div id="collapse-{{ loop.index }}" class="accordion-collapse collapse  {{ loop.index == 1 ? 'show' : '' }}" aria-labelledby="heading-{{ loop.index }}" data-bs-parent="#next-carpool">
+								<div class="accordion-body">
+									<div class="row align-items-center">
+										<h3 class="text-primary text-center">{{ ride.departureTime|date('d/m/Y') }}</h3>
+										<hr>
+									</div>
+									<div class="row align-items-center">
+										<div class="align-items-center d-flex col">
+											<img src="/assets/images/user.png" alt="" height="40" class="rounded-circle border border-dark me-2">
+											<div class="fs-5">{{ ride.driver.pseudo }}</div>
+										</div>
+										<div class="col text-end">
+											Note/5<i class="bi bi-star-fill text-warning"></i>
+										</div>
+									</div>
+									<hr>
+									<div class="row align-items-center mx-auto">
+										<div class="col fs-5 text-dark text-end">{{ ride.departureTime|date('H:i') }}</div>
+										<div class="col-6 line"></div>
+										<div class="col fs-5 text-dark">{{ ride.arrivalTime|date('H:i') }}</div>
+									</div>
+									<hr>
+									<div class="row align-items-center mx-auto">
+										<div class="col-8">
+											{% if ride.ecological %}
+												<p class="text-secondary mb-0">Voyage écologique
+													<i class="bi bi-lightning-charge"></i>
+												</p>
+											{% endif %}
+											<p class="mb-0">Places restante(s) :
+												{{ ride.seatsAvailable }}</p>
+										</div>
+										<div class="text-dark col text-end fs-2">{{ ride.price }}
+											<i class="bi bi-coin text-warning"></i>
+										</div>
+									</div>
+									<div>
+										<form method="post" onsubmit="return confirm('Voulez-vous vraiment supprimer cette réservation ?')">
+											<input type="hidden" name="booking_id" value="{{ participation.id }}">
+											<input type="hidden" name="carpool_id" value="{{ ride.id }}">
+											<input type="hidden" name="price" value="{{ ride.price }}">
+											<div class="text-center">
+												<button type="submit" class="btn btn-danger" name="deleteBooking">Annuler réservation</button>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					{% else %}
+						<p class="text-center mt-4">Pas de covoiturages prévus</p>
+					{% endfor %}
+				</div>
+			{% else %}
+				<p>Pas de covoiturages prévus</p>
+			{% endif %}
 		</div>
 	</main>
 {% endblock %}
