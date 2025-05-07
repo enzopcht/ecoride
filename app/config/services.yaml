@@ -8,6 +8,10 @@ parameters:
     env(MONGODB_DB): ''
 
 services:
+    App\DataFixtures\Mongo\DriverPreferenceFixtures:
+        tags: ['doctrine.mongodb.odm.fixture_loader']
+        arguments:
+            $registry: '@doctrine'
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
