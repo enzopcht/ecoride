@@ -29,6 +29,7 @@ class ParticipationRepository extends ServiceEntityRepository
             ->setParameter('passenger', $passenger)
             ->setParameter('ride_statuses', $rideStatuses)
             ->setParameter('participation_statuses', $participationStatuses)
+            ->orderBy('r.departure_time', 'ASC')
             ->getQuery()
             ->getResult();
     }
