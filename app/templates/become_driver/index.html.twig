@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Devenir conducteur
+{% endblock %}
+
+{% block body %}
+	<main class="container-xl">
+		<h1 class="text-dark">Devenir un <span class="text-primary">Driver</span></h1>
+        <div class="mb-3 text-secondary">
+            <p><i class="bi bi-info-circle-fill"></i> Afin de pouvoir organiser des covoiturages et devenir un Driver, il vous faut renseigner un véhicule ainsi que vos préférences de conducteur.</p>
+        </div>
+
+
+		<div class="container-xl mx-auto">
+			{{ form_start(becomeDriverForm, {'attr': {'id': 'become-driver-form'}}) }}
+			<div class="mb-3">
+				{{ form_row(becomeDriverForm.plate) }}
+			</div>
+			<div class="mb-3">
+				{{ form_row(becomeDriverForm.firstRegistrationDate) }}
+			</div>
+			<div class="mb-3">
+				{{ form_row(becomeDriverForm.brand) }}
+			</div>
+			<div class="mb-3 d-none">
+				{{ form_row(becomeDriverForm.model) }}
+			</div>
+			<div class="mb-3">
+				{{ form_row(becomeDriverForm.color) }}
+			</div>
+			<div class="mb-3">
+				{{ form_row(becomeDriverForm.seats) }}
+			</div>
+			<div class="mb-3">
+				<div class="form-check">
+					{{ form_label(becomeDriverForm.musicAllowed, null, {'label_attr': {'class': 'form-check-label', 'for': 'music'}}) }}
+					{{ form_widget(becomeDriverForm.musicAllowed, {'attr': {'class': 'form-check-input', 'value': 1, 'id': 'music'}}) }}
+				</div>
+				<div class="form-check">
+					{{ form_label(becomeDriverForm.animalsAllowed, null, {'label_attr': {'class': 'form-check-label', 'for': 'animals'}}) }}
+					{{ form_widget(becomeDriverForm.animalsAllowed, {'attr': {'class': 'form-check-input', 'value': 1, 'id': 'animals'}}) }}
+				</div>
+				<div class="form-check">
+					{{ form_label(becomeDriverForm.smokingAllowed, null, {'label_attr': {'class': 'form-check-label', 'for': 'smoke'}}) }}
+					{{ form_widget(becomeDriverForm.smokingAllowed, {'attr': {'class': 'form-check-input', 'value': 1, 'id': 'smoke'}}) }}
+				</div>
+			</div>
+            <div class='mb-3 text-center'>
+				<button id='validateButton' type="submit" class="btn btn-primary justify-content-center">Valider</button>
+			</div>
+			{{ form_end(becomeDriverForm) }}
+		</div>
+	</main>
+{% endblock %}
