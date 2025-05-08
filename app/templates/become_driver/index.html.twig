@@ -14,19 +14,19 @@
 		<div class="container-xl mx-auto">
 			{{ form_start(becomeDriverForm, {'attr': {'id': 'become-driver-form'}}) }}
 			<div class="mb-3">
-				{{ form_row(becomeDriverForm.plate) }}
+				{{ form_row(becomeDriverForm.vehicle.plate) }}
 			</div>
 			<div class="mb-3">
-				{{ form_row(becomeDriverForm.firstRegistrationDate) }}
+				{{ form_row(becomeDriverForm.vehicle.firstRegistrationDate) }}
 			</div>
 			<div class="mb-3">
-				{{ form_row(becomeDriverForm.brand) }}
-			</div>
-			<div class="mb-3 d-none">
-				{{ form_row(becomeDriverForm.model) }}
+				{{ form_row(becomeDriverForm.vehicle.brand) }}
 			</div>
 			<div class="mb-3">
-				{{ form_row(becomeDriverForm.color) }}
+				{{ form_row(becomeDriverForm.vehicle.model) }}
+			</div>
+			<div class="mb-3">
+				{{ form_row(becomeDriverForm.vehicle.color) }}
 			</div>
 			<div class="mb-3">
 				<div class="form-check">
@@ -48,4 +48,5 @@
 			{{ form_end(becomeDriverForm) }}
 		</div>
 	</main>
+	<script src="{{ asset('js/modules/carSelect.js') }}"></script>
 {% endblock %}

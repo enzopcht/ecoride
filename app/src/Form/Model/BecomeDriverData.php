@@ -2,30 +2,13 @@
 
 namespace App\Form\Model;
 
-use App\Entity\CarModel;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
 class BecomeDriverData
 {
-    #[Assert\NotBlank]
-    #[Assert\Regex(
-        pattern: '/^[A-Z]{2}-\d{3}-[A-Z]{2}$/',
-        message: 'Le format doit être de type AA-123-AA'
-    )]
-    public string $plate;
-
-    #[Assert\NotBlank]
-    public \DateTimeInterface $firstRegistrationDate;
-
-    #[Assert\NotBlank]
-    public CarModel $model;
-
-    #[Assert\NotBlank]
-    public string $brand;
-
-    #[Assert\NotBlank]
-    public string $color;
+    #[Assert\NotNull]
+    public VehicleData $vehicle;
 
     #[Assert\NotNull]
     public bool $musicAllowed;
@@ -35,4 +18,14 @@ class BecomeDriverData
 
     #[Assert\NotNull]
     public bool $animalsAllowed;
+
+    public function getVehicle(): VehicleData
+    {
+        return $this->vehicle;
+    }
+
+    public function setVehicle(VehicleData $vehicle): void
+    {
+        $this->vehicle = $vehicle;
+    }
 }

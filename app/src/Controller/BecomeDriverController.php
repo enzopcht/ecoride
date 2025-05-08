@@ -30,12 +30,15 @@ final class BecomeDriverController extends AbstractController
              */
             $user->setRoles(['ROLE_DRIVER']);
 
+            $vehicleData = $data->vehicle;
+
             $vehicle = new \App\Entity\Vehicle();
             $vehicle->setOwner($user);
-            $vehicle->setPlate($data->plate);
-            $vehicle->setFirstRegistrationDate($data->firstRegistrationDate);
-            $vehicle->setCarModel($data->model);
-            $vehicle->setColor($data->color);
+            $vehicle->setPlate($vehicleData->plate);
+            $vehicle->setFirstRegistrationDate($vehicleData->firstRegistrationDate);
+            $carModel = $em->getRepository(\App\Entity\CarModel::class)->find($vehicleData->model);
+            $vehicle->setCarModel($carModel);
+            $vehicle->setColor($vehicleData->color);
             $em->persist($vehicle);
 
             $preference = new \App\Document\DriverPreference();
