@@ -42,10 +42,6 @@ class BecomeDriverType extends AbstractType
                 'label' => 'Couleur',
                 'attr' => ['class' => 'form-control'],
             ])
-            ->add('seats', IntegerType::class, [
-                'label' => 'Nombre de places disponibles (Renseignez le nombre de places possiblement réservable dans le véhicule)',
-                'attr' => ['class' => 'form-control', 'min' => 1, 'max' => 4],
-            ])
             ->add('musicAllowed', CheckboxType::class, [
                 'label' => 'Musique acceptée à bord',
                 'required' => false,

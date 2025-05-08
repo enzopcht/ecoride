@@ -2,6 +2,7 @@
 
 namespace App\Form\Model;
 
+use App\Entity\CarModel;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
@@ -18,17 +19,13 @@ class BecomeDriverData
     public \DateTimeInterface $firstRegistrationDate;
 
     #[Assert\NotBlank]
-    public string $model;
+    public CarModel $model;
 
     #[Assert\NotBlank]
     public string $brand;
 
     #[Assert\NotBlank]
     public string $color;
-
-    #[Assert\NotNull]
-    #[Assert\Positive]
-    public int $seats;
 
     #[Assert\NotNull]
     public bool $musicAllowed;

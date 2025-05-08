@@ -16,6 +16,7 @@ final class BecomeDriverController extends AbstractController
 {
     #[Route('/become-driver', name: 'become_driver')]
     #[IsGranted('ROLE_PASSENGER')]
+
     public function index(Request $request, EntityManagerInterface $em, DocumentManager $dm): Response
     {
         $data = new BecomeDriverData();
@@ -23,7 +24,29 @@ final class BecomeDriverController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = $this->getUser();
+            /**
+             * @var \App\Entity\User $user
+             */
+            $user->setRoles(['ROLE_DRIVER']);
 
+            $vehicle = new \App\Entity\Vehicle();
+            $vehicle->setOwner($user);
+            $vehicle->setPlate($data->plate);
+            $vehicle->setFirstRegistrationDate($data->firstRegistrationDate);
+            $vehicle->setCarModel($data->model);
+            $vehicle->setColor($data->color);
+            $em->persist($vehicle);
+
+            $preference = new \App\Document\DriverPreference();
+            $preference->setUserId($user->getId());
+            $preference->setMusicAllowed($data->musicAllowed);
+            $preference->setSmokingAllowed($data->smokingAllowed);
+            $preference->setAnimalsAllowed($data->animalsAllowed);
+            $dm->persist($preference);
+
+            $em->flush();
+            $dm->flush();
 
             $this->addFlash('success', 'Vous êtes maintenant conducteur.');
             return $this->redirectToRoute('app_dashboard');
