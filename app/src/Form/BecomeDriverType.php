@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Form\Model\BecomeDriverData;
+use App\Form\Model\VehicleData;
+use App\Repository\CarModelRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,6 +17,7 @@ class BecomeDriverType extends AbstractType
         $builder
             ->add('vehicle', VehicleType::class, [
                 'label' => false,
+                'data_class' => VehicleData::class
             ])
             ->add('musicAllowed', CheckboxType::class, [
                 'label' => 'Musique acceptée à bord',

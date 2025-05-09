@@ -5,24 +5,35 @@
 
 {% block body %}
 	<main class="container-xl">
-		<h1 class="text-dark">Devenir un <span class="text-primary">Driver</span></h1>
-        <div class="mb-3 text-secondary">
-            <p><i class="bi bi-info-circle-fill"></i> Afin de pouvoir organiser des covoiturages et devenir un Driver, il vous faut renseigner un véhicule ainsi que vos préférences de conducteur.</p>
-        </div>
+		<h1 class="text-dark">Devenir un
+			<span class="text-primary">Driver</span>
+		</h1>
+		<div class="mb-3 text-secondary">
+			<p>
+				<i class="bi bi-info-circle-fill"></i>
+				Afin de pouvoir organiser des covoiturages et devenir un Driver, il vous faut renseigner un véhicule ainsi que vos préférences de conducteur.</p>
+		</div>
 
 
 		<div class="container-xl mx-auto">
 			{{ form_start(becomeDriverForm, {'attr': {'id': 'become-driver-form'}}) }}
 			<div class="mb-3">
-				{{ form_row(becomeDriverForm.vehicle.plate) }}
+				{{ form_label(becomeDriverForm.vehicle.plate) }}
+				{{ form_widget(becomeDriverForm.vehicle.plate, {'attr': {'class': 'form-control'}}) }}
+				<div class="invalid-feedback">
+					Votre plaque doit avoir le format suivant : AA-000-AA
+				</div>
+				{{ form_errors(becomeDriverForm.vehicle.plate) }}
 			</div>
 			<div class="mb-3">
-				{{ form_row(becomeDriverForm.vehicle.firstRegistrationDate) }}
+				{{ form_label(becomeDriverForm.vehicle.firstRegistrationDate) }}
+				{{ form_widget(becomeDriverForm.vehicle.firstRegistrationDate, {'attr': {'class': 'form-control'}}) }}
+				{{ form_errors(becomeDriverForm.vehicle.firstRegistrationDate) }}
 			</div>
 			<div class="mb-3">
 				{{ form_row(becomeDriverForm.vehicle.brand) }}
 			</div>
-			<div class="mb-3">
+			<div id="model_wrapper" class="mb-3">
 				{{ form_row(becomeDriverForm.vehicle.model) }}
 			</div>
 			<div class="mb-3">
@@ -42,11 +53,10 @@
 					{{ form_widget(becomeDriverForm.smokingAllowed, {'attr': {'class': 'form-check-input', 'value': 1, 'id': 'smoke'}}) }}
 				</div>
 			</div>
-            <div class='mb-3 text-center'>
-				<button id='validateButton' type="submit" class="btn btn-primary justify-content-center">Valider</button>
+			<div class='mb-3 text-center'>
+				<button id='validate_button' type="submit" class="btn btn-primary justify-content-center">Valider</button>
 			</div>
 			{{ form_end(becomeDriverForm) }}
 		</div>
 	</main>
-	<script src="{{ asset('js/modules/carSelect.js') }}"></script>
 {% endblock %}

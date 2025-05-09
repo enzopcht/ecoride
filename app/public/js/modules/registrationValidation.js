@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('registration-form')
     const password = document.getElementById('registration_plainPassword_first')
     const passwordConfirm = document.getElementById('registration_plainPassword_second')
     const email = document.getElementById('registration_email')

@@ -22,22 +22,21 @@ final class BecomeDriverController extends AbstractController
         $data = new BecomeDriverData();
         $form = $this->createForm(BecomeDriverType::class, $data);
         $form->handleRequest($request);
-
+        
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $this->getUser();
             /**
              * @var \App\Entity\User $user
              */
             $user->setRoles(['ROLE_DRIVER']);
-
+            
             $vehicleData = $data->vehicle;
 
             $vehicle = new \App\Entity\Vehicle();
             $vehicle->setOwner($user);
             $vehicle->setPlate($vehicleData->plate);
             $vehicle->setFirstRegistrationDate($vehicleData->firstRegistrationDate);
-            $carModel = $em->getRepository(\App\Entity\CarModel::class)->find($vehicleData->model);
-            $vehicle->setCarModel($carModel);
+            $vehicle->setCarModel($vehicleData->model);
             $vehicle->setColor($vehicleData->color);
             $em->persist($vehicle);
 
@@ -50,9 +49,8 @@ final class BecomeDriverController extends AbstractController
 
             $em->flush();
             $dm->flush();
-
             $this->addFlash('success', 'Vous êtes maintenant conducteur.');
-            return $this->redirectToRoute('app_dashboard');
+            return $this->redirectToRoute('app_dashboard/driver');
         }
 
         return $this->render('become_driver/index.html.twig', [

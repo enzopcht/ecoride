@@ -3,10 +3,12 @@
 namespace App\Form\Model;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Form\Model\VehicleData;
 
 
 class BecomeDriverData
 {
+    #[Assert\Valid]
     #[Assert\NotNull]
     public VehicleData $vehicle;
 
