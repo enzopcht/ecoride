@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Form\BecomeDriverType;
 use App\Form\Model\BecomeDriverData;
+use App\Security\LoginAuthenticator;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,13 +12,20 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 
 final class BecomeDriverController extends AbstractController
 {
-    #[Route('/become-driver', name: 'become_driver')]
+    #[Route('/passager/devenir-driver', name: 'become_driver')]
     #[IsGranted('ROLE_PASSENGER')]
 
-    public function index(Request $request, EntityManagerInterface $em, DocumentManager $dm): Response
+    public function index(
+                        Request $request,
+                        EntityManagerInterface $em,
+                        DocumentManager $dm,
+                        UserAuthenticatorInterface $userAuthenticator,
+                        LoginAuthenticator $authenticator
+                        ): Response
     {
         $data = new BecomeDriverData();
         $form = $this->createForm(BecomeDriverType::class, $data);
@@ -50,7 +58,8 @@ final class BecomeDriverController extends AbstractController
             $em->flush();
             $dm->flush();
             $this->addFlash('success', 'Vous êtes maintenant conducteur.');
-            return $this->redirectToRoute('app_dashboard/driver');
+            $userAuthenticator->authenticateUser($user, $authenticator, $request);
+            return $this->redirectToRoute('app_dashboard_driver');
         }
 
         return $this->render('become_driver/index.html.twig', [

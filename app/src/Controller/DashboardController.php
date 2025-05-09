@@ -44,7 +44,7 @@ final class DashboardController extends AbstractController
     // =========================
     // DASHBOARD PAR RÔLE
     // =========================
-    #[Route('/dashboard/passager', name: 'app_dashboard_passager', methods: ['GET', 'POST'])]
+    #[Route('/passager/dashboard', name: 'app_dashboard_passager', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_PASSENGER')]
     public function passager(
         ParticipationRepository $participationRepository,
@@ -79,7 +79,7 @@ final class DashboardController extends AbstractController
         ]);
     }
 
-    #[Route('/dashboard/driver', name: 'app_dashboard_driver')]
+    #[Route('/driver/dashboard', name: 'app_dashboard_driver')]
     #[IsGranted('ROLE_DRIVER')]
     public function driver(): Response
     {
@@ -88,7 +88,7 @@ final class DashboardController extends AbstractController
         ]);
     }
 
-    #[Route('/dashboard/employe', name: 'app_dashboard_employe')]
+    #[Route('/employe/dashboard', name: 'app_dashboard_employe')]
     #[IsGranted('ROLE_EMPLOYE')]
     public function employe(): Response
     {
@@ -97,7 +97,7 @@ final class DashboardController extends AbstractController
         ]);
     }
 
-    #[Route('/dashboard/admin', name: 'app_dashboard_admin')]
+    #[Route('/admin/dashboard', name: 'app_dashboard_admin')]
     #[IsGranted('ROLE_ADMIN')]
     public function admin(): Response
     {
