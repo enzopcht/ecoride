@@ -7,6 +7,7 @@ use App\Entity\CarModel;
 use App\Form\Model\VehicleData;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -39,8 +40,24 @@ class VehicleType extends AbstractType
                 'placeholder' => 'Sélectionnez un modèle',
                 'attr' => ['class' => 'form-control'],
             ])
-            ->add('color',  TextType::class, [
+            ->add('color', ChoiceType::class, [
                 'label' => 'Couleur',
+                'choices' => [
+                    'Blanc' => 'Blanc',
+                    'Noir' => 'Noir',
+                    'Gris' => 'Gris',
+                    'Bleu' => 'Bleu',
+                    'Rouge' => 'Rouge',
+                    'Vert' => 'Vert',
+                    'Jaune' => 'Jaune',
+                    'Orange' => 'Orange',
+                    'Marron' => 'Marron',
+                    'Violet' => 'Violet',
+                    'Rose' => 'Rose',
+                    'Beige' => 'Beige',
+                    'Autre' => 'Autre',
+                ],
+                'placeholder' => 'Sélectionnez une couleur',
                 'attr' => ['class' => 'form-control'],
             ]);
     }
