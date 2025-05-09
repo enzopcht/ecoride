@@ -25,7 +25,10 @@ class VehicleType extends AbstractType
             ->add('firstRegistrationDate', DateType::class, [
                 'label' => 'Date de première immatriculation',
                 'widget' => 'single_text',
-                'attr' => ['class' => 'form-control'],
+                'attr' => [
+                    'class' => 'form-control',
+                    'max' => (new \DateTime())->format('Y-m-d')
+                ],
             ])
             ->add('brand', EntityType::class, [
                 'class' => CarBrand::class,
@@ -37,6 +40,7 @@ class VehicleType extends AbstractType
             ->add('model', EntityType::class, [
                 'class' => CarModel::class,
                 'choice_label' => 'label',
+                'label' => 'Modèle',
                 'placeholder' => 'Sélectionnez un modèle',
                 'attr' => ['class' => 'form-control'],
             ])

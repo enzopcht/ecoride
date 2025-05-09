@@ -20,24 +20,52 @@
 			<div class="mb-3">
 				{{ form_label(becomeDriverForm.vehicle.plate) }}
 				{{ form_widget(becomeDriverForm.vehicle.plate, {'attr': {'class': 'form-control'}}) }}
+				{% for error in becomeDriverForm.vehicle.plate.vars.errors %}
+					<div id="errorPlate" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
 				<div class="invalid-feedback">
 					Votre plaque doit avoir le format suivant : AA-000-AA
 				</div>
-				{{ form_errors(becomeDriverForm.vehicle.plate) }}
 			</div>
 			<div class="mb-3">
 				{{ form_label(becomeDriverForm.vehicle.firstRegistrationDate) }}
 				{{ form_widget(becomeDriverForm.vehicle.firstRegistrationDate, {'attr': {'class': 'form-control'}}) }}
-				{{ form_errors(becomeDriverForm.vehicle.firstRegistrationDate) }}
+				{% for error in becomeDriverForm.vehicle.firstRegistrationDate.vars.errors %}
+					<div id="errorFirstRegistrationDate" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+				<div class="invalid-feedback">
+					La date ne peut être supérieur à la date du jour.
+				</div>
 			</div>
 			<div class="mb-3">
-				{{ form_row(becomeDriverForm.vehicle.brand) }}
+				{{ form_label(becomeDriverForm.vehicle.brand) }}
+				{{ form_widget(becomeDriverForm.vehicle.brand, {'attr': {'class': 'form-control'}}) }}
+				{% for error in becomeDriverForm.vehicle.brand.vars.errors %}
+					<div id="errorBrand" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+				<div class="invalid-feedback">
+					Vous devez d'abord sélectionner une marque.
+				</div>
 			</div>
 			<div id="model_wrapper" class="mb-3">
-				{{ form_row(becomeDriverForm.vehicle.model) }}
+				{{ form_label(becomeDriverForm.vehicle.model) }}
+				{{ form_widget(becomeDriverForm.vehicle.model, {'attr': {'class': 'form-control'}}) }}
+				{% for error in becomeDriverForm.vehicle.model.vars.errors %}
+					<div id="errorModel" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+				<div class="invalid-feedback">
+					Veuillez sélectionner un modèle.
+				</div>
 			</div>
 			<div class="mb-3">
-				{{ form_row(becomeDriverForm.vehicle.color) }}
+				{{ form_label(becomeDriverForm.vehicle.color) }}
+				{{ form_widget(becomeDriverForm.vehicle.color, {'attr': {'class': 'form-control'}}) }}
+				{% for error in becomeDriverForm.vehicle.color.vars.errors %}
+					<div id="errorColor" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+				<div class="invalid-feedback">
+					Veuillez sélectionner une couleur.
+				</div>
 			</div>
 			<div class="mb-3">
 				<div class="form-check">
@@ -59,4 +87,5 @@
 			{{ form_end(becomeDriverForm) }}
 		</div>
 	</main>
+	<script src="{{ asset('js/modules/carSelect.js') }}"></script>
 {% endblock %}

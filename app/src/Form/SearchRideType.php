@@ -23,6 +23,10 @@ class SearchRideType extends AbstractType
             ->add('date', DateType::class, [
                 'label' => 'Date du trajet',
                 'widget' => 'single_text',
+                'attr' => [
+                    'min' => (new \DateTime())->format('Y-m-d'),
+                    'class' => 'form-control'
+                ],
                 'html5' => true,
             ])
             ->add('rechercher', SubmitType::class, [

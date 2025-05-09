@@ -44,7 +44,7 @@ final class DashboardController extends AbstractController
     // =========================
     // DASHBOARD PAR RÔLE
     // =========================
-    #[Route('/passager/dashboard', name: 'app_dashboard_passager', methods: ['GET', 'POST'])]
+    #[Route('/passenger/dashboard', name: 'app_dashboard_passager', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_PASSENGER')]
     public function passager(
         ParticipationRepository $participationRepository,
@@ -81,10 +81,14 @@ final class DashboardController extends AbstractController
 
     #[Route('/driver/dashboard', name: 'app_dashboard_driver')]
     #[IsGranted('ROLE_DRIVER')]
-    public function driver(): Response
+    public function driver(\Doctrine\ODM\MongoDB\DocumentManager $dm): Response
     {
+        $user = $this->getUser();
+        /** @var \App\Entity\User $user */
+        $preferences = $dm->getRepository(\App\Document\DriverPreference::class)->findOneBy(['userId' => $user->getId()]);
         return $this->render('dashboard/driver.html.twig', [
-            'user' => $this->getUser(),
+            'user' => $user,
+            'preferences' => $preferences,
         ]);
     }
 

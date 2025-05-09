@@ -6,5 +6,10 @@
 {% block body %}
 <main>
     <h1>Driver</h1>
+    <ul>
+    <li>Musique autorisée : {{ preferences.musicAllowed ? 'Oui' : 'Non' }}</li>
+    <li>Fumer autorisé : {{ preferences.smokingAllowed ? 'Oui' : 'Non' }}</li>
+    <li>Animaux autorisés : {{ preferences.animalsAllowed ? 'Oui' : 'Non' }}</li>
+</ul>
 </main>
 {% endblock %}
