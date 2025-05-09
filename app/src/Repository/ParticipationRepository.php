@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Participation;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,28 +17,20 @@ class ParticipationRepository extends ServiceEntityRepository
         parent::__construct($registry, Participation::class);
     }
 
-    //    /**
-    //     * @return Participation[] Returns an array of Participation objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findParticipationsForPassengerByStatuses(User $passenger, array $rideStatuses, array $participationStatuses):array
+    {
+        $now = new \DateTime();
 
-    //    public function findOneBySomeField($value): ?Participation
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.user = :passenger')
+            ->andWhere('p.status IN (:participation_statuses)')
+            ->join('p.ride', 'r')
+            ->andWhere('r.status IN (:ride_statuses)')
+            ->setParameter('passenger', $passenger)
+            ->setParameter('ride_statuses', $rideStatuses)
+            ->setParameter('participation_statuses', $participationStatuses)
+            ->orderBy('r.departure_time', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -11,8 +11,8 @@
 			{{ message }}
 		</div>
 	{% endfor %}
-  
-	<div class="gradient pb-3 mb-2">
+
+	<div id="hero" class="gradient pb-3 mb-2">
 		<div class="box-hero">
 			<h1 class="text-white text-center col-10 mx-auto py-4">
 				<span class="fw-bold">EcoRide</span>
@@ -30,7 +30,7 @@
 					{{ form_row(searchForm.arrival, {'attr': {'class': 'form-control'}}) }}
 				</div>
 				<div class="col-12 col-lg-3">
-					{{ form_row(searchForm.date, {'attr': {'class': 'form-control', 'min': (date()|date('Y-m-d'))}}) }}
+					{{ form_row(searchForm.date) }}
 				</div>
 				<div class="text-center col-lg-2 align-self-end">
 					{{ form_row(searchForm.rechercher, {'attr': {'class': 'btn btn-primary w-100'}}) }}

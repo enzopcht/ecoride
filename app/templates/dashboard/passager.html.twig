@@ -1,0 +1,120 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord - EcoRde
+{% endblock %}
+
+{% block body %}
+
+<main class="container-xl">
+
+	<div class="d-flex align-items-center">
+		<h1 class="text-dark">
+			Tableau de bord
+			<span class="text-primary">{{user}}</span>
+		</h1>
+		<div class="text-white text-center d-flex bg-dark fs-5 ms-auto shadow p-3 rounded">{{balance}}<i class="bi bi-coin text-warning"></i>
+		</div>
+	</div>
+
+	<div class="list-nav-custom mb-3">
+		<ul>
+			<li><a href="#">Historique de covoiturages</a></li>
+		</ul>
+	</div>
+
+	<div class="text-center my-3">
+		<p>Vous souhaitez pouvoir organiser vos propres covoiturages ? Devenez un driver pour <span class="text-dark">EcoRide</span> dès maintenant !</p>
+		<a href="{{path('become_driver')}}" class="btn btn-primary">Devenir un driver</a>
+	</div>
+
+	<hr>
+	{% if participations_active|length > 0 %}
+		<div class="mb-3">
+			<h3 class="text-success">{{ participations_active|length > 1 ? 'Voyages' : 'Voyage'}}
+				en cours :</h3>
+			<div class="accordion shadow-sm" id="active_participations">
+				{% for participation in participations_active %}
+					{% set ride = participation.ride %}
+					{% set statusColor = '' %}
+					{% set statusContent = '' %}
+					{% if ride.status == 'active' %}
+						{% set statusColor = 'primary' %}
+						{% set statusContent = 'En cours...' %}
+					{% elseif ride.status == 'completed' %}
+						{% set statusColor = 'success' %}
+						{% set statusContent = 'Terminé' %}
+					{% endif %}
+
+					{% set dynamic_block %}
+					{% if ride.status == 'active' %}
+						<p class="text-primary">Une fois le trajet terminé, vous pourrez le confirmer.</p>
+					{% else %}
+						<p>Voyage terminé. Veuillez confirmer.</p>
+						<button class="btn btn-primary">Valider</button>
+						<button class="btn btn-danger">Signaler un problème</button>
+					{% endif %}
+					{% endset %}
+
+					{% include 'components/dashboard/_ride_accordion.html.twig' with {
+					    ride: ride,
+					    loop_index: 'active' ~ loop.index,
+						accordion_id: '#active_participations',
+					    status_color: statusColor,
+					    status_message: statusContent,
+					    ratings_by_driver: ratings_by_driver,
+					    dynamic_block: dynamic_block
+					} %}
+				{% endfor %}
+			</div>
+		</div>
+		<hr>
+	{% endif %}
+
+	<div class="mb-3">
+		<h3 class="text-primary">Covoiturages prévus :
+			<span class="text-secondary">{{participations_pending|length}}</span>
+		</h3>
+		{% if participations_pending|length > 0 %}
+			<div class="accordion shadow-sm" id="next_participations">
+				{% for participation in participations_pending %}
+					{% set ride = participation.ride %}
+					{% set statusColor = '' %}
+					{% set statusContent = '' %}
+					{% if participation.status == 'pending' %}
+						{% set statusColor = 'warning' %}
+						{% set statusContent = 'Votre réservation n\'a pas encore été acceptée par ' ~ ride.driver.pseudo %}
+					{% elseif participation.status == 'confirmed' %}
+						{% set statusColor = 'success'%}
+						{% set statusContent = 'Votre réservation a été acceptée par ' ~ ride.driver.pseudo %}
+					{% endif %}
+					{% set dynamic_block %}
+						<div>
+							<form method="post" action="{{ path('participations_delete', {id: participation.id}) }}" onsubmit="return confirm('Confirmez l\'annulation ?');">
+								<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ participation.id) }}">
+								<div class='text-center'>
+									<button class="btn btn-danger" type="submit">Annuler la réservation</button>
+								</div>
+							</form>
+						</div>
+					{% endset %}
+
+					{% include 'components/dashboard/_ride_accordion.html.twig' with {
+						ride: ride,
+						loop_index: 'pending' ~ loop.index,
+						accordion_id: '#next_participations',
+						status_color: statusColor,
+						status_message: statusContent,
+						ratings_by_driver: ratings_by_driver,
+						dynamic_block: dynamic_block
+					} %}
+					
+				{% endfor %}
+			</div>
+		{% else %}
+			<div class="text-center">
+				<p class="text-center mt-4">Pas de covoiturages prévus</p>
+			</div>
+		{% endif %}
+	</div>
+</main>
+{% endblock %}

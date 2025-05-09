@@ -7,10 +7,8 @@
 	<main class="container-xl">
 		<h1 class="text-dark">Créer un compte</h1>
 
-		<div class="container-xl justify-text pt-5 text-center"></div>
-
 		<div class="container-xl mx-auto">
-			{{ form_start(registrationForm, {'attr': {'id': 'registration-form'}}) }}
+			{{ form_start(registrationForm) }}
 			<div class="mb-3">
 				{{ form_label(registrationForm.email) }}
 				{{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}

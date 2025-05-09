@@ -38,9 +38,9 @@ class RideFixtures extends Fixture implements DependentFixtureInterface
                 $arrivalAddress = $faker->numberBetween(1, 200) . ' ' . $faker->streetName() . ', ' . $arrivalCity;
 
                 // Départ et durée selon le statut
-                if ($statut === 'en_attente') {
+                if ($statut === 'pending') {
                     $departureTime = $faker->dateTimeBetween('+1 hour', '+3 days');
-                } elseif ($statut === 'en_cours') {
+                } elseif ($statut === 'active') {
                     $departureTime = $faker->dateTimeBetween('-1 hour', 'now');
                 } else { // terminé
                     $departureTime = $faker->dateTimeBetween('-5 days', '-2 hours');
@@ -60,7 +60,7 @@ class RideFixtures extends Fixture implements DependentFixtureInterface
                 $ride->setArrivalTime(\DateTimeImmutable::createFromMutable($arrivalTime));
                 $ride->setPrice($faker->numberBetween(5, 10));
                 $ride->setSeatsAvailable($faker->numberBetween(1, 4));
-                $ride->setEcological($vehicle->getCarModel()->getEnergy() === 'électrique');
+                $ride->setEcological($vehicle->getCarModel()->getEnergy() === 'electric');
                 $ride->setStatus($statut);
 
                 $manager->persist($ride);

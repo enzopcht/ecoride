@@ -1,0 +1,65 @@
+<div class="accordion-item">
+	<h2 class="accordion-header">
+		{% set is_first = loop_index ends with '1' %}
+		<button class="accordion-button {{ is_first ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ loop_index }}" aria-expanded="{{ is_first ? 'true' : 'false' }}" aria-controls="collapse-{{ loop_index }}">
+			{{ ride.departureCity }}
+			->
+			{{ ride.arrivalCity }}
+			{% if status_color and status_message %}
+				<span class="text-{{ status_color }} ms-3">{{ status_message }}</span>
+			{% endif %}
+		</button>
+	</h2>
+	<div id="collapse-{{ loop_index }}" class="accordion-collapse collapse {{ is_first ? 'show' : '' }}"  data-bs-parent="{{ accordion_id }}">
+		<div
+			class="accordion-body">
+			<!-- DATE + HEURE -->
+			<div class="row align-items-center">
+				<h3 class="text-primary text-center">{{ ride.departureTime|date('d/m/Y') }}</h3>
+				<hr>
+			</div>
+			<div class="row align-items-center">
+				<div class="align-items-center d-flex col">
+					<img src="/assets/images/user.png" alt="" height="40" class="rounded-circle border border-dark me-2">
+					<div class="fs-5">{{ ride.driver.pseudo }}</div>
+				</div>
+				<div class="col text-end">
+					{% set driverId = ride.driver.id %}
+					{% if ratings_by_driver[driverId] is defined %}
+						<p class="mb-0">{{ ratings_by_driver[driverId]|number_format(1) }}/5
+							<i class="bi bi-star-fill text-warning"></i>
+						</p>
+					{% else %}
+						<p class="text-muted">Aucune note disponible</p>
+					{% endif %}
+				</div>
+			</div>
+			<hr>
+			<div class="row align-items-center mx-auto">
+				<div class="col fs-5 text-dark text-end">{{ ride.departureTime|date('H:i') }}</div>
+				<div class="col-6 line"></div>
+				<div class="col fs-5 text-dark">{{ ride.arrivalTime|date('H:i') }}</div>
+			</div>
+			<hr>
+			<div class="row align-items-center mx-auto">
+				<div class="col-8">
+					{% if ride.ecological %}
+						<p class="text-secondary mb-0">Voyage écologique
+							<i class="bi bi-lightning-charge"></i>
+						</p>
+					{% endif %}
+					<p class="mb-0">Places restante(s) :
+						{{ ride.seatsAvailable }}</p>
+				</div>
+				<div class="text-dark col text-end fs-2">{{ ride.price }}
+					<i class="bi bi-coin text-warning"></i>
+				</div>
+			</div>
+			<hr>
+			<!-- Zone dynamique -->
+			<div class="text-center">
+				{{ dynamic_block|raw }}
+			</div>
+		</div>
+	</div>
+</div>
