@@ -4,12 +4,130 @@
 {% endblock %}
 
 {% block body %}
-<main>
-    <h1>Driver</h1>
-    <ul>
-    <li>Musique autorisée : {{ preferences.musicAllowed ? 'Oui' : 'Non' }}</li>
-    <li>Fumer autorisé : {{ preferences.smokingAllowed ? 'Oui' : 'Non' }}</li>
-    <li>Animaux autorisés : {{ preferences.animalsAllowed ? 'Oui' : 'Non' }}</li>
-</ul>
-</main>
+
+	<main class="container-xl">
+
+		<div class="d-flex align-items-center mb-3">
+			<h1 class="text-dark">
+				Tableau de bord
+				<span class="text-primary">{{user}}</span>
+			</h1>
+			<div class="text-white text-center d-flex bg-dark fs-5 ms-auto shadow p-3 rounded">{{balance}}<i class="bi bi-coin text-warning"></i>
+			</div>
+		</div>
+		<div class="list-nav-custom mb-3">
+
+			<div class="list-group">
+				<a class="list-group-item" href="#">Gérer mes préférences</a>
+				<a class="list-group-item" href="#">Mes covoiturages</a>
+				<a class="list-group-item" href="#">Mes réservations (notif)</a>
+				<a class="list-group-item" href="#">Vos véhicules</a>
+			</div>
+
+		</div>
+		<div class="text-center my-3">
+			<a href="#" class="btn btn-primary">
+				<i class="bi bi-plus-circle"></i>
+				Publier un trajet</a>
+		</div>
+		{% if participations_active_passenger|length > 0 %}
+			<hr>
+			<div class="mb-3">
+				<h3 class="text-primary">
+					<i class="bi bi-exclamation-circle-fill text-danger me-2"></i>
+					{{ participations_active_passenger|length > 1 ? 'Voyages' : 'Voyage'}}
+					en cours en tant que passager :</h3>
+				<p class="text-secondary">
+					<i class="bi bi-info-circle"></i>
+					Merci de bien vouloir attendre que le trajet soit terminé à la suite de quoi le chauffeur validera l'arrivé du covoiturage. Un mail vous sera ensuite envoyé pour confirmer que tout s'est bien passé.</p>
+				<div class="accordion shadow-sm mt-3" id="active_participations">
+					{% for participation in participations_active_passenger %}
+						{% set ride = participation.ride %}
+						{% set statusColor = '' %}
+						{% set statusContent = '' %}
+						{% if ride.status == 'active' %}
+							{% set statusColor = 'primary' %}
+							{% set statusContent = 'En cours...' %}
+						{% elseif ride.status == 'completed' %}
+							{% set statusColor = 'success' %}
+							{% set statusContent = 'Terminé' %}
+						{% endif %}
+
+						{% set dynamic_block %}
+						{% if ride.status == 'active' %}
+							<p class="text-primary">Une fois le trajet terminé, vous pourrez le confirmer.</p>
+						{% else %}
+							<p>Voyage terminé. Veuillez confirmer.</p>
+							<button class="btn btn-primary">Valider</button>
+							<button class="btn btn-danger">Signaler un problème</button>
+						{% endif %}
+						{% endset %}
+
+						{% include 'components/dashboard/_ride_accordion.html.twig' with {
+					    ride: ride,
+					    loop_index: 'active' ~ loop.index,
+						accordion_id: '#active_participations',
+					    status_color: statusColor,
+					    status_message: statusContent,
+					    ratings_by_driver: ratings_by_driver[ride.driver.id],
+					    dynamic_block: dynamic_block
+					} %}
+					{% endfor %}
+				</div>
+			</div>
+		{% endif %}
+
+		{% if rides_active|length > 0 %}
+			<hr>
+			<div class="mb-3">
+				<h3 class="text-primary">
+					<i class="bi bi-exclamation-circle-fill text-danger me-2"></i>
+					{{ participations_active_passenger|length > 1 ? 'Voyages' : 'Voyage'}}
+					en cours en tant que chauffeur :</h3>
+				<p class="text-secondary">
+					<i class="bi bi-info-circle"></i>
+					Une fois votre trajet terminé nous vous invitons à venir valider le trajet dans votre tableau de bord. Vos passager pourront ensuite indiquer si le voyage s'est bien passé et ainsi débloquer vos paiements.</p>
+				<div class="accordion shadow-sm mt-3" id="active_rides">
+					{% for ride in rides_active %}
+						{% set statusColor = '' %}
+						{% set statusContent = '' %}
+						{% if ride.status == 'active' %}
+							{% set statusColor = 'primary' %}
+							{% set statusContent = 'En cours...' %}
+						{% elseif ride.status == 'completed' %}
+							{% set statusColor = 'success' %}
+							{% set statusContent = 'Terminé' %}
+						{% endif %}
+
+						{% set dynamic_block %}
+						{% if ride.status == 'completed' %}
+							<p class="text-primary">Vos passagers doivent maintenant confirmer que tout s'est bien passé, à la suite de quoi nous débloquerons vos fonds.</p>
+						{% else %}
+							<p class="text-primary">Vous êtes arrivé ? Confirmez le dès maintenant !</p>
+							{% if ride.driver.id == user.id and ride.status == 'active' %}
+								<form method="POST" action="{{ path('ride_complete', { id: ride.id }) }}" class="mt-2">
+									<input type="hidden" name="_token" value="{{ csrf_token('complete_ride_' ~ ride.id) }}">
+									<button type="submit" class="btn btn-primary">
+										Voyage terminé
+									</button>
+								</form>
+							{% endif %}
+						{% endif %}
+						{% endset %}
+
+						{% include 'components/dashboard/_ride_accordion.html.twig' with {
+					    ride: ride,
+					    loop_index: 'active-ride' ~ loop.index,
+						accordion_id: '#active_rides',
+					    status_color: statusColor,
+					    status_message: statusContent,
+					    ratings_by_driver: user_rating,
+					    dynamic_block: dynamic_block
+					} %}
+					{% endfor %}
+
+				</div>
+			</div>
+		{% endif %}
+	</main>
 {% endblock %}

@@ -2,9 +2,16 @@
 	<h2 class="accordion-header">
 		{% set is_first = loop_index ends with '1' %}
 		<button class="accordion-button {{ is_first ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ loop_index }}" aria-expanded="{{ is_first ? 'true' : 'false' }}" aria-controls="collapse-{{ loop_index }}">
+			{% if ride.driver.id == user.id %}
+				<span class="text-primary"> Chauffeur</span>
+			{% else %}
+				<span class="text-primary"> Passager</span>
+			{% endif %}
+			<span class="ms-3">
 			{{ ride.departureCity }}
 			->
 			{{ ride.arrivalCity }}
+			</span>
 			{% if status_color and status_message %}
 				<span class="text-{{ status_color }} ms-3">{{ status_message }}</span>
 			{% endif %}
@@ -24,13 +31,12 @@
 					<div class="fs-5">{{ ride.driver.pseudo }}</div>
 				</div>
 				<div class="col text-end">
-					{% set driverId = ride.driver.id %}
-					{% if ratings_by_driver[driverId] is defined %}
-						<p class="mb-0">{{ ratings_by_driver[driverId]|number_format(1) }}/5
+					{% if ratings_by_driver is defined and ratings_by_driver > 0 %}
+						<p class="mb-0">{{ ratings_by_driver|number_format(1) }}/5
 							<i class="bi bi-star-fill text-warning"></i>
 						</p>
 					{% else %}
-						<p class="text-muted">Aucune note disponible</p>
+						<p class="text-muted">Pas encore noté</p>
 					{% endif %}
 				</div>
 			</div>

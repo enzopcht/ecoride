@@ -155,4 +155,12 @@ article {
 article ul {
   list-style: none;
   padding: 0;
+}
+
+.list-group-item {
+  color: #2196F3;
+}
+.list-group-item:hover {
+  background: #2196F3;
+  color: white;
 }/*# sourceMappingURL=app.css.map */

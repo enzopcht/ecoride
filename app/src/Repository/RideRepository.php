@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Participation;
 use App\Entity\Ride;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,36 +18,11 @@ class RideRepository extends ServiceEntityRepository
         parent::__construct($registry, Ride::class);
     }
 
-    //    /**
-    //     * @return Ride[] Returns an array of Ride objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('r.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Ride
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
     public function findRidesBySearchData(string $departure, string $arrival, \DateTime $date): array
     {
         $now = new \DateTime();
         $today = (clone $now)->setTime(0, 0);
 
-        // Si la date demandée est dans le passé, retourne une liste vide
         if ($date < $today) {
             return [];
         }
@@ -87,6 +63,18 @@ class RideRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
-
     
+    // public function findDriverRidesByStatuses(User $driver, array $rideStatuses):array
+    //     {
+    //         $now = new \DateTime();
+    
+    //         return $this->createQueryBuilder('r')
+    //             ->andWhere('r.driver = :driver')
+    //             ->andWhere('r.status IN (:ride_statuses)')
+    //             ->setParameter('driver', $driver)
+    //             ->setParameter('ride_statuses', $rideStatuses)
+    //             ->orderBy('r.departure_time', 'ASC')
+    //             ->getQuery()
+    //             ->getResult();
+    //     }
 }
