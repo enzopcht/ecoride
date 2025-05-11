@@ -48,7 +48,6 @@ final class DriverDashboardController extends AbstractController
 
         return $this->render('dashboard/driver/index.html.twig', [
             'user' => $user,
-
             'balance' => $balance,
             'participations_active_passenger' => $participationsActivePassenger,
             'ratings_by_driver' => $ratingsByDriver,
@@ -96,5 +95,39 @@ final class DriverDashboardController extends AbstractController
         $this->addFlash('success', 'Préférences mises à jour avec succès.');
 
         return $this->redirectToRoute('app_driver_preferences');
+    }
+    #[Route('/driver/dashboard/your-rides', name: 'app_driver_your_rides')]
+    public function yourRides(
+        RideRepository $rideRepository,
+        ReviewRepository $reviewRepository,
+    ): Response {
+        $user = $this->getUser();
+        /** @var \App\Entity\User $user */
+        $activeRides = $rideRepository->findBy([
+            'driver' => $user,
+            'status' => ['active']
+        ],
+            ['departure_time' => 'ASC']
+        );
+        $nextRides = $rideRepository->findBy([
+            'driver' => $user,
+            'status' => ['pending']
+        ],
+            ['departure_time' => 'ASC']
+        );
+        $previousRides = $rideRepository->findBy([
+            'driver' => $user,
+            'status' => ['completed', 'canceled']
+        ],
+            ['departure_time' => 'DESC']
+        );
+        $userRating = $reviewRepository->getAverageRatingForUser($user);
+        return $this->render('dashboard/driver/your-rides.html.twig', [
+            'user' => $user,
+            'active_rides' => $activeRides,
+            'next_rides' => $nextRides,
+            'previous_rides' => $previousRides,
+            'user_rating' => $userRating,
+        ]);
     }
 }

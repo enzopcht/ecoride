@@ -19,8 +19,9 @@
 
 			<div class="list-group">
 				<a class="list-group-item" href="{{ path('app_driver_preferences')}}">Gérer mes préférences</a>
-				<a class="list-group-item" href="#">Mes covoiturages</a>
-				<a class="list-group-item" href="#">Mes réservations (notif)</a>
+				<a class="list-group-item" href="{{path('app_driver_your_rides')}}">Mes covoiturages</a>
+				<a class="list-group-item" href="#">Mes réservations</a>
+				<a class="list-group-item" href="#">Réservations pour mes covoiturages (notif)</a>
 				<a class="list-group-item" href="#">Vos véhicules</a>
 			</div>
 
@@ -82,7 +83,7 @@
 			<div class="mb-3">
 				<h3 class="text-primary">
 					<i class="bi bi-exclamation-circle-fill text-danger me-2"></i>
-					{{ participations_active_passenger|length > 1 ? 'Voyages' : 'Voyage'}}
+					{{ rides_active|length > 1 ? 'Voyages' : 'Voyage'}}
 					en cours en tant que chauffeur :</h3>
 				<p class="text-secondary">
 					<i class="bi bi-info-circle"></i>
@@ -102,7 +103,7 @@
 						{% set dynamic_block %}
 						{% if ride.status == 'completed' %}
 							<p class="text-primary">Vos passagers doivent maintenant confirmer que tout s'est bien passé, à la suite de quoi nous débloquerons vos fonds.</p>
-						{% else %}
+						{% elseif ride.status == 'active' %}
 							<p class="text-primary">Vous êtes arrivé ? Confirmez le dès maintenant !</p>
 							{% if ride.driver.id == user.id and ride.status == 'active' %}
 								<form method="POST" action="{{ path('ride_complete', { id: ride.id }) }}" class="mt-2">
