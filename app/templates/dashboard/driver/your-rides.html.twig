@@ -65,7 +65,7 @@
 
 					{% include 'components/dashboard/_ride_accordion.html.twig' with {
 					    ride: ride,
-					    loop_index: 'ride_driver' ~ loop.index,
+					    loop_index: 'active_rides' ~ loop.index,
 						accordion_id: '#active_rides',
 					    status_color: statusColor,
 					    status_message: statusContent,
@@ -132,7 +132,7 @@
 
 							{% include 'components/dashboard/_ride_accordion.html.twig' with {
 					    ride: ride,
-					    loop_index: 'ride_driver' ~ loop.index,
+					    loop_index: 'next_rides' ~ loop.index,
 						accordion_id: '#next_rides',
 					    status_color: statusColor,
 					    status_message: statusContent,
@@ -190,7 +190,7 @@
 
 							{% include 'components/dashboard/_ride_accordion.html.twig' with {
 					    ride: ride,
-					    loop_index: 'ride_driver' ~ loop.index,
+					    loop_index: 'previous_rides' ~ loop.index,
 						accordion_id: '#previous_rides',
 					    status_color: statusColor,
 					    status_message: statusContent,
