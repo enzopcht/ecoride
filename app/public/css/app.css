@@ -163,4 +163,11 @@ article ul {
 .list-group-item:hover {
   background: #2196F3;
   color: white;
+}
+
+.suggestion-container {
+  position: relative;
+}
+.suggestion-container .suggestion-box {
+  position: absolute;
 }/*# sourceMappingURL=app.css.map */

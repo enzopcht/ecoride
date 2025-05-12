@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un trajet - EcoRide
+{% endblock %}
+
+{% block body %}
+	<main class="container-xl">
+    <div id="liveAlertPlaceholder"></div>
+		<h1 class="text-dark">Publier un nouveau trajet</h1>
+
+		<div class="container-xl mx-auto">
+			{{ form_start(addRideForm) }}
+			<div class="mb-3 suggestion-container">
+				{{ form_label(addRideForm.departureAddress) }}
+				{{ form_widget(addRideForm.departureAddress, {'attr': {'class': 'form-control', 'aria-describedby': 'addressDepartureHelp'}}) }}
+				<div class="suggestion-box w-100">
+					<ul id="departure_suggestions" class="list-group">
+					</ul>
+				</div>
+				<div id="addressDepartureHelp" class="form-text">Merci de renseigner l'adresse au format complet grâce à l'autocomplétion.</div>
+				{% for error in addRideForm.departureAddress.vars.errors %}
+					<div id="errorDeparture" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+				<div class="invalid-feedback">
+					Votre adresse n'est pas au bon format.
+				</div>
+			</div>
+			<div class="mb-3">
+				{{ form_label(addRideForm.arrivalAddress) }}
+				{{ form_widget(addRideForm.arrivalAddress, {'attr': {'class': 'form-control', 'aria-describedby': 'addressArrivalHelp'}}) }}
+                <div class="suggestion-box w-100">
+					<ul id="arrival_suggestions" class="list-group">
+					</ul>
+				</div>
+				<div id="addressArrivalHelp" class="form-text">Merci de renseigner l'adresse au format complet grâce à l'autocomplétion.</div>
+				{% for error in addRideForm.arrivalAddress.vars.errors %}
+					<div id="errorArrival" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+				<div class="invalid-feedback">
+					Votre adresse n'est pas au bon format.
+				</div>
+			</div>
+			<div class="mb-3">
+				{{ form_label(addRideForm.departureTime) }}
+				{{ form_widget(addRideForm.departureTime, {'attr': {'class': 'form-control'}}) }}
+				{% for error in addRideForm.departureTime.vars.errors %}
+					<div id="errorDepartureTime" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+				<div class="invalid-feedback">
+					Votre date ne doit pas être dans le passé ou vide.
+				</div>
+			</div>
+			<div class="mb-3">
+				{{ form_label(addRideForm.arrivalTime) }}
+				{{ form_widget(addRideForm.arrivalTime, {'attr': {'class': 'form-control', 'aria-describedby': 'arrivalTimeHelp'}}) }}
+				<div id="arrivalTimeHelp" class="form-text">Notre système vous propose l'heure d'arrivée la plus rapide, mais vous pouvez en proposer une plus tarde.</div>
+				{% for error in addRideForm.arrivalTime.vars.errors %}
+					<div id="errorArrivalTime" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+				<div class="invalid-feedback">
+					Votre date de retour ne doit pas être avant celle de départ ou vide.
+				</div>
+			</div>
+			<div class="mb-3">
+				{{ form_label(addRideForm.vehicle) }}
+				{{ form_widget(addRideForm.vehicle, {'attr': {'class': 'form-control'}}) }}
+				{% for error in addRideForm.vehicle.vars.errors %}
+					<div id="errorVehicle" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+			</div>
+			<div class="mb-3">
+				{{ form_label(addRideForm.seatsAvailable) }}
+				{{ form_widget(addRideForm.seatsAvailable, {'attr': {'class': 'form-control'}}) }}
+				{% for error in addRideForm.seatsAvailable.vars.errors %}
+					<div id="errorVehicle" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+				<div class="invalid-feedback">
+					Vous devez à minima avoir un siège de libre et pas plus de 8. 
+				</div>
+			</div>
+			<div class="mb-3">
+				{{ form_label(addRideForm.price) }}
+				{{ form_widget(addRideForm.price, {'attr': {'class': 'form-control', 'aria-describedby': 'priceHelp'}}) }}
+				<div id="priceHelp" class="form-text">EcoRide vous prendre 2 jetons de commission sur ce prix.</div>
+				{% for error in addRideForm.price.vars.errors %}
+					<div id="errorVehicle" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+				<div class="invalid-feedback">
+					Votre prix ne peut être inférieur à la commission d'EcoRide.
+				</div>
+			</div>
+			<div class='mb-3 text-center'>
+				<button id='validate_button' type="submit" class="btn btn-primary justify-content-center">Publier</button>
+			</div>
+			{{ form_end(addRideForm) }}
+		</div>
+	</main>
+    <script src="{{ asset('js/modules/autocompleteFormAddress.js') }}"></script>
+{% endblock %}

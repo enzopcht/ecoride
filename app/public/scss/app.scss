@@ -33,3 +33,10 @@ article {
         color: white;
     }
 }
+
+.suggestion-container {
+    position: relative;
+    .suggestion-box {
+        position: absolute;
+    }
+}
