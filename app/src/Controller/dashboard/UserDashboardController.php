@@ -12,7 +12,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class UserDashboardController extends AbstractController
 {
-#[Route('/passenger/dashboard', name: 'app_dashboard_passager', methods: ['GET', 'POST'])]
+    #[Route('/passenger/dashboard', name: 'app_dashboard_passager', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_PASSENGER')]
     public function passager(
         ParticipationRepository $participationRepository,
@@ -21,6 +21,7 @@ final class UserDashboardController extends AbstractController
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
+        dd($user->getRoles());
 
         $participationsPending = $participationRepository->findParticipationsForPassengerByStatuses($user, ['pending'], ['confirmed', 'pending']);
         $participationsActive = $participationRepository->findParticipationsForPassengerByStatuses($user, ['active', 'completed'], ['confirmed']);

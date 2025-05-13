@@ -97,8 +97,8 @@
 					{% endif %}
 					{% set dynamic_block %}
 						<div>
-							<form method="post" action="{{ path('participations_delete', {id: participation.id}) }}" onsubmit="return confirm('Confirmez l\'annulation ?');">
-								<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ participation.id) }}">
+							<form method="post" action="{{ path('participations_canceled', {id: participation.id}) }}" onsubmit="return confirm('Confirmez l\'annulation ?');">
+								<input type="hidden" name="_token" value="{{ csrf_token('canceled' ~ participation.id) }}">
 								<div class='text-center'>
 									<button class="btn btn-danger" type="submit">Annuler la réservation</button>
 								</div>

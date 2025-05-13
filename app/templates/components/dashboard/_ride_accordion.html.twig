@@ -1,6 +1,6 @@
 <div class="accordion-item">
 	<h2 class="accordion-header">
-		{% set is_first = loop_index ends with '1' %}
+		{% set is_first = loop_index ends with '1' and open_first is defined and open_first %}
 		<button class="accordion-button {{ is_first ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ loop_index }}" aria-expanded="{{ is_first ? 'true' : 'false' }}" aria-controls="collapse-{{ loop_index }}">
 			{% if ride.driver.id == user.id %}
 				<span class="text-primary"> Chauffeur</span>
@@ -22,8 +22,6 @@
 	<div id="collapse-{{ loop_index }}" class="accordion-collapse collapse {{ is_first ? 'show' : '' }}"  data-bs-parent="{{ accordion_id }}">
 		<div
 			class="accordion-body">
-			<!-- DATE + HEURE -->
-			
 			<div class="row align-items-center">
 				<div class="align-items-center d-flex col">
 					<img src="/assets/images/user.png" alt="" height="40" class="rounded-circle border border-dark me-2">
