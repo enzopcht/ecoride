@@ -6,12 +6,9 @@
 
 {% block body %}
 	<main class="container-xl">
-		<h1 class="text-dark">
-			Vos covoiturages
-		</h1>
+		<h1 class="text-dark">Vos covoiturages</h1>
 
 		{% if active_rides|length > 0 %}
-			<hr>
 			<h3 class="text-primary">
 				<i class="bi bi-exclamation-circle-fill text-danger me-2"></i>
 				{{ active_rides|length > 1 ? 'Voyages' : 'Voyage'}}
@@ -23,54 +20,29 @@
 			</p>
 			<div class="accordion shadow-sm mt-3" id="active_rides">
 				{% for ride in active_rides %}
-					{% set statusColor = '' %}
-					{% set statusContent = '' %}
-					{% if ride.status == 'active' %}
-						{% set statusColor = 'primary' %}
-						{% set statusContent = 'En cours...' %}
-					{% elseif ride.status == 'completed' %}
-						{% set statusColor = 'success' %}
-						{% set statusContent = 'Terminé' %}
-					{% elseif ride.status == 'pending' %}
-						{% set statusColor = 'primary' %}
-						{% set statusContent = 'Prochainement' %}
-					{% elseif ride.status == 'canceled' %}
-						{% set statusColor = 'danger' %}
-						{% set statusContent = 'Annulé' %}
-					{% endif %}
 
 					{% set dynamic_block %}
-					{% if ride.status == 'completed' %}
-						<p class="text-primary">Vos passagers doivent maintenant confirmer que tout s'est bien passé, à la suite de quoi nous débloquerons vos fonds.</p>
-					{% elseif ride.status == 'pending' %}
-						<p class="text-primary">Vous être prêt à partir ? Merci de confirmer le départ.</p>
-						{% if ride.driver.id == user.id %}
-							<form method="POST" action="{{ path('ride_start', { id: ride.id }) }}" class="mt-2">
+					{% if  ride.driver.id == user.id %}
+						<div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+							<form method="POST" action="{{ path('ride_complete', { id: ride.id }) }}" onsubmit="return confirm('Vous êtes arrivé à bon port ?');">
 								<input type="hidden" name="_token" value="{{ csrf_token('complete_ride_' ~ ride.id) }}">
-								<button type="submit" class="btn btn-primary">
-									Démarrer le trajet
+								<button type="submit" class="btn btn-outline-success w-100">
+									Voyage terminé
 								</button>
 							</form>
-						{% endif %}
-					{% elseif ride.status == 'active' and ride.driver.id == user.id %}
-						<p class="text-primary">Vous êtes arrivé ? Confirmez le dès maintenant !</p>
-						<form method="POST" action="{{ path('ride_complete', { id: ride.id }) }}" class="mt-2">
-							<input type="hidden" name="_token" value="{{ csrf_token('complete_ride_' ~ ride.id) }}">
-							<button type="submit" class="btn btn-primary">
-								Voyage terminé
-							</button>
-						</form>
+						</div>
 					{% endif %}
 					{% endset %}
 
 					{% include 'components/dashboard/_ride_accordion.html.twig' with {
-					    ride: ride,
-					    loop_index: 'active_rides' ~ loop.index,
-						accordion_id: '#active_rides',
-					    status_color: statusColor,
-					    status_message: statusContent,
-					    ratings_by_driver: user_rating,
-					    dynamic_block: dynamic_block
+							ride: ride,
+							loop_index: 'active_rides' ~ loop.index,
+							accordion_id: '#active_rides',
+							open_first: true,
+							status_color: 'primary',
+							status_message: 'En cours...',
+							ratings_by_driver: user_rating,
+							dynamic_block: dynamic_block
 					} %}
 				{% endfor %}
 
@@ -82,62 +54,35 @@
 				<div class="mb-3">
 					<div class="accordion shadow-sm mt-3" id="next_rides">
 						{% for ride in next_rides %}
-							{% set statusColor = '' %}
-							{% set statusContent = '' %}
-							{% if ride.status == 'active' %}
-								{% set statusColor = 'primary' %}
-								{% set statusContent = 'En cours...' %}
-							{% elseif ride.status == 'completed' %}
-								{% set statusColor = 'success' %}
-								{% set statusContent = 'Terminé' %}
-							{% elseif ride.status == 'pending' %}
-								{% set statusColor = 'primary' %}
-								{% set statusContent = 'Prochainement' %}
-							{% elseif ride.status == 'canceled' %}
-								{% set statusColor = 'danger' %}
-								{% set statusContent = 'Annulé' %}
-							{% endif %}
 
 							{% set dynamic_block %}
-							{% if ride.status == 'completed' %}
-								<p class="text-primary">Vos passagers doivent maintenant confirmer que tout s'est bien passé, à la suite de quoi nous débloquerons vos fonds.</p>
-							{% elseif ride.status == 'pending' %}
-								<p class="text-primary">Vous être prêt à partir ? Merci de confirmer le départ.</p>
 								{% if ride.driver.id == user.id %}
-									<div class="mt-2 d-flex justify-content-center">
-										<form method="POST" action="{{ path('ride_start', { id: ride.id }) }}" class="me-3">
+									<div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+										<form method="post" action="{{ path('ride_start', { id: ride.id }) }}" onsubmit="return confirm('Toutes les ceintures sont bouclées ? Vous êtes prêt à partir ?');">
 											<input type="hidden" name="_token" value="{{ csrf_token('complete_ride_' ~ ride.id) }}">
-											<button type="submit" class="btn btn-primary">
-												Démarrer le trajet
+											<button class="btn btn-outline-success w-100" type="submit">
+												<i class="bi bi-car-front me-2"></i>Démarrer le trajet
 											</button>
 										</form>
-										<form method="post" action="{{ path('ride_delete', {id: ride.id}) }}" onsubmit="return confirm('Confirmez l\'annulation ?');">
+										<form method="post" action="{{ path('ride_delete', { id: ride.id }) }}" onsubmit="return confirm('Confirmez l\'annulation ?');">
 											<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ ride.id) }}">
-											<div class='text-center'>
-												<button class="btn btn-danger" type="submit">Annuler le trajet</button>
-											</div>
+											<button class="btn btn-outline-danger w-100" type="submit">
+												<i class="bi bi-trash me-2"></i>Annuler le trajet
+											</button>
 										</form>
 									</div>
 								{% endif %}
-							{% elseif ride.status == 'active' and ride.driver.id == user.id %}
-								<p class="text-primary">Vous êtes arrivé ? Confirmez le dès maintenant !</p>
-								<form method="POST" action="{{ path('ride_complete', { id: ride.id }) }}" class="mt-2">
-									<input type="hidden" name="_token" value="{{ csrf_token('complete_ride_' ~ ride.id) }}">
-									<button type="submit" class="btn btn-primary">
-										Voyage terminé
-									</button>
-								</form>
-							{% endif %}
 							{% endset %}
 
 							{% include 'components/dashboard/_ride_accordion.html.twig' with {
-					    ride: ride,
-					    loop_index: 'next_rides' ~ loop.index,
-						accordion_id: '#next_rides',
-					    status_color: statusColor,
-					    status_message: statusContent,
-					    ratings_by_driver: user_rating,
-					    dynamic_block: dynamic_block
+							ride: ride,
+							loop_index: 'next_rides' ~ loop.index,
+							accordion_id: '#next_rides',
+							open_first: true,
+							status_color: 'primary',
+							status_message: 'Prochainement',
+							ratings_by_driver: user_rating,
+							dynamic_block: dynamic_block
 					} %}
 						{% endfor %}
 
@@ -156,46 +101,33 @@
 						{% for ride in previous_rides %}
 							{% set statusColor = '' %}
 							{% set statusContent = '' %}
-							{% if ride.status == 'active' %}
-								{% set statusColor = 'primary' %}
-								{% set statusContent = 'En cours...' %}
-							{% elseif ride.status == 'completed' %}
+							{% if ride.status == 'completed' %}
 								{% set statusColor = 'success' %}
 								{% set statusContent = 'Terminé' %}
-							{% elseif ride.status == 'pending' %}
-								{% set statusColor = 'primary' %}
-								{% set statusContent = 'Prochainement' %}
+								{% set statusDescription = 'Vos passagers doivent maintenant confirmer que tout s\'est bien passé. Vous pouvez suivre leur avancement dans la rubrique <a class="text-dark" href="' ~ path('app_driver_manage_your_bookings') ~ '">Réservations pour mes covoiturages</a>.' %}
 							{% elseif ride.status == 'canceled' %}
 								{% set statusColor = 'danger' %}
 								{% set statusContent = 'Annulé' %}
+								{% set statusDescription = 'Ce trajet a été annulé.' %}
 							{% endif %}
 
 							{% set dynamic_block %}
-							{% if ride.status == 'completed' %}
-								<p class="text-primary">Vos passagers doivent maintenant confirmer que tout s'est bien passé, à la suite de quoi nous débloquerons vos fonds.</p>
-							{% elseif ride.status == 'active' %}
-								<p class="text-primary">Vous êtes arrivé ? Confirmez le dès maintenant !</p>
-								{% if ride.driver.id == user.id and ride.status == 'active' %}
-									<form method="POST" action="{{ path('ride_complete', { id: ride.id }) }}" class="mt-2">
-										<input type="hidden" name="_token" value="{{ csrf_token('complete_ride_' ~ ride.id) }}">
-										<button type="submit" class="btn btn-primary">
-											Voyage terminé
-										</button>
-									</form>
-								{% endif %}
-							{% elseif ride.status == 'canceled' %}
-								<p class="text-danger">Ce trajet a été annulé.</p>
-							{% endif %}
+							<div class="row justify-content-center">
+								<div class="text-primary col col-md-8">
+									<p><i class="bi bi-info-circle me-2"></i>{{ statusDescription|raw }}</p>
+								</div>
+							</div>
 							{% endset %}
 
 							{% include 'components/dashboard/_ride_accordion.html.twig' with {
-					    ride: ride,
-					    loop_index: 'previous_rides' ~ loop.index,
-						accordion_id: '#previous_rides',
-					    status_color: statusColor,
-					    status_message: statusContent,
-					    ratings_by_driver: user_rating,
-					    dynamic_block: dynamic_block
+								ride: ride,
+								loop_index: 'previous_rides' ~ loop.index,
+								accordion_id: '#previous_rides',
+								open_first: false,
+								status_color: statusColor,
+								status_message: statusContent,
+								ratings_by_driver: user_rating,
+								dynamic_block: dynamic_block
 					} %}
 						{% endfor %}
 

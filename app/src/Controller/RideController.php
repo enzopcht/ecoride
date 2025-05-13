@@ -7,7 +7,7 @@ use App\Repository\ParticipationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -19,7 +19,8 @@ class RideController extends AbstractController
     public function completeRide(
         Ride $ride,
         ParticipationRepository $participationRepository,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        Request $request
     ): RedirectResponse {
         $user = $this->getUser();
 
@@ -44,14 +45,15 @@ class RideController extends AbstractController
 
         $this->addFlash('success', 'Trajet terminé. Vos passagers doivent maintenant confirmer le trajet.');
 
-        return $this->redirectToRoute('app_dashboard_driver');
+        return $this->redirect($request->headers->get('referer'));
     }
     #[Route('/ride/{id}/delete', name: 'delete', methods: ['POST'])]
     #[IsGranted('ROLE_DRIVER')]
     public function deleteRide(
         Ride $ride,
         ParticipationRepository $participationRepository,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        Request $request
     ): RedirectResponse {
         $user = $this->getUser();
 
@@ -76,13 +78,14 @@ class RideController extends AbstractController
 
         $this->addFlash('success', 'Trajet annulé. Les remboursements nécessaires vont être fait.');
 
-        return $this->redirectToRoute('app_dashboard_driver');
+        return $this->redirect($request->headers->get('referer'));
     }
     #[Route('/ride/{id}/start', name: 'start', methods: ['POST'])]
     #[IsGranted('ROLE_DRIVER')]
     public function startRide(
         Ride $ride,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        Request $request
     ): RedirectResponse {
         $user = $this->getUser();
 
@@ -95,6 +98,6 @@ class RideController extends AbstractController
 
         $this->addFlash('success', 'Trajet démarré. Merci de confirmer l\'arriver de celui-ci dans votre tableau de bord à la fin de votre trajet.');
 
-        return $this->redirectToRoute('app_dashboard_driver');
+        return $this->redirect($request->headers->get('referer'));
     }
 }
