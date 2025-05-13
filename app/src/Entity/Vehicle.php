@@ -33,6 +33,9 @@ class Vehicle
     #[ORM\JoinColumn(nullable: false)]
     private ?User $owner = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isArchived = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -102,5 +105,15 @@ class Vehicle
 
         return $this;
     }
-}
 
+    public function isArchived(): bool
+    {
+        return $this->isArchived;
+    }
+
+    public function setIsArchived(bool $isArchived): static
+    {
+        $this->isArchived = $isArchived;
+        return $this;
+    }
+}
