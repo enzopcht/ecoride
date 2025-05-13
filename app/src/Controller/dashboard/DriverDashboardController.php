@@ -46,6 +46,18 @@ final class DriverDashboardController extends AbstractController
         $balance = $transactionRepository->calculateUserBalance($user);
         $userRating = $reviewRepository->getAverageRatingForUser($user);
 
+
+        $rides = $rideRepository->findBy(
+            ['driver' => $user],
+            ['departure_time' => 'ASC']
+        );
+        $participations = [];
+        foreach ($rides as $ride) {
+            $participations = array_merge($participations, $participationRepository->findBy([
+                'ride' => $ride,
+            ]));
+        }
+
         return $this->render('dashboard/driver/index.html.twig', [
             'user' => $user,
             'balance' => $balance,
@@ -53,6 +65,8 @@ final class DriverDashboardController extends AbstractController
             'ratings_by_driver' => $ratingsByDriver,
             'rides_active' => $ridesActive,
             'user_rating' => $userRating,
+            'rides' => $rides,
+            'participations' => $participations,
         ]);
     }
     #[Route('/driver/dashboard/preferences', name: 'app_driver_preferences')]
@@ -103,22 +117,25 @@ final class DriverDashboardController extends AbstractController
     ): Response {
         $user = $this->getUser();
         /** @var \App\Entity\User $user */
-        $activeRides = $rideRepository->findBy([
-            'driver' => $user,
-            'status' => ['active']
-        ],
+        $activeRides = $rideRepository->findBy(
+            [
+                'driver' => $user,
+                'status' => ['active']
+            ],
             ['departure_time' => 'ASC']
         );
-        $nextRides = $rideRepository->findBy([
-            'driver' => $user,
-            'status' => ['pending']
-        ],
+        $nextRides = $rideRepository->findBy(
+            [
+                'driver' => $user,
+                'status' => ['pending']
+            ],
             ['departure_time' => 'ASC']
         );
-        $previousRides = $rideRepository->findBy([
-            'driver' => $user,
-            'status' => ['completed', 'canceled']
-        ],
+        $previousRides = $rideRepository->findBy(
+            [
+                'driver' => $user,
+                'status' => ['completed', 'canceled']
+            ],
             ['departure_time' => 'DESC']
         );
         $userRating = $reviewRepository->getAverageRatingForUser($user);
@@ -128,6 +145,31 @@ final class DriverDashboardController extends AbstractController
             'next_rides' => $nextRides,
             'previous_rides' => $previousRides,
             'user_rating' => $userRating,
+        ]);
+    }
+    #[Route('/driver/dashboard/manage-your-bookings', name: 'app_driver_manage_your_bookings')]
+    public function manageYourBookings(
+        RideRepository $rideRepository,
+        ParticipationRepository $participationRepository,
+    ): Response {
+        $user = $this->getUser();
+        /** @var \App\Entity\User $user */
+        $rides = $rideRepository->findBy(
+            [
+                'driver' => $user,
+            ],
+            ['departure_time' => 'ASC']
+        );
+        $participations = [];
+        foreach ($rides as $ride) {
+            $participations = array_merge($participations, $participationRepository->findBy([
+                'ride' => $ride,
+            ]));
+        }
+        return $this->render('dashboard/driver/manage-your-bookings.html.twig', [
+            'user' => $user,
+            'rides' => $rides,
+            'participations' => $participations,
         ]);
     }
 }

@@ -21,7 +21,8 @@
 				<a class="list-group-item" href="{{ path('app_driver_preferences')}}">Gérer mes préférences</a>
 				<a class="list-group-item" href="{{path('app_driver_your_rides')}}">Mes covoiturages</a>
 				<a class="list-group-item" href="#">Mes réservations</a>
-				<a class="list-group-item" href="#">Réservations pour mes covoiturages (notif)</a>
+				{% set pendingParticipations = participations|filter(p => p.status == 'pending') %}
+				<a class="list-group-item" href="{{path('app_driver_manage_your_bookings')}}">Réservations pour mes covoiturages<span class="badge bg-danger ms-2 {{ pendingParticipations|length > 0 ? '' : 'd-none'}}">{{ pendingParticipations|length }}</span></a>
 				<a class="list-group-item" href="#">Vos véhicules</a>
 			</div>
 

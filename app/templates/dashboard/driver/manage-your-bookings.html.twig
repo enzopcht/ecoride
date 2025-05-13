@@ -1,0 +1,168 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Vos covoiturages - EcoRde
+{% endblock %}
+
+{% block body %}
+	<main class="container-xl">
+		<h1 class="text-dark mb-3">
+			Gérer les réservations
+		</h1>
+
+		{% set pendingParticipations = participations|filter(p => p.status == 'pending') %}
+		<h3 class="text-primary">
+			<span class="badge bg-danger me-2 {{ pendingParticipations|length > 0 ? '' : 'd-none'}}">{{ pendingParticipations|length }}</span>Demande de réservation en attente :</h3>
+		{% if pendingParticipations|length > 0 %}
+			<table class="table mt-3">
+				<thead>
+					<tr>
+						<th class="text-dark" scope="col">Pseudo</th>
+						<th class="text-dark" scope="col">Trajet</th>
+						<th class="text-dark" scope="col">Date</th>
+						<th class="text-dark" scope="col">Prix</th>
+						<th class="text-dark" scope="col">Statut</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for ride in rides %}
+						{% for participation in participations %}
+							{% if participation.ride == ride and participation.status == 'pending' %}
+								<tr>
+									<th class="text-primary" scope="row">{{participation.user}}</th>
+									<td>{{ ride.departureCity }}
+										->
+										{{ ride.arrivalCity }}</td>
+									<td>{{ ride.departureTime|date('d/m/Y') }}</td>
+									<td>{{participation.creditsUsed}}<i class="bi bi-coin text-warning"></i>
+									</td>
+									<td>
+										{% if participation.status == 'pending' %}
+											<div class="d-flex justify-content-evenly">
+												<form method="POST" action="{{ path('participations_accept', { id: participation.id }) }}">
+													<input type="hidden" name="_token" value="{{ csrf_token('participations_accept_' ~ participation.id) }}">
+													<button type="submit" class="btn btn-primary">
+														<i class="bi bi-hand-thumbs-up"></i>
+													</button>
+												</form>
+												<form method="POST" action="{{ path('participations_reject', { id: participation.id }) }}">
+													<input type="hidden" name="_token" value="{{ csrf_token('participations_reject_' ~ participation.id) }}">
+													<button type="submit" class="btn btn-danger">
+														<i class="bi bi-hand-thumbs-down"></i>
+													</button>
+												</form>
+											</div>
+											{% else %}
+										{% endif %}
+									</td>
+								</tr>
+							{% endif %}
+						{% endfor %}
+					{% endfor %}
+				</tbody>
+			</table>
+		{% else %}
+			<div>
+				<p>Vous n'avez aucune demande de réservation actuellement.</p>
+			</div>
+		{% endif %}
+		<hr>
+		<h3 class="text-primary">Tous vos trajets</h3>
+		<div class="accordion mt-3" id="accordion_driver_bookings">
+			{% for ride in rides %}
+				{% set rideParticipations = participations|filter(p => p.ride == ride and p.status not in ['pending', 'canceled', 'rejected']) %}
+				{% set allRideParticipations = participations|filter(p => p.ride == ride and p.status != 'pending') %}
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="heading-{{ loop.index }}">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ loop.index }}" aria-expanded="false" aria-controls="collapse-{{ loop.index }}">
+							{{ ride.departureCity }}
+							->
+							{{ ride.arrivalCity }}
+							|
+							<span class="text-primary ms-2">{{ ride.departureTime|date('d/m/Y') }}</span>
+							<span class="badge bg-{{ rideParticipations|length > 0 ? 'primary' : 'danger' }} ms-2">{{ rideParticipations|length }}
+								réservation{{ rideParticipations|length > 1 ? 's' : '' }}</span>
+						</button>
+					</h2>
+					<div id="collapse-{{ loop.index }}" class="accordion-collapse collapse" data-bs-parent="#accordion_driver_bookings">
+						<div class="accordion-body">
+							{% if allRideParticipations|length > 0 %}
+								<table class="table">
+									<thead>
+										<tr>
+											<th class="text-dark" scope="col">Pseudo</th>
+											<th class="text-dark" scope="col">Trajet</th>
+											<th class="text-dark" scope="col">Date</th>
+											<th class="text-dark" scope="col">Prix</th>
+											<th class="text-dark" scope="col">Statut</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for participation in participations %}
+											{% if participation.ride == ride and participation.status != 'pending' %}
+												<tr>
+													<th class="text-primary" scope="row">{{participation.user}}</th>
+													<td>{{ ride.departureCity }}
+														->
+														{{ ride.arrivalCity }}</td>
+													<td>{{ ride.departureTime|date('d/m/Y') }}</td>
+													<td>{{participation.creditsUsed}}<i class="bi bi-coin text-warning"></i>
+													</td>
+													{% set statusColor = '' %}
+													{% set statusContent = '' %}
+													{% if participation.status == 'confirmed' %}
+														{% set statusColor = 'primary' %}
+														{% set statusContent = 'Confirmé' %}
+													{% elseif participation.status == 'canceled' %}
+														{% set statusColor = 'danger' %}
+														{% set statusContent = 'Annulé' %}
+													{% elseif participation.status == 'rejected' %}
+														{% set statusColor = 'danger' %}
+														{% set statusContent = 'Rejeté' %}
+													{% elseif participation.status == 'waiting_passenger_review' %}
+														{% set statusColor = 'warning' %}
+														{% set statusContent = 'En attente de validation par le passager' %}
+													{% elseif participation.status == 'validated' %}
+														{% set statusColor = 'success' %}
+														{% set statusContent = 'Terminé' %}
+													{% elseif participation.status == 'disputed' %}
+														{% set statusColor = 'warning' %}
+														{% set statusContent = 'Problème signalé' %}
+													{% endif %}
+													<td class="text-{{statusColor}}">
+														{% if participation.status == 'pending' %}
+															<div class="d-flex justify-content-evenly">
+																<form method="POST" action="#">
+																	<input type="hidden" name="_token" value="#">
+																	<button type="submit" class="btn btn-primary">
+																		<i class="bi bi-hand-thumbs-up"></i>
+																	</button>
+																</form>
+																<form method="POST" action="#">
+																	<input type="hidden" name="_token" value="#">
+																	<button type="submit" class="btn btn-danger">
+																		<i class="bi bi-hand-thumbs-down"></i>
+																	</button>
+																</form>
+															</div>
+														{% else %}
+															{{statusContent}}
+														{% endif %}
+													</td>
+												</tr>
+											{% endif %}
+										{% endfor %}
+									</tbody>
+								</table>
+							{% else %}
+								<strong class="text-secondary">Vous n'avez pas encore de réservation pour ce trajet.</strong>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+
+
+	</main>
+{% endblock %}
