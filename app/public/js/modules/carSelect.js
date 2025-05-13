@@ -1,24 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
-	const plate = document.getElementById('become_driver_vehicle_plate')
-	const errorPlate = document.getElementById('errorPlate')
+	const form = document.querySelector('form[name="vehicle"]') || document.querySelector('form[name="becomeDriverForm"]');
+	if (!form) return;
 
-	const firstRegistrationDate = document.getElementById('become_driver_vehicle_firstRegistrationDate')
-	const errorFirstRegistrationDate = document.getElementById('errorFirstRegistrationDate')
+	const plate = form.querySelector('[name$="[plate]"]');
+	const errorPlate = document.getElementById('errorPlate');
 
-	const brandSelect = document.getElementById('become_driver_vehicle_brand')
-	const errorBrandSelect = document.getElementById('errorBrand')
+	const firstRegistrationDate = form.querySelector('[name$="[firstRegistrationDate]"]');
+	const errorFirstRegistrationDate = document.getElementById('errorFirstRegistrationDate');
 
-	const modelSelect = document.getElementById('become_driver_vehicle_model')
-	const errorModelSelect = document.getElementById('errorModel')
-	const modelWrapper = document.getElementById('model_wrapper')
-	// modelSelect.innerHTML = '<option value="">Sélectionnez un modèle</option>'
+	const brandSelect = form.querySelector('[name$="[brand]"]');
+	const errorBrandSelect = document.getElementById('errorBrand');
 
-	const color = document.getElementById('become_driver_vehicle_color')
-	const errorColor = document.getElementById('errorColor')
+	const modelSelect = form.querySelector('[name$="[model]"]');
+	const modelWrapper = document.getElementById('model_wrapper');
 
-	const validateButton = document.getElementById('validate_button')
+	const color = form.querySelector('[name$="[color]"]');
+	const errorColor = document.getElementById('errorColor');
 
-
+	const validateButton = document.getElementById('validate_button');
 
 	if (!modelWrapper.classList.contains('d-none')) {
 		modelWrapper.classList.add('d-none')
@@ -125,7 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function checkColor() {
-		if (color.value) {
 			if (!color.value) {
 				color.classList.remove('is-valid')
 				color.classList.add('is-invalid')
@@ -135,21 +133,13 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 	
 			checkFormValidity()
-		}
 	}
 
-	if (!errorPlate) {
-		checkPlate()
-	}
-	if (!errorFirstRegistrationDate) {
-		checkFirstRegistrationDate()
-	}
-	if (!errorBrandSelect) {
-		checkBrand()
-	}
-	if (!errorColor) {
+	if (errorPlate) {
 		checkColor()
-	}
+		checkBrand()
+		checkFirstRegistrationDate()
+	} 
 	checkFormValidity()
 
 
