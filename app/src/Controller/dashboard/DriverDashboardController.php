@@ -158,7 +158,7 @@ final class DriverDashboardController extends AbstractController
             [
                 'driver' => $user,
             ],
-            ['departure_time' => 'ASC']
+            ['departure_time' => 'DESC']
         );
         $participations = [];
         foreach ($rides as $ride) {
