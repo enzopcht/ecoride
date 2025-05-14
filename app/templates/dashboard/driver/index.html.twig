@@ -92,13 +92,38 @@
 				<div class="accordion shadow-sm mt-3" id="active_participations">
 					{% for participation in participations_active_passenger %}
 						{% set ride = participation.ride %}
-
+						{% set statusContent = '' %}
+						{% if participation.status == 'active' %}
+							{% set statusContent = 'En cours...' %}
+							{% set statusNotif = false %}
+						{% else %}
+							{% set statusContent = 'Veuillez confirmer si tout s\'est bien passé.' %}
+							{% set statusNotif = true %}
+						{% endif %}
+						
 						{% set dynamic_block %}
-						<div class="row justify-content-center">
-							<div class="text-primary col col-md-8">
-								<p class="text-secondary"><i class="bi bi-info-circle me-2"></i>Merci de bien vouloir attendre que le trajet soit terminé à la suite de quoi le chauffeur validera l'arrivé du covoiturage. Un mail vous sera ensuite envoyé pour confirmer que tout s'est bien passé.</p>                        
+						{% if participation.status == 'active' %}
+							<div class="row justify-content-center">
+								<div class="text-primary col col-md-8">
+									<p class="text-secondary"><i class="bi bi-info-circle me-2"></i>Merci de bien vouloir attendre que le trajet soit terminé à la suite de quoi le chauffeur validera l'arrivé du covoiturage. Un mail vous sera ensuite envoyé pour confirmer que tout s'est bien passé.</p>                        
+								</div>
 							</div>
-                        </div>
+						{% else %}
+							<div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                                <form method="post" action="{{ path('participations_valid_ride', {id: participation.id}) }}" onsubmit="return confirm('En validant le bon déroulement du trajet, vous confirmez qu’aucun problème n’a eu lieu. Confirmer ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('valid_ride' ~ participation.id) }}">
+                                    <button class="btn btn-outline-success w-100" type="submit">
+                                        <i class="bi bi-check-circle me-2"></i>Trajet OK
+                                    </button>
+                                </form>
+                                <form method="post" action="{{ path('participations_report', {id: participation.id}) }}" onsubmit="return confirm('Souhaitez-vous signaler un problème sur ce trajet ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('report' ~ participation.id) }}">
+                                    <button class="btn btn-outline-danger w-100" type="submit">
+                                        <i class="bi bi-exclamation-octagon me-2"></i>Signaler un souci
+                                    </button>
+                                </form>
+                            </div>
+						{% endif %}
 						{% endset %}
 
 						{% include 'components/dashboard/_ride_accordion.html.twig' with {
@@ -107,9 +132,10 @@
 						accordion_id: '#active_participations',
 						open_first: rides_active is empty,
 					    status_color: 'primary',
-					    status_message: 'En cours...',
+					    status_message: statusContent,
 					    ratings_by_driver: ratings_by_driver[ride.driver.id],
-					    dynamic_block: dynamic_block
+					    dynamic_block: dynamic_block,
+					    status_notif: statusNotif
 					} %}
 					{% endfor %}
 				</div>

@@ -15,7 +15,12 @@
 			{{ ride.departureTime|date('d/m/Y')  }}
 			</span>
 			{% if status_color and status_message %}
-				<span class="text-{{ status_color }} ms-3">{{ status_message }}</span>
+				<span class="text-{{ status_color }} ms-3">
+					{% if status_notif is defined and status_notif %}
+						<i class="bi bi-exclamation-circle-fill text-danger"></i>
+					{% endif %}
+					{{ status_message|raw }}
+				</span>
 			{% endif %}
 		</button>
 	</h2>

@@ -27,11 +27,12 @@ final class DriverDashboardController extends AbstractController
         $user = $this->getUser();
         /** @var \App\Entity\User $user */
 
-        $participationsPendingPassenger = $participationRepository->findParticipationsForPassengerByStatuses($user, ['pending'], ['confirmed', 'pending']);
-        $participationsActivePassenger = $participationRepository->findParticipationsForPassengerByStatuses($user, ['active', 'completed'], ['confirmed']);
-        $allParticipationsPassenger = array_merge($participationsPendingPassenger, $participationsActivePassenger);
+        $participationsActivePassenger = $participationRepository->findBy([
+            'user' => $user,
+            'status' => ['active', 'waiting_passenger_review']
+        ]);
         $ratingsByDriver = [];
-        foreach ($allParticipationsPassenger as $participation) {
+        foreach ($participationsActivePassenger as $participation) {
             $driver = $participation->getRide()->getDriver();
             $driverId = $driver->getId();
             if (!isset($ratingsByDriver[$driverId])) {
@@ -45,7 +46,6 @@ final class DriverDashboardController extends AbstractController
         ]);
         $balance = $transactionRepository->calculateUserBalance($user);
         $userRating = $reviewRepository->getAverageRatingForUser($user);
-
 
         $rides = $rideRepository->findBy(
             ['driver' => $user],
