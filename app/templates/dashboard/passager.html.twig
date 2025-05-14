@@ -7,7 +7,7 @@
 
 <main class="container-xl">
 
-	<div class="d-flex align-items-center">
+	<div class="d-flex align-items-center mb-3">
 		<h1 class="text-dark">
 			Tableau de bord
 			<span class="text-primary">{{user}}</span>
@@ -17,21 +17,29 @@
 	</div>
 
 	<div class="list-nav-custom mb-3">
-		<ul>
-			<li><a href="#">Historique de covoiturages</a></li>
-		</ul>
-	</div>
+			<div class="list-group">
+				<a class="list-group-item" href="#">Mes covoiturages</a>
+			</div>
+		</div>
 
 	<div class="text-center my-3">
-		<p>Vous souhaitez pouvoir organiser vos propres covoiturages ? Devenez un driver pour <span class="text-dark">EcoRide</span> dès maintenant !</p>
+		<p>Vous souhaitez pouvoir organiser vos propres covoiturages ? Devenez un driver pour
+			<span class="text-dark">EcoRide</span>
+			dès maintenant !</p>
 		<a href="{{path('become_driver')}}" class="btn btn-primary">Devenir un driver</a>
 	</div>
 
 	<hr>
 	{% if participations_active|length > 0 %}
-		<div class="mb-3">
-			<h3 class="text-success">{{ participations_active|length > 1 ? 'Voyages' : 'Voyage'}}
-				en cours :</h3>
+			<hr>
+			<div class="mb-3">
+				<h3 class="text-primary">
+					<i class="bi bi-exclamation-circle-fill text-danger me-2"></i>
+					{{ participations_active|length > 1 ? 'Voyages' : 'Voyage'}}
+					en cours en tant que passager :</h3>
+				<p class="text-secondary">
+					<i class="bi bi-info-circle"></i>
+					Merci de bien vouloir attendre que le trajet soit terminé à la suite de quoi le chauffeur validera l'arrivé du covoiturage. Un mail vous sera ensuite envoyé pour confirmer que tout s'est bien passé.</p>
 			<div class="accordion shadow-sm" id="active_participations">
 				{% for participation in participations_active %}
 					{% set ride = participation.ride %}
@@ -89,8 +97,8 @@
 					{% endif %}
 					{% set dynamic_block %}
 						<div>
-							<form method="post" action="{{ path('participations_delete', {id: participation.id}) }}" onsubmit="return confirm('Confirmez l\'annulation ?');">
-								<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ participation.id) }}">
+							<form method="post" action="{{ path('participations_canceled', {id: participation.id}) }}" onsubmit="return confirm('Confirmez l\'annulation ?');">
+								<input type="hidden" name="_token" value="{{ csrf_token('canceled' ~ participation.id) }}">
 								<div class='text-center'>
 									<button class="btn btn-danger" type="submit">Annuler la réservation</button>
 								</div>

@@ -1,0 +1,184 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes réservations - EcoRide
+{% endblock %}
+
+{% block body %}
+	<main class="container-xl">
+		<h1 class="text-dark mb-3">Mes réservations</h1>
+        {% set needActionParticipations = participations|filter(p => p.status == 'waiting_passenger_review') %}
+		{% if needActionParticipations|length > 0 %}
+			<section class="mb-3">
+				<h3 class="mb-3 text-primary">
+                    En attente d'action :<span class="badge bg-danger ms-2 {{ needActionParticipations|length > 0 ? '' : 'd-none'}}">
+                        {{ needActionParticipations|length }}
+                    </span>
+                </h3>
+                <p class="text-secondary"><i class="bi bi-info-circle me-2"></i>Merci de bien vouloir nous indiquer si le voyage s'est bien passé.</p>
+				<div class="accordion shadow-sm mt-3" id="needActionParticipations">
+					{% for participation in needActionParticipations %}
+
+						{% set dynamic_block %}
+                            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                                <form method="post" action="{{ path('participations_valid_ride', {id: participation.id}) }}" onsubmit="return confirm('En validant le bon déroulement du trajet, vous confirmez qu’aucun problème n’a eu lieu. Confirmer ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('valid_ride' ~ participation.id) }}">
+                                    <button class="btn btn-outline-success w-100" type="submit">
+                                        <i class="bi bi-check-circle me-2"></i>Trajet OK
+                                    </button>
+                                </form>
+                                <form method="post" action="{{ path('participations_report', {id: participation.id}) }}" onsubmit="return confirm('Souhaitez-vous signaler un problème sur ce trajet ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('report' ~ participation.id) }}">
+                                    <button class="btn btn-outline-danger w-100" type="submit">
+                                        <i class="bi bi-exclamation-octagon me-2"></i>Signaler un souci
+                                    </button>
+                                </form>
+                            </div>
+						{% endset %}
+
+						{% include 'components/dashboard/_ride_accordion.html.twig' with {
+                                    ride: participation.ride,
+                                    loop_index: 'needActionParticipations' ~ loop.index,
+                                    accordion_id: '#needActionParticipations',
+                                    open_first: true,
+                                    status_color: 'primary',
+                                    status_message: 'Veuillez confirmer si tout s\'est bien passé',
+                                    ratings_by_driver: ratings_by_driver,
+                                    dynamic_block: dynamic_block
+                                } %}
+
+                        {% endfor %}
+                </div>
+                <hr>
+            </section>
+        {% endif %}
+        {% set activeParticipations = participations|filter(p => p.status == 'active') %}
+		{% if activeParticipations|length > 0 %}
+			<section class="mb-3">
+				<h3 class="mb-3 text-primary">Voyage en cours :</h3>
+				<div class="accordion shadow-sm mt-3" id="activeParticipations">
+					{% for participation in activeParticipations %}
+
+						{% set dynamic_block %}
+						<div class="row justify-content-center">
+                            <div class="text-primary col col-md-8">
+                                <p class="text-secondary"><i class="bi bi-info-circle me-2"></i>Merci de bien vouloir attendre que le trajet soit terminé à la suite de quoi le chauffeur validera l'arrivé du covoiturage. Un mail vous sera ensuite envoyé pour confirmer que tout s'est bien passé.</p>                        
+                            </div>
+                        </div>
+						{% endset %}
+
+						{% include 'components/dashboard/_ride_accordion.html.twig' with {
+                                    ride: participation.ride,
+                                    loop_index: 'activeParticipations' ~ loop.index,
+                                    accordion_id: '#activeParticipations',
+                                    open_first: needActionParticipations is empty,
+                                    status_color: 'primary',
+                                    status_message: 'En cours...',
+                                    ratings_by_driver: ratings_by_driver,
+                                    dynamic_block: dynamic_block
+                                } %}
+
+                        {% endfor %}
+                </div>
+                <hr>
+            </section>
+        {% endif %}
+        <section class="mb-3">
+            <h3 class="mb-3 text-primary">Prochainement :</h3>
+            {% set nextParticipations = participations|filter(p => p.status in ['confirmed', 'pending']) %}
+            {% if nextParticipations|length > 0 %}
+                <div class="accordion shadow-sm mt-3" id="nextParticipations">
+                    {% for participation in nextParticipations %}
+                            {% set statusColor = '' %}
+							{% set statusContent = '' %}
+							{% if participation.status == 'confirmed' %}
+								{% set statusColor = 'success' %}
+								{% set statusContent = 'Réservation confirmée' %}
+							{% elseif participation.status == 'pending' %}
+								{% set statusColor = 'primary' %}
+								{% set statusContent = 'Réservation en attente' %}
+							{% endif %}
+
+							{% set dynamic_block %}
+                            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                                <form method="post" action="{{ path('participations_canceled', {id: participation.id}) }}" onsubmit="return confirm('Confirmez l\'annulation ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('canceled' ~ participation.id) }}">
+                                    <div class='text-center'>
+                                        <button class="btn btn-outline-danger w-100" type="submit">
+                                        <i class="bi bi-trash me-2"></i>Annuler la réservation
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+							{% endset %}
+
+							{% include 'components/dashboard/_ride_accordion.html.twig' with {
+                                    ride: participation.ride,
+                                    loop_index: 'nextParticipations' ~ loop.index,
+                                    accordion_id: '#nextParticipations',
+                                    open_first: (activeParticipations is empty and needActionParticipations is empty),
+                                    status_color: statusColor,
+                                    status_message: statusContent,
+                                    ratings_by_driver: ratings_by_driver,
+                                    dynamic_block: dynamic_block
+                                } %}
+					{% endfor %}
+				</div>
+			{% else %}
+				<div>Vous n'avez pas de voyage prochainement.</div>
+			{% endif %}
+            <hr>
+        </section>
+        <section class="mb-3">
+            <h3 class="mb-3 text-primary">Historique :</h3>
+            {% set historyParticipations = participations|filter(p => p.status not in ['confirmed', 'pending', 'waiting_passenger_review', 'active']) %}
+            {% if historyParticipations|length > 0 %}
+                <div class="accordion shadow-sm mt-3" id="historyParticipations">
+                    {% for participation in historyParticipations %}
+                        {% set statusColor = '' %}
+                        {% set statusContent = '' %}
+                        {% if participation.status == 'canceled' %}
+                            {% set statusColor = 'danger' %}
+                            {% set statusContent = 'Réservation annulée' %}
+                            {% set statusDescription = 'Vous avez annulé votre réservation.' %}
+                        {% elseif participation.status == 'validated' %}
+                            {% set statusColor = 'success' %}
+                            {% set statusContent = 'Trajet terminé' %}
+                            {% set statusDescription = 'Trajet terminé sans aucun problème signalé.' %}
+                        {% elseif participation.status == 'disputed' %}
+                            {% set statusColor = 'warning' %}
+                            {% set statusContent = 'Litige en cours' %}
+                            {% set statusDescription = 'Nous avons reçu votre demande de litige, un de nos employé va prendre en main la situation et vous rembourser si nécessaire.' %}
+                        {% elseif participation.status == 'resolved' %}
+                            {% set statusColor = 'success' %}
+                            {% set statusContent = 'Litige résolu' %}
+                            {% set statusDescription = 'La situation a été régulée.' %}
+                        {% elseif participation.status == 'rejected' %}
+                            {% set statusColor = 'danger' %}
+                            {% set statusContent = 'Réservation annulée' %}
+                            {% set statusDescription = 'Réservation annulée par le conducteur.' %}
+                        {% endif %}
+
+                        {% set dynamic_block %}
+                            <div class="text-center text-primary">
+                                <p><i class="bi bi-info-circle me-2"></i>{{statusDescription}}</p>
+                            </div>
+                        {% endset %}
+
+                        {% include 'components/dashboard/_ride_accordion.html.twig' with {
+                        ride: participation.ride,
+                        loop_index: 'historyParticipations' ~ loop.index,
+                        accordion_id: '#historyParticipations',
+                        open_first: false,
+                        status_color: statusColor,
+                        status_message: statusContent,
+                        ratings_by_driver: ratings_by_driver,
+                        dynamic_block: dynamic_block
+                    } %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div>Historique vide</div>
+            {% endif %}
+        </section>
+    </main>
+{% endblock %}

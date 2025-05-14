@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vos véhicules - EcoRide
+{% endblock %}
+
+{% block body %}
+	<main class="container-xl">
+		<h1 class="text-dark mb-3">Vos véhicules</h1>
+		<section class="mb-3">
+			<div>
+				<p>Voici la liste de tous vos véhicules :</p>
+			</div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">Modèle</th>
+						<th scope="col">Marque</th>
+						<th scope="col">Plaque d'immatriculation</th>
+						<th scope="col">Couleur</th>
+						<th scope="col">Energie</th>
+						<th scope="col"></th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for vehicle in vehicles %}
+						{% if not vehicle.isArchived %}
+
+							<tr>
+								<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">
+									<span class="{{vehicle.carModel.energy == 'electric' ? '' : 'd-none'}} me-2">
+										<i class="bi bi-lightning"></i>
+									</span>
+									{{vehicle.carModel.label}}</td>
+								<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">{{vehicle.carModel.brand.label}}</td>
+								<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">{{vehicle.plate}}</td>
+								<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">{{vehicle.color}}</td>
+								<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">{{vehicle.carModel.energy == 'electric' ? 'Électrique' : 'Thermique'}}</td>
+								<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">
+									<form method="POST" action="{{ path('vehicle_delete', { id: vehicle.id }) }}">
+										<input type="hidden" name="_token" value="{{ csrf_token('vehicle_delete_' ~ vehicle.id) }}">
+										<button type="submit" class="btn btn-danger">
+											<i class="bi bi-trash"></i>
+										</button>
+									</form>
+								</td>
+							</tr>
+						{% endif %}
+					{% endfor %}
+				</tbody>
+			</table>
+		</section>
+
+		<hr class="mb-3">
+
+		<section class="mb-3">
+			<h3 class="text-primary">Ajouter un véhicule</h3>
+			{{ form_start(vehicleForm)}}
+			<div class="mb-3">
+				{{ form_label(vehicleForm.plate) }}
+				{{ form_widget(vehicleForm.plate) }}
+				{% for error in vehicleForm.plate.vars.errors %}
+					<div id="errorPlate" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+				<div class="invalid-feedback">
+					Votre plaque doit avoir le format suivant : AA-000-AA
+				</div>
+			</div>
+			<div class="mb-3">
+				{{ form_label(vehicleForm.firstRegistrationDate) }}
+				{{ form_widget(vehicleForm.firstRegistrationDate) }}
+				{% for error in vehicleForm.firstRegistrationDate.vars.errors %}
+					<div id="errorFirstRegistrationDate" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+				<div class="invalid-feedback">
+					La date ne peut être supérieur à la date du jour.
+				</div>
+			</div>
+			<div class="mb-3">
+				{{ form_label(vehicleForm.brand) }}
+				{{ form_widget(vehicleForm.brand) }}
+				{% for error in vehicleForm.brand.vars.errors %}
+					<div id="errorBrand" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+				<div class="invalid-feedback">
+					Vous devez d'abord sélectionner une marque.
+				</div>
+			</div>
+			<div id="model_wrapper" class="mb-3">
+				{{ form_label(vehicleForm.model) }}
+				{{ form_widget(vehicleForm.model) }}
+				{% for error in vehicleForm.model.vars.errors %}
+					<div id="errorModel" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+				<div class="invalid-feedback">
+					Veuillez sélectionner un modèle.
+				</div>
+			</div>
+			<div class="mb-3">
+				{{ form_label(vehicleForm.color) }}
+				{{ form_widget(vehicleForm.color) }}
+				{% for error in vehicleForm.color.vars.errors %}
+					<div id="errorColor" class="text-danger small">{{ error.message }}</div>
+				{% endfor %}
+				<div class="invalid-feedback">
+					Veuillez sélectionner une couleur.
+				</div>
+			</div>
+			<div class='mb-3 text-center'>
+				<button id='validate_button' type="submit" class="btn btn-primary justify-content-center">Ajouter</button>
+			</div>
+			{{ form_end(vehicleForm) }}
+		</section>
+	</main>
+	<script src="{{ asset('js/modules/carSelect.js') }}"></script>
+{% endblock %}

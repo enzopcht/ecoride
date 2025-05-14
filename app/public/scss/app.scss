@@ -17,12 +17,26 @@ main {
     flex: 1 0 auto;
 }
 
-
 article {
     text-align: justify;
 
     ul {
         list-style: none;
         padding: 0;
+    }
+}
+
+.list-group-item {
+    color: $primary;
+    &:hover {
+        background: $primary;
+        color: white;
+    }
+}
+
+.suggestion-container {
+    position: relative;
+    .suggestion-box {
+        position: absolute;
     }
 }

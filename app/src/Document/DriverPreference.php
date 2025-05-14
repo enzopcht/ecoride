@@ -22,6 +22,9 @@ class DriverPreference
     #[MongoDB\Field(type: 'bool')]
     private bool $animalsAllowed = false;
 
+    #[MongoDB\Field(type: 'collection')]
+    private array $customPreferences = [];
+
     public function getId(): ?string
     {
         return $this->id;
@@ -68,6 +71,31 @@ class DriverPreference
     public function setAnimalsAllowed(bool $animalsAllowed): self
     {
         $this->animalsAllowed = $animalsAllowed;
+        return $this;
+    }
+
+    public function getCustomPreferences(): array
+    {
+        return $this->customPreferences;
+    }
+
+    public function setCustomPreferences(array $customPreferences): self
+    {
+        $this->customPreferences = $customPreferences;
+        return $this;
+    }
+
+    public function addCustomPreference(string $preference): self
+    {
+        if (!in_array($preference, $this->customPreferences)) {
+            $this->customPreferences[] = $preference;
+        }
+        return $this;
+    }
+
+    public function removeCustomPreference(string $preference): self
+    {
+        $this->customPreferences = array_filter($this->customPreferences, fn($p) => $p !== $preference);
         return $this;
     }
 }

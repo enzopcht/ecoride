@@ -28,7 +28,7 @@ class UserFixtures extends Fixture
             $user = new User();
             $user->setEmail($email);
             $user->setPseudo($pseudo);
-            $user->setRoles(['ROLE_USER']);
+            $user->setRoles(['ROLE_PASSENGER']);
             $user->setCreatedAt(new \DateTimeImmutable());
 
             $hashedPassword = $this->passwordHasher->hashPassword($user, 'password');

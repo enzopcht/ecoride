@@ -15,7 +15,18 @@ class RideFixtures extends Fixture implements DependentFixtureInterface
         $users = $manager->getRepository(\App\Entity\User::class)->findAll();
         $vehicles = $manager->getRepository(\App\Entity\Vehicle::class)->findAll();
 
-        $towns = ['Paris', 'Lyon', 'Nantes', 'Bordeaux', 'Lille', 'Strasbourg', 'Toulouse', 'Nice', 'Rennes', 'Dijon'];
+        $towns = [
+            'Paris' => '75000',
+            'Lyon' => '69000',
+            'Nantes' => '44000',
+            'Bordeaux' => '33000',
+            'Lille' => '59000',
+            'Strasbourg' => '67000',
+            'Toulouse' => '31000',
+            'Nice' => '06000',
+            'Rennes' => '35000',
+            'Dijon' => '21000',
+        ];
         $statuts = ['pending', 'active', 'completed'];
 
         foreach ($statuts as $statut) {
@@ -29,10 +40,13 @@ class RideFixtures extends Fixture implements DependentFixtureInterface
 
                 $vehicle = $faker->randomElement($userVehicles);
 
-                $departureCity = $faker->randomElement($towns);
+                $departureCity = $faker->randomElement(array_keys($towns));
                 do {
-                    $arrivalCity = $faker->randomElement($towns);
+                    $arrivalCity = $faker->randomElement(array_keys($towns));
                 } while ($arrivalCity === $departureCity);
+
+                $departurePostCode = $towns[$departureCity];
+                $arrivalPostCode = $towns[$arrivalCity];
 
                 $departureAddress = $faker->numberBetween(1, 200) . ' ' . $faker->streetName() . ', ' . $departureCity;
                 $arrivalAddress = $faker->numberBetween(1, 200) . ' ' . $faker->streetName() . ', ' . $arrivalCity;
@@ -54,6 +68,8 @@ class RideFixtures extends Fixture implements DependentFixtureInterface
                 $ride->setVehicle($vehicle);
                 $ride->setDepartureCity($departureCity);
                 $ride->setArrivalCity($arrivalCity);
+                $ride->setDeparturePostCode($departurePostCode);
+                $ride->setArrivalPostCode($arrivalPostCode);
                 $ride->setDepartureAddress($departureAddress);
                 $ride->setArrivalAddress($arrivalAddress);
                 $ride->setDepartureTime(\DateTimeImmutable::createFromMutable($departureTime));

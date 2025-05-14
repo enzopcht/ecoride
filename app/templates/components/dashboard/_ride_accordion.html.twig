@@ -1,36 +1,44 @@
 <div class="accordion-item">
 	<h2 class="accordion-header">
-		{% set is_first = loop_index ends with '1' %}
+		{% set is_first = loop_index ends with '1' and open_first is defined and open_first %}
 		<button class="accordion-button {{ is_first ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ loop_index }}" aria-expanded="{{ is_first ? 'true' : 'false' }}" aria-controls="collapse-{{ loop_index }}">
+			{% if ride.driver.id == user.id %}
+				<span class="text-primary"> Chauffeur</span>
+			{% else %}
+				<span class="text-primary"> Passager</span>
+			{% endif %}
+			<span class="ms-3">
 			{{ ride.departureCity }}
 			->
 			{{ ride.arrivalCity }}
+			le
+			{{ ride.departureTime|date('d/m/Y')  }}
+			</span>
 			{% if status_color and status_message %}
-				<span class="text-{{ status_color }} ms-3">{{ status_message }}</span>
+				<span class="text-{{ status_color }} ms-3">
+					{% if status_notif is defined and status_notif %}
+						<i class="bi bi-exclamation-circle-fill text-danger"></i>
+					{% endif %}
+					{{ status_message|raw }}
+				</span>
 			{% endif %}
 		</button>
 	</h2>
 	<div id="collapse-{{ loop_index }}" class="accordion-collapse collapse {{ is_first ? 'show' : '' }}"  data-bs-parent="{{ accordion_id }}">
 		<div
 			class="accordion-body">
-			<!-- DATE + HEURE -->
-			<div class="row align-items-center">
-				<h3 class="text-primary text-center">{{ ride.departureTime|date('d/m/Y') }}</h3>
-				<hr>
-			</div>
 			<div class="row align-items-center">
 				<div class="align-items-center d-flex col">
 					<img src="/assets/images/user.png" alt="" height="40" class="rounded-circle border border-dark me-2">
 					<div class="fs-5">{{ ride.driver.pseudo }}</div>
 				</div>
 				<div class="col text-end">
-					{% set driverId = ride.driver.id %}
-					{% if ratings_by_driver[driverId] is defined %}
-						<p class="mb-0">{{ ratings_by_driver[driverId]|number_format(1) }}/5
+					{% if ratings_by_driver is defined and ratings_by_driver > 0 %}
+						<p class="mb-0">{{ ratings_by_driver|number_format(1) }}/5
 							<i class="bi bi-star-fill text-warning"></i>
 						</p>
 					{% else %}
-						<p class="text-muted">Aucune note disponible</p>
+						<p class="text-muted">Pas encore noté</p>
 					{% endif %}
 				</div>
 			</div>

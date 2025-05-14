@@ -20,11 +20,17 @@ class Ride
     #[ORM\Column(length: 255)]
     private ?string $departure_address = null;
 
+    #[ORM\Column(length: 10)]
+    private ?string $departure_post_code = null;
+
     #[ORM\Column(length: 255)]
     private ?string $arrival_city = null;
 
     #[ORM\Column(length: 255)]
     private ?string $arrival_address = null;
+
+    #[ORM\Column(length: 10)]
+    private ?string $arrival_post_code = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $departure_time = null;
@@ -198,6 +204,30 @@ public function setArrivalAddress(string $arrival): static
     {
         $this->vehicle = $vehicle;
 
+        return $this;
+    }
+
+    public function getDeparturePostCode(): ?string
+    {
+        return $this->departure_post_code;
+    }
+    
+    public function setDeparturePostCode(string $departure_post_code): static
+    {
+        $this->departure_post_code = $departure_post_code;
+    
+        return $this;
+    }
+
+    public function getArrivalPostCode(): ?string
+    {
+        return $this->arrival_post_code;
+    }
+    
+    public function setArrivalPostCode(string $arrival_post_code): static
+    {
+        $this->arrival_post_code = $arrival_post_code;
+    
         return $this;
     }
 }
