@@ -4,47 +4,55 @@
 {% endblock %}
 
 {% block body %}
-<main class="container-xl">
-	<h1 class="text-dark">
-		Vos préférences de conducteur
-	</h1>
+	<main class="container-xl">
+		<h1 class="text-dark mb-3">Vos préférences de conducteur</h1>
+		<section class="mb-3">
+			<form method="POST" action="{{ path('app_driver_preferences_update') }}">
+				<input type="hidden" name="_token" value="{{ csrf_token('update_preferences') }}">
 
-	<div class="mt-4">
-		<h3 class="text-primary">A bord de vos trajets vous avez établi ces règles :</h3>
-		<p>Musique :
-			<strong class="text-{{ preferences.musicAllowed ? 'success' : 'danger' }}">{{ preferences.musicAllowed ? 'Autorisé' : 'Réfusé' }}</strong>
-		</p>
-		<p>Fumer  :
-			<strong class="text-{{ preferences.smokingAllowed ? 'success' : 'danger' }}">{{ preferences.smokingAllowed ? 'Autorisé' : 'Réfusé' }}</strong>
-		</p>
-		<p>Animaux :
-			<strong class="text-{{ preferences.animalsAllowed ? 'success' : 'danger' }}">{{ preferences.animalsAllowed ? 'Autorisé' : 'Réfusé' }}</strong>
-		</p>
-	</div>
+				<div class="form-check form-switch my-2">
+					<input class="form-check-input" type="checkbox" id="musicAllowed" name="musicAllowed" {% if preferences.musicAllowed %} checked {% endif %}>
+					<label class="form-check-label" for="musicAllowed">Autoriser la musique</label>
+				</div>
 
-<hr class="my-4">
+				<div class="form-check form-switch my-2">
+					<input class="form-check-input" type="checkbox" id="smokingAllowed" name="smokingAllowed" {% if preferences.smokingAllowed %} checked {% endif %}>
+					<label class="form-check-label" for="smokingAllowed">Autoriser à fumer</label>
+				</div>
 
-<h2 class="text-dark">Modifier mes préférences</h2>
+				<div class="form-check form-switch my-2">
+					<input class="form-check-input" type="checkbox" id="animalsAllowed" name="animalsAllowed" {% if preferences.animalsAllowed %} checked {% endif %}>
+					<label class="form-check-label" for="animalsAllowed">Autoriser les animaux</label>
+				</div>
 
-<form method="POST" action="{{ path('app_driver_preferences_update') }}">
-	<input type="hidden" name="_token" value="{{ csrf_token('update_preferences') }}">
+				<button type="submit" class="btn btn-primary mt-3">Enregistrer</button>
+			</form>
+		</section>
 
-	<div class="form-check form-switch my-2">
-		<input class="form-check-input" type="checkbox" id="musicAllowed" name="musicAllowed" {% if preferences.musicAllowed %}checked{% endif %}>
-		<label class="form-check-label" for="musicAllowed">Autoriser la musique</label>
-	</div>
+		<section class="mb-3">
+			<h5 class="text-primary">Vos préférences personnalisées</h5>
+			<div class="mb-3">
+				{% for preference in preferences.customPreferences %}
+					<div class="d-flex justify-content-between align-items-center border rounded p-2 mb-2 shadow-sm">
+						<span class="text-dark">{{ preference }}</span>
+						<form method="post" action="{{ path('app_driver_preferences_custom_remove') }}" class="mb-0">
+							<input type="hidden" name="_token" value="{{ csrf_token('remove_custom_preference') }}">
+							<input type="hidden" name="preference" value="{{ preference }}">
+							<button class="btn btn-sm btn-outline-danger">Supprimer</button>
+						</form>
+					</div>
+				{% else %}
+					<div class="text-muted">Aucune préférence personnalisée</div>
+				{% endfor %}
+			</div>
+			<form method="post" action="{{ path('app_driver_preferences_custom_add') }}">
+				<input type="hidden" name="_token" value="{{ csrf_token('add_custom_preference') }}">
+				<div class="input-group">
+					<input name="new_preference" class="form-control" placeholder="Ex: pas de bagage lourd">
+					<button class="btn btn-outline-success">Ajouter</button>
+				</div>
+			</form>
+		</section>
 
-	<div class="form-check form-switch my-2">
-		<input class="form-check-input" type="checkbox" id="smokingAllowed" name="smokingAllowed" {% if preferences.smokingAllowed %}checked{% endif %}>
-		<label class="form-check-label" for="smokingAllowed">Autoriser à fumer</label>
-	</div>
-
-	<div class="form-check form-switch my-2">
-		<input class="form-check-input" type="checkbox" id="animalsAllowed" name="animalsAllowed" {% if preferences.animalsAllowed %}checked{% endif %}>
-		<label class="form-check-label" for="animalsAllowed">Autoriser les animaux</label>
-	</div>
-
-	<button type="submit" class="btn btn-primary mt-3">Enregistrer</button>
-</form>
-</main>
+	</main>
 {% endblock %}
