@@ -5,6 +5,7 @@
 
 {% block body %}
 	<main class="container-xl">
+        <a href="{{path('app_dashboard')}}" class="btn text-dark"><i class="bi bi-arrow-left-circle fs-3"></i></a>
 		<h1 class="text-dark mb-3">Mes réservations</h1>
         {% set needActionParticipations = participations|filter(p => p.status == 'waiting_passenger_review') %}
 		{% if needActionParticipations|length > 0 %}
