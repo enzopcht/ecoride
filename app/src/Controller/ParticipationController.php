@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\CreditTransaction;
 use App\Entity\Participation;
+use App\Entity\Ride;
+use App\Repository\CreditTransactionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -12,6 +15,74 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/participations', name: 'participations_')]
 class ParticipationController extends AbstractController
 {
+    #[Route('/book/{id}', name: 'book', methods: ['POST'])]
+    public function book(
+        Request $request,
+        Ride $ride,
+        EntityManagerInterface $em,
+        CreditTransactionRepository $transactionRepository,
+        ): RedirectResponse
+    {
+        $user = $this->getUser();
+        
+        if (!$this->getUser()) {
+            $this->addFlash('warning', 'Vous devez être connecté pour réserver un trajet.');
+            return $this->redirectToRoute('app_login');
+        }
+        
+        if (
+            !$this->isGranted('ROLE_PASSENGER') &&
+            !$this->isGranted('ROLE_DRIVER')
+        ) {
+            throw $this->createAccessDeniedException();
+        }
+        if ($ride->getDriver() === $user) {
+            $this->addFlash('danger', 'Vous ne pouvez pas réserver votre propre trajet.');
+            return $this->redirect($request->headers->get('referer'));
+        }
+        if ($ride->getSeatsAvailable() <= 0) {
+            $this->addFlash('danger', 'Ce trajet est complet.');
+            return $this->redirect($request->headers->get('referer'));
+        } 
+        $balance = $transactionRepository->calculateUserBalance($this->getUser());
+        if ($ride->getPrice() > $balance) {
+            $this->addFlash('danger', 'Vous n\'avez pas assez de jetons.');
+            return $this->redirect($request->headers->get('referer'));
+        }
+        
+        $transaction = new CreditTransaction();
+        $transaction->setUser($user);
+        $transaction->setRide($ride);
+        $transaction->setAmount(-($ride->getPrice() - 2));
+        $transaction->setReason('Booking a trip');
+        $transaction->setCreatedAt(new \DateTimeImmutable());
+        
+        $em->persist($transaction);
+        
+        $transactionCommission = new CreditTransaction();
+        $transactionCommission->setUser($user);
+        $transactionCommission->setRide($ride);
+        $transactionCommission->setAmount(-2);
+        $transactionCommission->setReason('Commmission EcoRide');
+        $transactionCommission->setCreatedAt(new \DateTimeImmutable());
+
+        $em->persist($transactionCommission);
+
+        $participation = new Participation();
+        $participation->setUser($user);
+        $participation->setRide($ride);
+        $participation->setStatus('pending');
+        $participation->setCreditsUsed($ride->getPrice());
+
+        $ride->setSeatsAvailable($ride->getSeatsAvailable() - 1);
+        
+        $em->persist($participation);
+        $em->flush();
+
+        $this->addFlash('success', 'Votre réservation a bien été prise en compte, retrouvez là dans vos réservations.');
+
+        return $this->redirect($request->headers->get('referer'));
+    }
     #[Route('/canceled/{id}', name: 'canceled', methods: ['POST'])]
     public function canceled(
         Request $request,
