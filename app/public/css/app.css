@@ -194,4 +194,8 @@ article ul {
 }
 .suggestion-container .suggestion-box {
   position: absolute;
+}
+
+.star {
+  cursor: pointer;
 }/*# sourceMappingURL=app.css.map */

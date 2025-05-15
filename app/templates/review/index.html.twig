@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Laisser un avis - EcoRide
+{% endblock %}
+
+{% block body %}
+	<main class="container-xl">
+		<h1 class="text-dark mb-3">Laisser un avis à <span class="text-primary">{{participation.ride.driver}}</span></h1>
+		<section >
+            <p class="text-secondary">Merci de prendre quelques instants pour nous donner votre avis sur votre trajet de <span class="text-dark">{{participation.ride.departureCity}}</span> à <span class="text-dark">{{participation.ride.arrivalCity}}</span> le <span class="text-dark">{{participation.ride.departureTime|date('d/m/Y')}}</span>.</p>
+			{{ form_start(reviewForm) }}
+			<div class="mb-3">
+				{{ form_widget(reviewForm.comment, {'attr': {'class': 'col-2 form-control'}}) }}
+				{{ form_errors(reviewForm.comment) }}
+                <div class="invalid-feedback">
+					Merci de rentrer un message.
+				</div>
+			</div>
+            <div id="star-rating" class="d-flex gap-1 justify-content-center mb-3">
+				{% for i in 1..5 %}
+					<div>
+						<i class="star bi bi-star fs-3 text-warning" data-value="{{ i }}"></i>
+					</div>
+				{% endfor %}
+			</div>
+			<div class='mt-3 d-flex flex-column flex-md-row justify-content-center'>
+				<button id='validateButton' type="submit" class="btn btn-primary">Valider</button>
+			</div>
+			{{ form_end(reviewForm) }}
+		</section>
+	</main>
+	<script src="{{ asset('js/modules/review.js') }}"></script>
+{% endblock %}

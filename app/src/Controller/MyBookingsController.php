@@ -26,6 +26,9 @@ final class MyBookingsController extends AbstractController
         ) {
             throw $this->createAccessDeniedException();
         }
+        $reviews = $reviewRepository->findBy([
+            'author' => $user,
+        ]);
 
         $participations = $participationRepository->findBy(['user' => $user]);
         foreach ($participations as $participation) {
@@ -40,6 +43,7 @@ final class MyBookingsController extends AbstractController
             'participations' => $participations,
             'user' => $user,
             'ratings_by_driver' => $ratingsByDriver,
+            'reviews' => $reviews,
         ]);
     }
 }
