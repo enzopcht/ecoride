@@ -114,7 +114,7 @@
 						{% if ride.departureCity is same as(data.departure) and ride.arrivalCity is same as(data.arrival) %}
 							{% if ride.departureTime|date('Y-m-d') == data.date|date('Y-m-d') %}
 								{% set exact_match = exact_match + 1 %}
-								<a class="text-black" href="#">
+								<a class="text-black" href="{{path('app_ride_details', { id: ride.id })}}">
 									<div class="carpooling-item bg-white shadow rounded  p-3 mb-3" data-price="{{ ride.price }}" data-rating="4.5" data-eco="{{ ride.ecological ? '1' : '0' }}">
 
 										<h3 class="text-primary">{{ ride.departureCity }}

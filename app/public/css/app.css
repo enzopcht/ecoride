@@ -30,9 +30,21 @@
   color: #fff;
 }
 
+.btn-outline-primary {
+  border-color: #2196F3 !important;
+  color: #2196F3;
+}
+
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active {
+  background-color: #1976d2 !important;
+  border-color: #1976d2 !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
   background-color: #1976d2 !important;
   border-color: #1976d2 !important;
 }
@@ -56,9 +68,21 @@
   color: #fff;
 }
 
+.btn-outline-dark {
+  border-color: #002E6B !important;
+  color: #002E6B;
+}
+
 .btn-dark:hover,
 .btn-dark:focus,
 .btn-dark:active {
+  background-color: #021c42 !important;
+  border-color: #021c42 !important;
+}
+
+.btn-outline-dark:hover,
+.btn-outline-dark:focus,
+.btn-outline-dark:active {
   background-color: #021c42 !important;
   border-color: #021c42 !important;
 }

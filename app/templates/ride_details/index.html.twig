@@ -1,0 +1,154 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du trajet - EcoRide
+{% endblock %}
+
+{% block body %}
+	<main class="container-xl">
+		<button onclick="window.history.back()" class="btn text-dark">
+			<i class="bi bi-arrow-left-circle fs-3"></i>
+		</button>
+		<h1 class="text-dark mb-3">Détail du trajet</h1>
+
+		<div class="row justify-content-center">
+			<section class="col-12 col-md-10 col-lg-6 align-self-start mb-3">
+				<div class="bg-white rounded shadow overflow-hidden">
+					<div class="row align-items-center p-3">
+						<span class="text-primary col fs-4">{{ride.departureCity}}
+							->
+							{{ride.arrivalCity}}</span>
+						<span class="text-end text-primary col fs-4">{{ride.departureTime|date('d/m/Y')}}</span>
+					</div>
+					<hr class="mt-0">
+					<div class="row align-items-center px-3 py-2">
+						<div class="d-flex align-items-center col">
+							<img src="/assets/images/user.png" alt="" height="50" width="50" class="rounded-circle border border-dark me-2 bg-white">
+							<div class="fs-5">{{ride.driver}}</div>
+						</div>
+						<div class="col text-end">
+							{% if driver_rating is defined and driver_rating > 0 %}
+								<p class="mb-0">{{ driver_rating|number_format(1) }}/5
+									<i class="bi bi-star-fill text-warning"></i>
+								</p>
+							{% else %}
+								<p class="text-muted">Pas encore noté</p>
+							{% endif %}
+						</div>
+					</div>
+					<hr>
+					<div class="row align-items-center mx-auto px-3 py-2">
+						<div class="col fs-5 text-dark text-end">{{ride.departureTime|date('H:m')}}</div>
+						<div class="col-6 line"></div>
+						<div class="col fs-5 text-dark">{{ride.arrivalTime|date('H:m')}}</div>
+					</div>
+					<hr>
+					<div class="row align-items-center mx-auto px-3 py-2">
+						<div class="col-8">
+							{% if ride.vehicle.carModel.energy == 'electric'%}
+								<p class="text-secondary mb-0">Voyage écologique
+									<i class="bi bi-lightning-charge"></i>
+								</p>
+							{% endif %}
+							<p class="mb-0">Places restante(s) :
+								{{ride.seatsAvailable}}</p>
+						</div>
+						<div class="text-dark col text-end ">
+							<span class="fs-4">
+								{{ride.price}}
+								<i class="bi bi-coin text-warning"></i>
+							</span>
+						</div>
+					</div>
+                    {% if user and user == ride.driver %}
+                    {% else %}
+					<form method="POST" action="{{ path('participations_book', { id: ride.id }) }}" onsubmit="return confirm('Êtes vous sur de vouloir réserver ce trajet ?');">
+						<input type="hidden" name="_token" value="{{ csrf_token('participations_book_' ~ ride.id) }}">
+						<button class="btn btn-primary w-100 rounded-0 rounded-bottom py-3">Réserver</button>
+					</form>
+                    {% endif %}
+                    
+				</div>
+			</section>
+			<section class="col-12 col-md-10 col-lg-6 mx-auto">
+				<div class="my-3 d-flex">
+					<h5 class="text-primary me-2">
+						<i class="bi bi-geo-alt"></i>Départ :</h5>
+					<span class="text-dark">{{ride.departureAddress}}</span>
+				</div>
+				<hr>
+				<div class="my-3 d-flex">
+					<h5 class="text-primary me-2">
+						<i class="bi bi-geo-alt"></i>Arrivée :</h5>
+					<span class="text-dark">{{ride.arrivalAddress}}</span>
+				</div>
+				<hr>
+				<a href="#" class="text-decoration-none">
+					<div class="d-flex my-3 text-dark">
+						<h5 class="text-primary me-2">Avis({{number_of_reviews_driver|length}}) :
+						</h5>
+						{% if driver_rating is defined and driver_rating > 0 %}
+							<p class="mb-0">{{ driver_rating|number_format(1) }}/5
+								<i class="bi bi-star-fill text-warning"></i>
+							</p>
+						{% else %}
+							<p class="text-muted">Pas encore noté</p>
+						{% endif %}
+						<i class="bi bi-chevron-right text-dark col text-end"></i>
+					</div>
+				</a>
+				<hr>
+
+				<div class="my-3 d-flex">
+					<h5 class="text-primary me-2">Véhicule du trajet :</h5>
+					{% if ride.vehicle.carModel.energy == 'electric'%}
+						<span class="text-primary">
+							<i class="bi bi-lightning-charge"></i>
+							{{ride.vehicle.carModel.brand.label}}
+							-
+							{{ride.vehicle.Carmodel.label}}
+						</span>
+					{% else %}
+						<span class="text-dark">
+							{{ride.vehicle.carModel.brand.label}}
+							-
+							{{ride.vehicle.Carmodel.label}}
+						</span>
+					{% endif %}
+				</div>
+
+				<hr>
+
+				<div class="my-3 row justify-content-center">
+					<div class="col-12 col-md-6">
+						<h5 class="text-dark">Préférences conducteur</h5>
+						<div class="mb-3">
+							<div class="d-flex justify-content-between align-items-center border rounded p-2 mb-2 shadow-sm {{ preferences.musicAllowed ? 'text-success border-success' : 'text-danger border-danger'}}">
+								<span>Musique</span>
+								<i class="bi bi-hand-thumbs-{{ preferences.musicAllowed ? 'up' : 'down'}}"></i>
+							</div>
+							<div class="d-flex justify-content-between align-items-center border rounded p-2 mb-2 shadow-sm {{ preferences.smokingAllowed ? 'text-success border-success' : 'text-danger border-danger'}}">
+								<span>Fumer</span>
+								<i class="bi bi-hand-thumbs-{{ preferences.smokingAllowed ? 'up' : 'down'}}"></i>
+							</div>
+							<div class="d-flex justify-content-between align-items-center border rounded p-2 mb-2 shadow-sm {{ preferences.animalsAllowed ? 'text-success border-success' : 'text-danger border-danger'}}">
+								<span>Animaux</span>
+								<i class="bi bi-hand-thumbs-{{ preferences.animalsAllowed ? 'up' : 'down'}}"></i>
+							</div>
+
+						</div>
+					</div>
+					<div class="col-12 col-md-6">
+						<h5 class="text-dark">Demandes du conducteur</h5>
+						<div class="mb-3">
+							{% for customPreference in preferences.customPreferences %}
+								<div class="d-flex justify-content-between align-items-center border rounded p-2 mb-2 shadow-sm text-dark border-dark">
+									<span>{{customPreference}}</span>
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	</div>
+</main>{% endblock %}

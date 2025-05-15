@@ -21,7 +21,6 @@ final class UserDashboardController extends AbstractController
     ): Response {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
-        dd($user->getRoles());
 
         $participationsPending = $participationRepository->findParticipationsForPassengerByStatuses($user, ['pending'], ['confirmed', 'pending']);
         $participationsActive = $participationRepository->findParticipationsForPassengerByStatuses($user, ['active', 'completed'], ['confirmed']);
