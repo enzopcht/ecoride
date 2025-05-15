@@ -22,13 +22,14 @@ final class UserDashboardController extends AbstractController
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
-        $participationsPending = $participationRepository->findParticipationsForPassengerByStatuses($user, ['pending'], ['confirmed', 'pending']);
-        $participationsActive = $participationRepository->findParticipationsForPassengerByStatuses($user, ['active', 'completed'], ['confirmed']);
+        $participationsActive = $participationRepository->findBy([
+            'user' => $user,
+            'status' => ['active', 'waiting_passenger_review']
+        ]);
 
-        $allParticipations = array_merge($participationsPending, $participationsActive);
         $ratingsByDriver = [];
 
-        foreach ($allParticipations as $participation) {
+        foreach ($participationsActive as $participation) {
             $driver = $participation->getRide()->getDriver();
             $driverId = $driver->getId();
 
@@ -40,7 +41,6 @@ final class UserDashboardController extends AbstractController
 
         return $this->render('dashboard/passager.html.twig', [
             'user' => $this->getUser(),
-            'participations_pending' => $participationsPending,
             'participations_active' => $participationsActive,
             'balance' => $balance,
             'ratings_by_driver' => $ratingsByDriver,

@@ -5,32 +5,90 @@
 
 {% block body %}
 
-<main class="container-xl">
+	<main class="container-xl">
 
-	<div class="d-flex align-items-center mb-3">
-		<h1 class="text-dark">
-			Tableau de bord
-			<span class="text-primary">{{user}}</span>
-		</h1>
-		<div class="text-white text-center d-flex bg-dark fs-5 ms-auto shadow p-3 rounded">{{balance}}<i class="bi bi-coin text-warning"></i>
-		</div>
-	</div>
-
-	<div class="list-nav-custom mb-3">
-			<div class="list-group">
-				<a class="list-group-item" href="#">Mes covoiturages</a>
+		<div class="d-flex align-items-center mb-3">
+			<h1 class="text-dark">
+				Tableau de bord
+				<span class="text-primary">{{user}}</span>
+			</h1>
+			<div class="text-white text-center d-flex bg-dark fs-5 ms-auto shadow p-3 rounded">{{balance}}<i class="bi bi-coin text-warning"></i>
 			</div>
 		</div>
 
-	<div class="text-center my-3">
-		<p>Vous souhaitez pouvoir organiser vos propres covoiturages ? Devenez un driver pour
-			<span class="text-dark">EcoRide</span>
-			dès maintenant !</p>
-		<a href="{{path('become_driver')}}" class="btn btn-primary">Devenir un driver</a>
-	</div>
+		<div class="list-group mb-4">
+			<div class="fw-bold text-uppercase small text-dark px-3 py-2 border border-bottom-0 rounded-top">Passager</div>
+			<a class="list-group-item" href="{{path('app_driver_dashboard_bookings')}}">Mes réservations</a>
+		</div>
 
-	<hr>
-	{% if participations_active|length > 0 %}
+		<div class="text-center my-3">
+			<p>Vous souhaitez pouvoir organiser vos propres covoiturages ? Devenez un driver pour
+				<span class="text-dark">EcoRide</span>
+				dès maintenant !</p>
+			<a href="{{path('become_driver')}}" class="btn btn-primary">Devenir un driver</a>
+		</div>
+
+		{% if participations_active|length > 0 %}
+			<hr>
+			<section class="mb-3">
+				<h3 class="text-primary">
+					<i class="bi bi-exclamation-circle-fill text-danger me-2"></i>
+					{{ participations_active|length > 1 ? 'Voyages' : 'Voyage'}}
+					en cours en tant que passager :
+				</h3>
+				<div class="accordion shadow-sm mt-3" id="active_participations">
+					{% for participation in participations_active %}
+						{% set ride = participation.ride %}
+						{% set statusContent = '' %}
+						{% if participation.status == 'active' %}
+							{% set statusContent = 'En cours...' %}
+							{% set statusNotif = false %}
+						{% else %}
+							{% set statusContent = 'Veuillez confirmer si tout s\'est bien passé.' %}
+							{% set statusNotif = true %}
+						{% endif %}
+						
+						{% set dynamic_block %}
+						{% if participation.status == 'active' %}
+							<div class="row justify-content-center">
+								<div class="text-primary col col-md-8">
+									<p class="text-secondary"><i class="bi bi-info-circle me-2"></i>Merci de bien vouloir attendre que le trajet soit terminé à la suite de quoi le chauffeur validera l'arrivé du covoiturage. Un mail vous sera ensuite envoyé pour confirmer que tout s'est bien passé.</p>                        
+								</div>
+							</div>
+						{% else %}
+							<div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                                <form method="post" action="{{ path('participations_valid_ride', {id: participation.id}) }}" onsubmit="return confirm('En validant le bon déroulement du trajet, vous confirmez qu’aucun problème n’a eu lieu. Confirmer ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('valid_ride' ~ participation.id) }}">
+                                    <button class="btn btn-outline-success w-100" type="submit">
+                                        <i class="bi bi-check-circle me-2"></i>Trajet OK
+                                    </button>
+                                </form>
+                                <form method="post" action="{{ path('participations_report', {id: participation.id}) }}" onsubmit="return confirm('Souhaitez-vous signaler un problème sur ce trajet ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('report' ~ participation.id) }}">
+                                    <button class="btn btn-outline-danger w-100" type="submit">
+                                        <i class="bi bi-exclamation-octagon me-2"></i>Signaler un souci
+                                    </button>
+                                </form>
+                            </div>
+						{% endif %}
+						{% endset %}
+
+						{% include 'components/dashboard/_ride_accordion.html.twig' with {
+					    ride: ride,
+					    loop_index: 'active' ~ loop.index,
+						accordion_id: '#active_participations',
+						open_first: true,
+					    status_color: 'primary',
+					    status_message: statusContent,
+					    ratings_by_driver: ratings_by_driver[ride.driver.id],
+					    dynamic_block: dynamic_block,
+					    status_notif: statusNotif
+					} %}
+					{% endfor %}
+				</div>
+			</section>
+		{% endif %}
+	{# {% if participations_active|length > 0 %}
 			<hr>
 			<div class="mb-3">
 				<h3 class="text-primary">
@@ -76,9 +134,9 @@
 			</div>
 		</div>
 		<hr>
-	{% endif %}
+	{% endif %} #}
 
-	<div class="mb-3">
+	{# <div class="mb-3">
 		<h3 class="text-primary">Covoiturages prévus :
 			<span class="text-secondary">{{participations_pending|length}}</span>
 		</h3>
@@ -91,11 +149,11 @@
 					{% if participation.status == 'pending' %}
 						{% set statusColor = 'warning' %}
 						{% set statusContent = 'Votre réservation n\'a pas encore été acceptée par ' ~ ride.driver.pseudo %}
-					{% elseif participation.status == 'confirmed' %}
-						{% set statusColor = 'success'%}
-						{% set statusContent = 'Votre réservation a été acceptée par ' ~ ride.driver.pseudo %}
-					{% endif %}
-					{% set dynamic_block %}
+						{% elseif participation.status == 'confirmed' %}
+							{% set statusColor = 'success'%}
+							{% set statusContent = 'Votre réservation a été acceptée par ' ~ ride.driver.pseudo %}
+						{% endif %}
+						{% set dynamic_block %}
 						<div>
 							<form method="post" action="{{ path('participations_canceled', {id: participation.id}) }}" onsubmit="return confirm('Confirmez l\'annulation ?');">
 								<input type="hidden" name="_token" value="{{ csrf_token('canceled' ~ participation.id) }}">
@@ -104,9 +162,9 @@
 								</div>
 							</form>
 						</div>
-					{% endset %}
+						{% endset %}
 
-					{% include 'components/dashboard/_ride_accordion.html.twig' with {
+						{% include 'components/dashboard/_ride_accordion.html.twig' with {
 						ride: ride,
 						loop_index: 'pending' ~ loop.index,
 						accordion_id: '#next_participations',
@@ -115,14 +173,15 @@
 						ratings_by_driver: ratings_by_driver,
 						dynamic_block: dynamic_block
 					} %}
-					
-				{% endfor %}
-			</div>
-		{% else %}
-			<div class="text-center">
-				<p class="text-center mt-4">Pas de covoiturages prévus</p>
-			</div>
-		{% endif %}
-	</div>
-</main>
+
+					{% endfor %}
+				</div>
+			{% else %}
+				<div class="text-center">
+					<p class="text-center mt-4">Pas de covoiturages prévus</p>
+				</div>
+			{% endif %}
+		</div>
+		#}
+	</main>
 {% endblock %}
