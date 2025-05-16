@@ -4,39 +4,42 @@
 {% endblock %}
 
 {% block body %}
-	<main class="container-xl">
-        <a href="{{path('app_dashboard')}}" class="btn text-dark"><i class="bi bi-arrow-left-circle fs-3"></i></a>
-		<h1 class="text-dark mb-3">Mes réservations</h1>
-        {% set needActionParticipations = participations|filter(p => p.status == 'waiting_passenger_review') %}
-		{% if needActionParticipations|length > 0 %}
-			<section class="mb-3">
-				<h3 class="mb-3 text-primary">
-                    En attente d'action :<span class="badge bg-danger ms-2 {{ needActionParticipations|length > 0 ? '' : 'd-none'}}">
-                        {{ needActionParticipations|length }}
-                    </span>
-                </h3>
-                <p class="text-secondary"><i class="bi bi-info-circle me-2"></i>Merci de bien vouloir nous indiquer si le voyage s'est bien passé.</p>
-				<div class="accordion shadow-sm mt-3" id="needActionParticipations">
-					{% for participation in needActionParticipations %}
+<main class="container-xl">
+	<a href="{{path('app_dashboard')}}" class="btn text-dark">
+		<i class="bi bi-arrow-left-circle fs-3"></i>
+	</a>
+	<h1 class="text-dark mb-3">Mes réservations</h1>
+	{% set needActionParticipations = participations|filter(p => p.status == 'waiting_passenger_review') %}
+	{% if needActionParticipations|length > 0 %}
+		<section class="mb-3">
+			<h3 class="mb-3 text-primary">
+				En attente d'action :<span class="badge bg-danger ms-2 {{ needActionParticipations|length > 0 ? '' : 'd-none'}}">
+					{{ needActionParticipations|length }}
+				</span>
+			</h3>
+			<p class="text-secondary">
+				<i class="bi bi-info-circle me-2"></i>Merci de bien vouloir nous indiquer si le voyage s'est bien passé.</p>
+			<div class="accordion shadow-sm mt-3" id="needActionParticipations">
+				{% for participation in needActionParticipations %}
 
-						{% set dynamic_block %}
-                            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
-                                <form method="post" action="{{ path('participations_valid_ride', {id: participation.id}) }}" onsubmit="return confirm('En validant le bon déroulement du trajet, vous confirmez qu’aucun problème n’a eu lieu. Confirmer ?');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('valid_ride' ~ participation.id) }}">
-                                    <button class="btn btn-outline-success w-100" type="submit">
-                                        <i class="bi bi-check-circle me-2"></i>Trajet OK
-                                    </button>
-                                </form>
-                                <form method="post" action="{{ path('participations_report', {id: participation.id}) }}" onsubmit="return confirm('Souhaitez-vous signaler un problème sur ce trajet ?');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('report' ~ participation.id) }}">
-                                    <button class="btn btn-outline-danger w-100" type="submit">
-                                        <i class="bi bi-exclamation-octagon me-2"></i>Signaler un souci
-                                    </button>
-                                </form>
-                            </div>
-						{% endset %}
+					{% set dynamic_block %}
+					<div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+						<form method="post" action="{{ path('participations_valid_ride', {id: participation.id}) }}" onsubmit="return confirm('En validant le bon déroulement du trajet, vous confirmez qu’aucun problème n’a eu lieu. Confirmer ?');">
+							<input type="hidden" name="_token" value="{{ csrf_token('valid_ride' ~ participation.id) }}">
+							<button class="btn btn-outline-success w-100" type="submit">
+								<i class="bi bi-check-circle me-2"></i>Trajet OK
+							</button>
+						</form>
+						<form method="post" action="{{ path('participations_report', {id: participation.id}) }}" onsubmit="return confirm('Souhaitez-vous signaler un problème sur ce trajet ?');">
+							<input type="hidden" name="_token" value="{{ csrf_token('report' ~ participation.id) }}">
+							<button class="btn btn-outline-danger w-100" type="submit">
+								<i class="bi bi-exclamation-octagon me-2"></i>Signaler un souci
+							</button>
+						</form>
+					</div>
+					{% endset %}
 
-						{% include 'components/dashboard/_ride_accordion.html.twig' with {
+					{% include 'components/dashboard/_ride_accordion.html.twig' with {
                                     ride: participation.ride,
                                     loop_index: 'needActionParticipations' ~ loop.index,
                                     accordion_id: '#needActionParticipations',
@@ -162,6 +165,20 @@
                         {% set dynamic_block %}
                             <div class="text-center text-primary">
                                 <p><i class="bi bi-info-circle me-2"></i>{{statusDescription}}</p>
+                            </div>
+                            {% set existingReview = reviews|filter(r => r.ride.id == participation.ride.id and r.author.id == user.id)|first %}
+                            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                                {% if not existingReview %}
+                                    <div class='text-center'>
+                                        <a href="{{ path('app_review', { id: participation.id }) }}" class="btn btn-outline-primary w-100" type="submit">
+                                        Laisser un avis
+                                        </a>
+                                    </div>
+                                {% else %}
+                                    <div class='text-center text-secondary'>
+                                        <i class="bi bi-check-circle me-2"></i>Avis déjà laissé
+                                    </div>
+                                {% endif %}
                             </div>
                         {% endset %}
 
