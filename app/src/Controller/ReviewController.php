@@ -7,9 +7,11 @@ use App\Entity\Review;
 use App\Form\ReviewType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class ReviewController extends AbstractController
 {
@@ -42,5 +44,41 @@ final class ReviewController extends AbstractController
             'reviewForm' => $form->createView(),
             'participation' => $participation,
         ]);
+    }
+
+    #[Route('/employe/valid-review/{id}', name: 'app_valid_review', methods: ['POST'])]
+    #[IsGranted('ROLE_EMPLOYE')]
+    public function validReview(
+        Review $review,
+        EntityManagerInterface $em,
+        Request $request
+    ): RedirectResponse {
+        $employe = $this->getUser();
+
+        $review->setValidated(true);
+
+        $em->flush();
+
+        $this->addFlash('primary', 'L\'avis a bien été validé.');
+
+        return $this->redirect($request->headers->get('referer'));
+    }
+
+    #[Route('/employe/reject-review/{id}', name: 'app_reject_review', methods: ['POST'])]
+    #[IsGranted('ROLE_EMPLOYE')]
+    public function rejectReview(
+        Review $review,
+        EntityManagerInterface $em,
+        Request $request
+    ): RedirectResponse {
+        $employe = $this->getUser();
+
+        $em->remove($review);
+
+        $em->flush();
+
+        $this->addFlash('primary', 'L\'avis a bien été supprimé.');
+
+        return $this->redirect($request->headers->get('referer'));
     }
 }
