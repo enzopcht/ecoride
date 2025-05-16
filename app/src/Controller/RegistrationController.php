@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\CreditTransaction;
 use App\Entity\User;
 use App\Form\RegistrationType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,7 +17,7 @@ class RegistrationController extends AbstractController
     #[Route('/registration', name: 'app_registration')]
     public function register(
         Request $request,
-        EntityManagerInterface $entityManager,
+        EntityManagerInterface $em,
         UserPasswordHasherInterface $passwordHasher
     ): Response {
         $user = new User();
@@ -29,8 +30,18 @@ class RegistrationController extends AbstractController
             $user->setPassword($hashedPassword);
             $user->setRoles(['ROLE_PASSENGER']);
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $em->persist($user);
+            
+            $transaction = new CreditTransaction();
+            $transaction->setUser($user);
+            $transaction->setRide(NULL);
+            $transaction->setAmount(20);
+            $transaction->setReason('Welcome Bonus');
+            $transaction->setCreatedAt(new \DateTimeImmutable());
+        
+            $em->persist($transaction);
+            
+            $em->flush();
 
             $this->addFlash('success', 'Compte créé avec succès ! Vous pouvez maintenant vous connecter.');
             return $this->redirectToRoute('app_login');
