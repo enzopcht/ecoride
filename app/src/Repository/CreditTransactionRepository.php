@@ -4,17 +4,22 @@ namespace App\Repository;
 
 use App\Entity\CreditTransaction;
 use App\Entity\User;
+use App\Entity\Ride;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @extends ServiceEntityRepository<CreditTransaction>
  */
 class CreditTransactionRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private EntityManagerInterface $em;
+
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $em)
     {
         parent::__construct($registry, CreditTransaction::class);
+        $this->em = $em;
     }
 
     public function calculateUserBalance(User $user): int
@@ -27,5 +32,27 @@ class CreditTransactionRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
 
         return (int) $qb;
+    }
+
+    public function refund() 
+    {
+        
+    }
+
+    /**
+     * Create and persist a credit transaction for a user and ride.
+     */
+    public function createTransaction(User $user, Ride $ride, int $amount, string $reason): CreditTransaction
+    {
+        $transaction = new CreditTransaction();
+        $transaction->setUser($user);
+        $transaction->setRide($ride);
+        $transaction->setAmount($amount);
+        $transaction->setReason($reason);
+        $transaction->setCreatedAt(new \DateTimeImmutable());
+
+        $this->em->persist($transaction);
+
+        return $transaction;
     }
 }

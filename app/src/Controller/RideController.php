@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Ride;
+use App\Repository\CreditTransactionRepository;
 use App\Repository\ParticipationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,7 +15,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/ride', name: 'ride_')]
 class RideController extends AbstractController
 {
-    #[Route('/ride/{id}/complete', name: 'complete', methods: ['POST'])]
+    #[Route('/{id}/complete', name: 'complete', methods: ['POST'])]
     #[IsGranted('ROLE_DRIVER')]
     public function completeRide(
         Ride $ride,
@@ -24,17 +25,17 @@ class RideController extends AbstractController
     ): RedirectResponse {
         $user = $this->getUser();
 
-        if ($ride->getDriver() !== $user) {
+        if ($ride->getDriver() !== $user || $ride->getStatus() !== 'active') {
             throw $this->createAccessDeniedException();
         }
 
-        
+
         $ride->setStatus('completed');
 
-        
+
         $participations = $participationRepository->findBy([
             'ride' => $ride,
-            'status' => 'confirmed',
+            'status' => 'active',
         ]);
 
         foreach ($participations as $participation) {
@@ -47,31 +48,35 @@ class RideController extends AbstractController
 
         return $this->redirect($request->headers->get('referer'));
     }
-    #[Route('/ride/{id}/delete', name: 'delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
     #[IsGranted('ROLE_DRIVER')]
     public function deleteRide(
         Ride $ride,
         ParticipationRepository $participationRepository,
         EntityManagerInterface $em,
+        CreditTransactionRepository $creditTransactionRepository,
         Request $request
     ): RedirectResponse {
         $user = $this->getUser();
 
-        if ($ride->getDriver() !== $user) {
+        if ($ride->getDriver() !== $user || $ride->getStatus() !== 'pending') {
             throw $this->createAccessDeniedException();
         }
 
-        
         $ride->setStatus('canceled');
 
-        
+
         $participations = $participationRepository->findBy([
             'ride' => $ride,
             'status' => ['pending', 'confirmed'],
         ]);
 
-        foreach ($participations as $participation) {
-            $participation->setStatus('canceled');
+        if ($participations) {
+            foreach ($participations as $participation) {
+                $participation->setStatus('rejected');
+                $creditTransactionRepository->createTransaction($participation->getUser(), $ride, $ride->getPrice() - 2, 'Refund');
+                $creditTransactionRepository->createTransaction($participation->getUser(), $ride, 2, 'Commission');
+            }
         }
 
         $em->flush();
@@ -80,19 +85,36 @@ class RideController extends AbstractController
 
         return $this->redirect($request->headers->get('referer'));
     }
-    #[Route('/ride/{id}/start', name: 'start', methods: ['POST'])]
+    #[Route('/{id}/start', name: 'start', methods: ['POST'])]
     #[IsGranted('ROLE_DRIVER')]
     public function startRide(
         Ride $ride,
         EntityManagerInterface $em,
+        ParticipationRepository $participationRepository,
+        CreditTransactionRepository $creditTransactionRepository,
         Request $request
     ): RedirectResponse {
         $user = $this->getUser();
 
-        if ($ride->getDriver() !== $user) {
+        if ($ride->getDriver() !== $user || $ride->getStatus() !== 'pending') {
             throw $this->createAccessDeniedException();
         }
         $ride->setStatus('active');
+        $participations = $participationRepository->findBy([
+            'ride' => $ride,
+            'status' => ['confirmed', 'pending'],
+        ]);
+
+        foreach ($participations as $participation) {
+            if ($participation->getStatus() === 'confirmed') {
+                $participation->setStatus('active');
+            } else {
+                $participation->setStatus('rejected');
+
+                $creditTransactionRepository->createTransaction($participation->getUser(), $ride, $ride->getPrice() - 2, 'Refund');
+                $creditTransactionRepository->createTransaction($participation->getUser(), $ride, 2, 'Commission');
+            }
+        }
 
         $em->flush();
 

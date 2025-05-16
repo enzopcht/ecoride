@@ -31,6 +31,7 @@ final class MyBookingsController extends AbstractController
         ]);
 
         $participations = $participationRepository->findBy(['user' => $user]);
+        $ratingsByDriver = [];
         foreach ($participations as $participation) {
             $driver = $participation->getRide()->getDriver();
             $driverId = $driver->getId();

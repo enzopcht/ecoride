@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\CreditTransaction;
 use App\Entity\Participation;
 use App\Entity\Ride;
 use App\Repository\CreditTransactionRepository;
@@ -21,15 +20,14 @@ class ParticipationController extends AbstractController
         Ride $ride,
         EntityManagerInterface $em,
         CreditTransactionRepository $transactionRepository,
-        ): RedirectResponse
-    {
+    ): RedirectResponse {
         $user = $this->getUser();
-        
+
         if (!$this->getUser()) {
             $this->addFlash('warning', 'Vous devez être connecté pour réserver un trajet.');
             return $this->redirectToRoute('app_login');
         }
-        
+
         if (
             !$this->isGranted('ROLE_PASSENGER') &&
             !$this->isGranted('ROLE_DRIVER')
@@ -43,30 +41,15 @@ class ParticipationController extends AbstractController
         if ($ride->getSeatsAvailable() <= 0) {
             $this->addFlash('danger', 'Ce trajet est complet.');
             return $this->redirect($request->headers->get('referer'));
-        } 
+        }
         $balance = $transactionRepository->calculateUserBalance($this->getUser());
         if ($ride->getPrice() > $balance) {
             $this->addFlash('danger', 'Vous n\'avez pas assez de jetons.');
             return $this->redirect($request->headers->get('referer'));
         }
-        
-        $transaction = new CreditTransaction();
-        $transaction->setUser($user);
-        $transaction->setRide($ride);
-        $transaction->setAmount(-($ride->getPrice() - 2));
-        $transaction->setReason('Booking a trip');
-        $transaction->setCreatedAt(new \DateTimeImmutable());
-        
-        $em->persist($transaction);
-        
-        $transactionCommission = new CreditTransaction();
-        $transactionCommission->setUser($user);
-        $transactionCommission->setRide($ride);
-        $transactionCommission->setAmount(-2);
-        $transactionCommission->setReason('Commmission EcoRide');
-        $transactionCommission->setCreatedAt(new \DateTimeImmutable());
 
-        $em->persist($transactionCommission);
+        $transactionRepository->createTransaction($user, $ride, - ($ride->getPrice() - 2), 'Booking a trip');
+        $transactionRepository->createTransaction($user, $ride, - 2, 'Commmission');
 
         $participation = new Participation();
         $participation->setUser($user);
@@ -74,12 +57,10 @@ class ParticipationController extends AbstractController
         $participation->setStatus('pending');
         $participation->setCreditsUsed($ride->getPrice());
 
-        $ride->setSeatsAvailable($ride->getSeatsAvailable() - 1);
-        
         $em->persist($participation);
         $em->flush();
 
-        $this->addFlash('success', 'Votre réservation a bien été prise en compte, retrouvez là dans vos réservations.');
+        $this->addFlash('success', 'Votre réservation a bien été prise en compte, Le chauffeur doit la valider.');
 
         return $this->redirect($request->headers->get('referer'));
     }
@@ -87,9 +68,9 @@ class ParticipationController extends AbstractController
     public function canceled(
         Request $request,
         Participation $participation,
+        CreditTransactionRepository $creditTransactionRepository,
         EntityManagerInterface $em
-        ): RedirectResponse
-    {
+    ): RedirectResponse {
         $user = $this->getUser();
 
         if (
@@ -99,12 +80,25 @@ class ParticipationController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        if ($participation->getUser() !== $user) {
+        if (
+            $participation->getUser() !== $user ||
+            $participation->getRide()->getStatus() !== 'pending' ||
+            !in_array($participation->getStatus(), ['pending', 'confirmed'], true)
+        ) {
             throw $this->createAccessDeniedException();
         }
 
+        $ride = $participation->getRide();
+        
+        if ($participation->getStatus() === 'confirmed') {
+            $ride->setSeatsAvailable($ride->getSeatsAvailable() + 1);
+        }
+
         $participation->setStatus('canceled');
-        //rembourser
+
+
+        $creditTransactionRepository->createTransaction($participation->getUser(), $ride, $ride->getPrice() - 2, 'Refund');
+        $creditTransactionRepository->createTransaction($participation->getUser(), $ride, 2, 'Commission');
         $em->flush();
 
         $this->addFlash('success', 'Votre réservation a bien été annulée.');
@@ -116,8 +110,7 @@ class ParticipationController extends AbstractController
         Participation $participation,
         EntityManagerInterface $em,
         Request $request,
-        ): RedirectResponse
-    {
+    ): RedirectResponse {
         $user = $this->getUser();
 
         if (
@@ -127,11 +120,18 @@ class ParticipationController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        if ($participation->getRide()->getDriver() !== $user) {
+        if ($participation->getRide()->getDriver() !== $user ||  $participation->getStatus() !== 'pending') {
             throw $this->createAccessDeniedException();
         }
 
+        $ride = $participation->getRide();
         $participation->setStatus('confirmed');
+        if ($ride->getSeatsAvailable() > 0) {
+            $ride->setSeatsAvailable($ride->getSeatsAvailable() - 1);
+        } else {
+            $this->addFlash('danger', 'Vous n\'avez plus de place disponible sur ce trajet. cette réservation a été refusée');
+            return $this->redirect($request->headers->get('referer'));
+        }
         $em->flush();
 
         $this->addFlash('success', 'La réservation a été acceptée.');
@@ -142,9 +142,9 @@ class ParticipationController extends AbstractController
     public function reject(
         Participation $participation,
         EntityManagerInterface $em,
+        CreditTransactionRepository $creditTransactionRepository,
         Request $request,
-        ): RedirectResponse
-    {
+    ): RedirectResponse {
         $user = $this->getUser();
 
         if (
@@ -154,12 +154,16 @@ class ParticipationController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        if ($participation->getRide()->getDriver() !== $user) {
+        if ($participation->getRide()->getDriver() !== $user || $participation->getStatus() !== 'pending') {
             throw $this->createAccessDeniedException();
         }
 
+        $ride = $participation->getRide();
         $participation->setStatus('rejected');
-        //rembourser
+
+        $creditTransactionRepository->createTransaction($participation->getUser(), $ride, $ride->getPrice() - 2, 'Refund');
+        $creditTransactionRepository->createTransaction($participation->getUser(), $ride, 2, 'Commission');
+
         $em->flush();
 
         $this->addFlash('danger', 'La demande de réservation a été rejetée.');
@@ -170,9 +174,9 @@ class ParticipationController extends AbstractController
     public function validRide(
         Participation $participation,
         EntityManagerInterface $em,
+        CreditTransactionRepository $creditTransactionRepository,
         Request $request,
-        ): RedirectResponse
-    {
+    ): RedirectResponse {
         $user = $this->getUser();
 
         if (
@@ -182,15 +186,19 @@ class ParticipationController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        if ($participation->getUser() !== $user) {
+        if ($participation->getUser() !== $user || $participation->getStatus() !== 'waiting_passenger_review') {
             throw $this->createAccessDeniedException();
         }
 
         $participation->setStatus('validated');
-        //déclencher paiement
+
+        $ride = $participation->getRide();
+
+        $creditTransactionRepository->createTransaction($ride->getDriver(), $ride, $ride->getPrice() - 2, 'Driver payment');
+
         $em->flush();
 
-        $this->addFlash('success', 'Ravi que tout se soit bien passé ! Merci d\'avoir utilisé EcoRide.');
+        $this->addFlash('success', 'Ravi que tout se soit bien passé ! Merci d\'avoir utilisé EcoRide. Vous pouvez laisser un avis au conducteur.');
 
         return $this->redirect($request->headers->get('referer'));
     }
@@ -199,8 +207,7 @@ class ParticipationController extends AbstractController
         Participation $participation,
         EntityManagerInterface $em,
         Request $request,
-        ): RedirectResponse
-    {
+    ): RedirectResponse {
         $user = $this->getUser();
         if (
             !$this->isGranted('ROLE_PASSENGER') &&
@@ -209,7 +216,7 @@ class ParticipationController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        if ($participation->getUser() !== $user) {
+        if ($participation->getUser() !== $user || $participation->getStatus() !== 'waiting_passenger_review') {
             throw $this->createAccessDeniedException();
         }
 
