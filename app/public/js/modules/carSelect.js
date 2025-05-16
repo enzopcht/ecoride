@@ -1,20 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
-	const form = document.querySelector('form[name="vehicle"]') || document.querySelector('form[name="becomeDriverForm"]');
+	// Select form with name containing 'vehicle' or exactly 'become_driver'
+	const form =
+		document.querySelector('form[name*="vehicle"]') ||
+		document.querySelector('form[name="become_driver"]');
 	if (!form) return;
 
-	const plate = form.querySelector('[name$="[plate]"]');
+	// Support nested names like vehicle[plate] or becomeDriverForm[vehicle][plate]
+	const plate = form.querySelector('input[name$="[plate]"]');
 	const errorPlate = document.getElementById('errorPlate');
 
-	const firstRegistrationDate = form.querySelector('[name$="[firstRegistrationDate]"]');
+	const firstRegistrationDate = form.querySelector('input[name$="[firstRegistrationDate]"]');
 	const errorFirstRegistrationDate = document.getElementById('errorFirstRegistrationDate');
 
-	const brandSelect = form.querySelector('[name$="[brand]"]');
+	const brandSelect = form.querySelector('select[name$="[brand]"]');
 	const errorBrandSelect = document.getElementById('errorBrand');
 
-	const modelSelect = form.querySelector('[name$="[model]"]');
+	const modelSelect = form.querySelector('select[name$="[model]"]');
 	const modelWrapper = document.getElementById('model_wrapper');
 
-	const color = form.querySelector('[name$="[color]"]');
+	const color = form.querySelector('select[name$="[color]"]');
 	const errorColor = document.getElementById('errorColor');
 
 	const validateButton = document.getElementById('validate_button');
