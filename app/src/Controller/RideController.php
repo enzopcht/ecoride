@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\CreditTransaction;
 use App\Entity\Ride;
 use App\Repository\ParticipationRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,10 +29,10 @@ class RideController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        
+
         $ride->setStatus('completed');
 
-        
+
         $participations = $participationRepository->findBy([
             'ride' => $ride,
             'status' => 'active',
@@ -61,10 +62,10 @@ class RideController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        
+
         $ride->setStatus('canceled');
 
-        
+
         $participations = $participationRepository->findBy([
             'ride' => $ride,
             'status' => ['pending', 'confirmed'],
@@ -96,11 +97,33 @@ class RideController extends AbstractController
         $ride->setStatus('active');
         $participations = $participationRepository->findBy([
             'ride' => $ride,
-            'status' => ['confirmed'],
+            'status' => ['confirmed', 'pending'],
         ]);
 
         foreach ($participations as $participation) {
-            $participation->setStatus('active');
+            if ($participation->getStatus() === 'confirmed') {
+                $participation->setStatus('active');
+            } else {
+                $participation->setStatus('rejected');
+
+                $transactionRefund = new CreditTransaction();
+                $transactionRefund->setUser($participation->getUser());
+                $transactionRefund->setRide($ride);
+                $transactionRefund->setAmount($ride->getPrice() - 2);
+                $transactionRefund->setReason('Refund');
+                $transactionRefund->setCreatedAt(new \DateTimeImmutable());
+
+                $em->persist($transactionRefund);
+
+                $commissionRefund = new CreditTransaction();
+                $commissionRefund->setUser($participation->getUser());
+                $commissionRefund->setRide($ride);
+                $commissionRefund->setAmount(2);
+                $commissionRefund->setReason('Commission');
+                $commissionRefund->setCreatedAt(new \DateTimeImmutable());
+
+                $em->persist($commissionRefund);
+            }
         }
 
         $em->flush();

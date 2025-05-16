@@ -63,7 +63,7 @@ class ParticipationController extends AbstractController
         $transactionCommission->setUser($user);
         $transactionCommission->setRide($ride);
         $transactionCommission->setAmount(-2);
-        $transactionCommission->setReason('Commmission EcoRide');
+        $transactionCommission->setReason('Commmission');
         $transactionCommission->setCreatedAt(new \DateTimeImmutable());
 
         $em->persist($transactionCommission);
@@ -159,7 +159,26 @@ class ParticipationController extends AbstractController
         }
 
         $participation->setStatus('rejected');
-        //rembourser
+
+        $ride = $participation->getRide();
+        $transactionRefund = new CreditTransaction();
+        $transactionRefund->setUser($participation->getUser());
+        $transactionRefund->setRide($ride);
+        $transactionRefund->setAmount($ride->getPrice() - 2);
+        $transactionRefund->setReason('Refund');
+        $transactionRefund->setCreatedAt(new \DateTimeImmutable());
+
+        $em->persist($transactionRefund);
+
+        $commissionRefund = new CreditTransaction();
+        $commissionRefund->setUser($participation->getUser());
+        $commissionRefund->setRide($ride);
+        $commissionRefund->setAmount(2);
+        $commissionRefund->setReason('Commission');
+        $commissionRefund->setCreatedAt(new \DateTimeImmutable());
+        
+        $em->persist($commissionRefund);
+
         $em->flush();
 
         $this->addFlash('danger', 'La demande de réservation a été rejetée.');
