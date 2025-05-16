@@ -187,7 +187,18 @@ class ParticipationController extends AbstractController
         }
 
         $participation->setStatus('validated');
-        //déclencher paiement
+        
+        $ride = $participation->getRide();
+
+        $transaction = new CreditTransaction();
+        $transaction->setUser($ride->getDriver());
+        $transaction->setRide($ride);
+        $transaction->setAmount($ride->getPrice() - 2);
+        $transaction->setReason('Driver payment');
+        $transaction->setCreatedAt(new \DateTimeImmutable());
+        
+        $em->persist($transaction);
+        
         $em->flush();
 
         $this->addFlash('success', 'Ravi que tout se soit bien passé ! Merci d\'avoir utilisé EcoRide.');

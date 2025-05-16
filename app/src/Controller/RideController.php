@@ -34,7 +34,7 @@ class RideController extends AbstractController
         
         $participations = $participationRepository->findBy([
             'ride' => $ride,
-            'status' => 'confirmed',
+            'status' => 'active',
         ]);
 
         foreach ($participations as $participation) {
@@ -85,6 +85,7 @@ class RideController extends AbstractController
     public function startRide(
         Ride $ride,
         EntityManagerInterface $em,
+        ParticipationRepository $participationRepository,
         Request $request
     ): RedirectResponse {
         $user = $this->getUser();
@@ -93,6 +94,14 @@ class RideController extends AbstractController
             throw $this->createAccessDeniedException();
         }
         $ride->setStatus('active');
+        $participations = $participationRepository->findBy([
+            'ride' => $ride,
+            'status' => ['confirmed'],
+        ]);
+
+        foreach ($participations as $participation) {
+            $participation->setStatus('active');
+        }
 
         $em->flush();
 
