@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\CreditTransaction;
 use App\Entity\Ride;
+use App\Repository\CreditTransactionRepository;
 use App\Repository\ParticipationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,7 +15,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/ride', name: 'ride_')]
 class RideController extends AbstractController
 {
-    #[Route('/ride/{id}/complete', name: 'complete', methods: ['POST'])]
+    #[Route('/{id}/complete', name: 'complete', methods: ['POST'])]
     #[IsGranted('ROLE_DRIVER')]
     public function completeRide(
         Ride $ride,
@@ -25,7 +25,7 @@ class RideController extends AbstractController
     ): RedirectResponse {
         $user = $this->getUser();
 
-        if ($ride->getDriver() !== $user) {
+        if ($ride->getDriver() !== $user || $ride->getStatus() !== 'active') {
             throw $this->createAccessDeniedException();
         }
 
@@ -48,20 +48,20 @@ class RideController extends AbstractController
 
         return $this->redirect($request->headers->get('referer'));
     }
-    #[Route('/ride/{id}/delete', name: 'delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
     #[IsGranted('ROLE_DRIVER')]
     public function deleteRide(
         Ride $ride,
         ParticipationRepository $participationRepository,
         EntityManagerInterface $em,
+        CreditTransactionRepository $creditTransactionRepository,
         Request $request
     ): RedirectResponse {
         $user = $this->getUser();
 
-        if ($ride->getDriver() !== $user) {
+        if ($ride->getDriver() !== $user || $ride->getStatus() !== 'pending') {
             throw $this->createAccessDeniedException();
         }
-
 
         $ride->setStatus('canceled');
 
@@ -71,8 +71,12 @@ class RideController extends AbstractController
             'status' => ['pending', 'confirmed'],
         ]);
 
-        foreach ($participations as $participation) {
-            $participation->setStatus('canceled');
+        if ($participations) {
+            foreach ($participations as $participation) {
+                $participation->setStatus('rejected');
+                $creditTransactionRepository->createTransaction($participation->getUser(), $ride, $ride->getPrice() - 2, 'Refund');
+                $creditTransactionRepository->createTransaction($participation->getUser(), $ride, 2, 'Commission');
+            }
         }
 
         $em->flush();
@@ -81,17 +85,18 @@ class RideController extends AbstractController
 
         return $this->redirect($request->headers->get('referer'));
     }
-    #[Route('/ride/{id}/start', name: 'start', methods: ['POST'])]
+    #[Route('/{id}/start', name: 'start', methods: ['POST'])]
     #[IsGranted('ROLE_DRIVER')]
     public function startRide(
         Ride $ride,
         EntityManagerInterface $em,
         ParticipationRepository $participationRepository,
+        CreditTransactionRepository $creditTransactionRepository,
         Request $request
     ): RedirectResponse {
         $user = $this->getUser();
 
-        if ($ride->getDriver() !== $user) {
+        if ($ride->getDriver() !== $user || $ride->getStatus() !== 'pending') {
             throw $this->createAccessDeniedException();
         }
         $ride->setStatus('active');
@@ -106,23 +111,8 @@ class RideController extends AbstractController
             } else {
                 $participation->setStatus('rejected');
 
-                $transactionRefund = new CreditTransaction();
-                $transactionRefund->setUser($participation->getUser());
-                $transactionRefund->setRide($ride);
-                $transactionRefund->setAmount($ride->getPrice() - 2);
-                $transactionRefund->setReason('Refund');
-                $transactionRefund->setCreatedAt(new \DateTimeImmutable());
-
-                $em->persist($transactionRefund);
-
-                $commissionRefund = new CreditTransaction();
-                $commissionRefund->setUser($participation->getUser());
-                $commissionRefund->setRide($ride);
-                $commissionRefund->setAmount(2);
-                $commissionRefund->setReason('Commission');
-                $commissionRefund->setCreatedAt(new \DateTimeImmutable());
-
-                $em->persist($commissionRefund);
+                $creditTransactionRepository->createTransaction($participation->getUser(), $ride, $ride->getPrice() - 2, 'Refund');
+                $creditTransactionRepository->createTransaction($participation->getUser(), $ride, 2, 'Commission');
             }
         }
 
