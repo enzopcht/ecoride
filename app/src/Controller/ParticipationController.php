@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Participation;
+use App\Entity\Report;
 use App\Entity\Ride;
 use App\Repository\CreditTransactionRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -49,7 +50,7 @@ class ParticipationController extends AbstractController
         }
 
         $transactionRepository->createTransaction($user, $ride, - ($ride->getPrice() - 2), 'Booking a trip');
-        $transactionRepository->createTransaction($user, $ride, - 2, 'Commmission');
+        $transactionRepository->createTransaction($user, $ride, -2, 'Commmission');
 
         $participation = new Participation();
         $participation->setUser($user);
@@ -89,7 +90,7 @@ class ParticipationController extends AbstractController
         }
 
         $ride = $participation->getRide();
-        
+
         if ($participation->getStatus() === 'confirmed') {
             $ride->setSeatsAvailable($ride->getSeatsAvailable() + 1);
         }
@@ -209,22 +210,31 @@ class ParticipationController extends AbstractController
         Request $request,
     ): RedirectResponse {
         $user = $this->getUser();
-        if (
-            !$this->isGranted('ROLE_PASSENGER') &&
-            !$this->isGranted('ROLE_DRIVER')
-        ) {
-            throw $this->createAccessDeniedException();
-        }
 
         if ($participation->getUser() !== $user || $participation->getStatus() !== 'waiting_passenger_review') {
             throw $this->createAccessDeniedException();
         }
 
+        // Récupération de la description
+        $description = $request->request->get('description');
+
+        if (!$description) {
+            $this->addFlash('danger', 'Vous devez fournir une description du problème.');
+            return $this->redirectToRoute('app_my_bookings');
+        }
+
+        $report = new Report();
+        $report->setAuthor($user);
+        $report->setParticipation($participation);
+        $report->setDescription($description);
+        $report->setCreatedAt(new \DateTimeImmutable());
+        $report->setStatus('pending');
+
         $participation->setStatus('disputed');
-        // Faire la révocation
+        $em->persist($report);
         $em->flush();
 
-        $this->addFlash('primary', 'Désolé d\'apprendre qu\'il y a eu un soucis sur votre trajet. Un membre de notre équipe va prendre en main votre problème rapidement.');
+        $this->addFlash('warning', 'Votre signalement a bien été envoyé, un employé va prendre en main la situation et revenir vers vous.');
 
         return $this->redirect($request->headers->get('referer'));
     }
