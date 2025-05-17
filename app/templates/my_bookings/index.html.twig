@@ -20,6 +20,7 @@
 			<p class="text-secondary">
 				<i class="bi bi-info-circle me-2"></i>Merci de bien vouloir nous indiquer si le voyage s'est bien passé.</p>
 			<div class="accordion shadow-sm mt-3" id="needActionParticipations">
+
 				{% for participation in needActionParticipations %}
 
 					{% set dynamic_block %}
@@ -30,12 +31,34 @@
 								<i class="bi bi-check-circle me-2"></i>Trajet OK
 							</button>
 						</form>
-						<form method="post" action="{{ path('participations_report', {id: participation.id}) }}" onsubmit="return confirm('Souhaitez-vous signaler un problème sur ce trajet ?');">
-							<input type="hidden" name="_token" value="{{ csrf_token('report' ~ participation.id) }}">
-							<button class="btn btn-outline-danger w-100" type="submit">
+						<div>
+							<button class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#reportModal-{{ participation.id }}">
 								<i class="bi bi-exclamation-octagon me-2"></i>Signaler un souci
 							</button>
-						</form>
+						</div>
+						<div class="modal fade" id="reportModal-{{ participation.id }}" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<form method="post" action="{{ path('participations_report', { id: participation.id }) }}">
+										<div class="modal-header">
+											<h5 class="modal-title" id="reportModalLabel">Signaler un souci</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+										</div>
+										<div class="modal-body">
+											<div class="mb-3">
+												<label for="description-{{ participation.id }}" class="form-label">Décrivez le problème :</label>
+												<textarea class="form-control" id="description-{{ participation.id }}" name="description" rows="4" required></textarea>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<input type="hidden" name="_token" value="{{ csrf_token('participation_report' ~ participation.id) }}">
+											<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Annuler</button>
+											<button type="submit" class="btn btn-primary">Envoyer le signalement</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
 					</div>
 					{% endset %}
 

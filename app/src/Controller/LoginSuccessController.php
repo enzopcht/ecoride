@@ -19,6 +19,6 @@ class LoginSuccessController extends AbstractController
 
         $this->addFlash('success', "Connexion réussie. Bienvenue sur EcoRide, $pseudo !");
 
-        return $this->redirectToRoute('app_home');
+        return $this->redirectToRoute('app_dashboard');
     }
 }
