@@ -6,6 +6,7 @@ use App\Entity\CreditTransaction;
 use App\Entity\User;
 use App\Form\EmployeType;
 use App\Form\RegistrationType;
+use App\Repository\CreditTransactionRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -20,10 +21,14 @@ final class AdminDashboardController extends AbstractController
 {
     #[Route('/admin/dashboard', name: 'app_dashboard_admin')]
     #[IsGranted('ROLE_ADMIN')]
-    public function admin(): Response
+    public function admin(
+        CreditTransactionRepository $creditTransactionRepository,
+    ): Response
     {
+        $balance = $creditTransactionRepository->calculateEcoRideRevenue();
         return $this->render('dashboard/admin/admin.html.twig', [
             'user' => $this->getUser(),
+            'balance' => $balance,
         ]);
     }
 

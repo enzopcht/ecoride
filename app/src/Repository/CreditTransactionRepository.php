@@ -34,10 +34,20 @@ class CreditTransactionRepository extends ServiceEntityRepository
         return (int) $qb;
     }
 
-    public function refund() 
+    public function calculateEcoRideRevenue(): float
     {
-        
+        $qb = $this->createQueryBuilder('t');
+
+        return $qb
+            ->select('SUM(t.amount) as total')
+            ->where('t.reason = :commission OR t.reason = :commissionRefund')
+            ->setParameter('commission', 'Commission')
+            ->setParameter('commissionRefund', 'Refund Commission')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
+
+
 
     /**
      * Create and persist a credit transaction for a user and ride.
