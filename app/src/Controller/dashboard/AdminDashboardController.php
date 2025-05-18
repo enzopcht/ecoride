@@ -8,6 +8,7 @@ use App\Form\EmployeType;
 use App\Form\RegistrationType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,8 +33,7 @@ final class AdminDashboardController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         UserPasswordHasherInterface $passwordHasher
-    ): Response
-    {
+    ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationType::class, $user);
         $form->handleRequest($request);
@@ -43,6 +43,7 @@ final class AdminDashboardController extends AbstractController
             $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
             $user->setRoles(['ROLE_EMPLOYE']);
+            $user->setSuspended(false);
 
             $em->persist($user);
 
@@ -61,12 +62,57 @@ final class AdminDashboardController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function manageAccounts(
         UserRepository $userRepository,
-    ): Response
-    {
-        $users = $userRepository->findAll();
+        Request $request,
+        PaginatorInterface $paginator,
+    ): Response {
+        $sortUsers = $request->query->get('sortUsers', 'id');
+        $directionUsers = $request->query->get('directionUsers', 'asc');
+
+        $sortEmployes = $request->query->get('sortEmployes', 'id');
+        $directionEmployes = $request->query->get('directionEmployes', 'asc');
+
+        $searchUsers = $request->query->get('searchUsers', '');
+        $searchEmployes = $request->query->get('searchEmployes', '');
+
+        $allowedSorts = ['id', 'pseudo', 'email', 'roles', 'suspended'];
+        if (!in_array($sortUsers, $allowedSorts)) $sortUsers = 'id';
+        if (!in_array($sortEmployes, $allowedSorts)) $sortEmployes = 'id';
+
+        $queryUsers = $userRepository->createQueryBuilder('u')
+            ->where('(u.roles LIKE :role1 OR u.roles LIKE :role2)')
+            ->setParameter('role1', '%ROLE_PASSENGER%')
+            ->setParameter('role2', '%ROLE_DRIVER%');
+
+        if ($searchUsers !== '') {
+            $queryUsers->andWhere('u.pseudo LIKE :searchUsers OR u.email LIKE :searchUsers')
+                ->setParameter('searchUsers', '%'.$searchUsers.'%');
+        }
+
+        $queryUsers->orderBy('u.' . $sortUsers, $directionUsers);
+
+        $queryEmployes = $userRepository->createQueryBuilder('u')
+            ->where('u.roles LIKE :role')
+            ->setParameter('role', '%ROLE_EMPLOYE%');
+
+        if ($searchEmployes !== '') {
+            $queryEmployes->andWhere('u.pseudo LIKE :searchEmployes OR u.email LIKE :searchEmployes')
+                ->setParameter('searchEmployes', '%'.$searchEmployes.'%');
+        }
+
+        $queryEmployes->orderBy('u.' . $sortEmployes, $directionEmployes);
+
+        $users = $paginator->paginate($queryUsers, $request->query->getInt('pageUsers', 1), 5);
+        $employes = $paginator->paginate($queryEmployes, $request->query->getInt('pageEmployes', 1), 5);
 
         return $this->render('dashboard/admin/manage-accounts.html.twig', [
-            'users' => $users
+            'users' => $users,
+            'employes' => $employes,
+            'sortUsers' => $sortUsers,
+            'directionUsers' => $directionUsers,
+            'sortEmployes' => $sortEmployes,
+            'directionEmployes' => $directionEmployes,
+            'searchUsers' => $searchUsers,
+            'searchEmployes' => $searchEmployes,
         ]);
     }
 }

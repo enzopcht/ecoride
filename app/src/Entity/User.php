@@ -95,6 +95,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getMainRole(): string
+    {
+        $roles = $this->getRoles();
+
+        // Priorité : employé > chauffeur > passager
+        if (in_array('ROLE_EMPLOYE', $roles)) return 'EMPLOYE';
+        if (in_array('ROLE_DRIVER', $roles)) return 'CHAUFFEUR';
+        return 'PASSAGER';
+    }
+
     /**
      * @see PasswordAuthenticatedUserInterface
      */

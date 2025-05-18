@@ -60,6 +60,9 @@
             "src/Document/.gitignore"
         ]
     },
+    "knplabs/knp-paginator-bundle": {
+        "version": "v6.8.0"
+    },
     "symfony/console": {
         "version": "7.2",
         "recipe": {
