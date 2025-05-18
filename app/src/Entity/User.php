@@ -38,6 +38,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $pseudo = null;
 
     #[ORM\Column]
+    private ?bool $suspended = null;
+
+    #[ORM\Column]
     private ?\DateTimeImmutable $created_at = null;
 
     public function __construct()
@@ -131,6 +134,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __toString(): string
     {
         return $this->pseudo;
+    }
+
+    public function isSuspended(): ?bool
+    {
+        return $this->suspended;
+    }
+
+    public function setSuspended(bool $suspended): static
+    {
+        $this->suspended = $suspended;
+
+        return $this;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable

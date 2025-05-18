@@ -6,6 +6,7 @@ use App\Entity\CreditTransaction;
 use App\Entity\User;
 use App\Form\EmployeType;
 use App\Form\RegistrationType;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,9 +26,9 @@ final class AdminDashboardController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/dashboard/create-employes', name: 'app_create_employes')]
+    #[Route('/admin/dashboard/create-employee', name: 'app_create_employee')]
     #[IsGranted('ROLE_ADMIN')]
-    public function createEmployes(
+    public function createEmployee(
         Request $request,
         EntityManagerInterface $em,
         UserPasswordHasherInterface $passwordHasher
@@ -51,8 +52,21 @@ final class AdminDashboardController extends AbstractController
             return $this->redirect($request->headers->get('referer'));
         }
 
-        return $this->render('dashboard/admin/create-employes.html.twig', [
+        return $this->render('dashboard/admin/create-employee.html.twig', [
             'registrationForm' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/admin/dashboard/manage-accounts', name: 'app_manage_accounts')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function manageAccounts(
+        UserRepository $userRepository,
+    ): Response
+    {
+        $users = $userRepository->findAll();
+
+        return $this->render('dashboard/admin/manage-accounts.html.twig', [
+            'users' => $users
         ]);
     }
 }

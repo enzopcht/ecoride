@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gérer les comptes - EcoRde
+{% endblock %}
+
+{% block body %}
+
+	<main class="container-xl">
+		<a href="{{path('app_dashboard')}}" class="btn text-dark">
+			<i class="bi bi-arrow-left-circle fs-3"></i>
+		</a>
+		<h1 class="text-dark">Gérer les comptes</h1>
+
+		<section class="mt-3">
+			<h2>Employés</h2>
+			<div class="table-responsive">
+				<table class="table mt-3">
+					<thead>
+						<tr>
+							<th class="text-dark" scope="col">Id</th>
+							<th class="text-dark" scope="col">Pseudo</th>
+							<th class="text-dark" scope="col">Email</th>
+							<th class="text-dark" scope="col"></th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for user in users %}
+							{% if 'ROLE_EMPLOYE' in user.roles %}
+								<tr>
+									<th class="text-primary" scope="row">{{user.id}}</th>
+									<td>{{ user.pseudo }}</td>
+									<td>{{ user.email }}</td>
+									<td></td>
+								</tr>
+							{% endif %}
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<hr>
+
+		<section class="mt-3">
+			<h2>Utilisateur</h2>
+			<div class="table-responsive">
+				<table class="table mt-3">
+					<thead>
+						<tr>
+							<th class="text-dark" scope="col">Id</th>
+							<th class="text-dark" scope="col">Pseudo</th>
+							<th class="text-dark" scope="col">Email</th>
+							<th class="text-dark" scope="col">Rôle</th>
+							<th class="text-dark" scope="col"></th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for user in users %}
+							{% if 'ROLE_PASSENGER' in user.roles or 'ROLE_DRIVER' in user.roles %}
+								<tr>
+									<th class="text-primary" scope="row">{{user.id}}</th>
+									<td>{{ user.pseudo }}</td>
+									<td>{{ user.email }}</td>
+									<td class="{{ 'ROLE_DRIVER' in user.roles ? 'text-primary' : '' }}">{{ 'ROLE_DRIVER' in user.roles ? 'Chauffeur' : 'Passager' }}</td>
+									<td>
+										<div class="d-flex justify-content-evenly">
+											{% if user.suspended == false %}
+                                                <form method="POST" action="{{path('user_suspend', {id: user.id }) }}">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('user_suspend_' ~ user.id) }}">
+                                                    <button type="submit" class="btn btn-warning">
+                                                        Suspendre
+                                                    </button>
+                                                </form>
+                                            {% else %}
+                                                <form method="POST" action="{{path('user_reactivate', {id: user.id }) }}">
+												<input type="hidden" name="_token" value="{{ csrf_token('user_reactivate_' ~ user.id) }}">
+												<button type="submit" class="btn btn-dark">
+													Réactiver
+												</button>
+											</form>
+                                            {% endif %}
+										</div>
+									</td>
+								</tr>
+							{% endif %}
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</section>
+	</main>
+{% endblock %}
