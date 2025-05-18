@@ -6,6 +6,8 @@ use App\Entity\Ride;
 use App\Repository\CreditTransactionRepository;
 use App\Repository\ParticipationRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +23,8 @@ class RideController extends AbstractController
         Ride $ride,
         ParticipationRepository $participationRepository,
         EntityManagerInterface $em,
-        Request $request
+        Request $request,
+        MailerInterface $mailer
     ): RedirectResponse {
         $user = $this->getUser();
 
@@ -40,6 +43,17 @@ class RideController extends AbstractController
 
         foreach ($participations as $participation) {
             $participation->setStatus('waiting_passenger_review');
+
+            $email = (new Email())
+                ->from('noreply@ecoride.fr')
+                ->to($participation->getUser()->getEmail())
+                ->subject('Votre trajet est terminé – Confirmez son bon déroulé !')
+                ->html($this->renderView('emails/review_request.html.twig', [
+                    'user' => $participation->getUser(),
+                    'ride' => $ride,
+                ]));
+
+            $mailer->send($email);
         }
 
         $em->flush();
