@@ -215,12 +215,12 @@ class ParticipationController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        // Récupération de la description
+        
         $description = $request->request->get('description');
 
         if (!$description) {
             $this->addFlash('danger', 'Vous devez fournir une description du problème.');
-            return $this->redirectToRoute('app_my_bookings');
+            return $this->redirect($request->headers->get('referer'));
         }
 
         $report = new Report();
