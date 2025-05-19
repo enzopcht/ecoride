@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Form\EmployeType;
 use App\Form\RegistrationType;
 use App\Repository\CreditTransactionRepository;
+use App\Repository\RideRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -23,12 +24,24 @@ final class AdminDashboardController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function admin(
         CreditTransactionRepository $creditTransactionRepository,
-    ): Response
-    {
+        RideRepository $rideRepository,
+    ): Response {
+        $ridesPerDay = $rideRepository->countRidesGroupedByDay();
+        $labelsRide = array_column($ridesPerDay, 'date');
+        $dataRide = array_column($ridesPerDay, 'count');
+
+        $creditsPerDay = $creditTransactionRepository->countCreditsGroupedByDay();
+        $labelsCredit = array_column($creditsPerDay, 'date');
+        $dataCredit = array_column($creditsPerDay, 'amount');
+
         $balance = $creditTransactionRepository->calculateEcoRideRevenue();
         return $this->render('dashboard/admin/admin.html.twig', [
             'user' => $this->getUser(),
             'balance' => $balance,
+            'rideLabels' => $labelsRide,
+            'rideCounts' => $dataRide,
+            'creditLabels' => $labelsCredit,
+            'creditCounts' => $dataCredit,
         ]);
     }
 
@@ -90,7 +103,7 @@ final class AdminDashboardController extends AbstractController
 
         if ($searchUsers !== '') {
             $queryUsers->andWhere('u.pseudo LIKE :searchUsers OR u.email LIKE :searchUsers')
-                ->setParameter('searchUsers', '%'.$searchUsers.'%');
+                ->setParameter('searchUsers', '%' . $searchUsers . '%');
         }
 
         $queryUsers->orderBy('u.' . $sortUsers, $directionUsers);
@@ -101,7 +114,7 @@ final class AdminDashboardController extends AbstractController
 
         if ($searchEmployes !== '') {
             $queryEmployes->andWhere('u.pseudo LIKE :searchEmployes OR u.email LIKE :searchEmployes')
-                ->setParameter('searchEmployes', '%'.$searchEmployes.'%');
+                ->setParameter('searchEmployes', '%' . $searchEmployes . '%');
         }
 
         $queryEmployes->orderBy('u.' . $sortEmployes, $directionEmployes);

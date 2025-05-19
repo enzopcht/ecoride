@@ -65,4 +65,44 @@ class CreditTransactionRepository extends ServiceEntityRepository
 
         return $transaction;
     }
+
+    public function countCreditsGroupedByDay(): array
+    {
+        $credits = $this->createQueryBuilder('t')
+            ->select('t.created_at, t.amount, t.reason')
+            ->where('t.reason = :commission OR t.reason = :commissionRefund')
+            ->setParameter('commission', 'Commission')
+            ->setParameter('commissionRefund', 'Refund Commission')
+            ->getQuery()
+            ->getResult();
+
+            
+            $grouped = [];
+            $formatter = new \IntlDateFormatter('fr_FR', \IntlDateFormatter::NONE, \IntlDateFormatter::NONE, null, null, 'd MMM');
+            
+            foreach ($credits as $credit) {
+                /** @var \DateTimeInterface $date */
+                $date = $credit['created_at'];
+                $day = $formatter->format($date);
+                
+                if (!isset($grouped[$day])) {
+                    $grouped[$day] = 0;
+                }
+                
+                $grouped[$day] += ($credit['reason'] === 'Commission' ? 2 : -2);
+            }
+            
+
+        $result = [];
+        $today = new \DateTimeImmutable();
+        for ($i = 6; $i >= 0; $i--) {
+            $day = $formatter->format($today->modify("-$i days"));
+            $result[] = [
+                'date' => $day,
+                'amount' => $grouped[$day] ?? 0,
+            ];
+        }
+
+        return $result;
+    }
 }

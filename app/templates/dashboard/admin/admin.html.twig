@@ -35,7 +35,32 @@
 		</div>
 
 		<hr>
-			<section></section>
-		</main>
-
+		<section class="mb-3">
+			<h2 class="text-primary mb-3">Nombre de trajet par jour :</h2>
+			<div class="row justify-content-md-center">
+				<div class="col-12 col-md-10">
+					<div class="border p-2 rounded">
+						<canvas id="ridesChart" data-labels="{{ rideLabels|json_encode }}" data-data="{{ rideCounts|json_encode }}" height="150"></canvas>
+					</div>
+				</div>
+			</div>
+		</section>
+		<hr>
+		<section class="mb-3">
+			<h2 class="text-primary mb-3">Nombre de crédits gagné par jour :</h2>
+			<div class="row justify-content-md-center">
+				<div class="col-12 col-md-10">
+					<div class="border p-2 rounded">
+						<canvas id="creditsChart" data-labels="{{ creditLabels|json_encode }}" data-data="{{ creditCounts|json_encode }}" height="150"></canvas>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+	{% block javascripts %}
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script src="/js/charts/chart-ride.js"></script>
+		<script src="/js/charts/chart-credits.js"></script>
 	{% endblock %}
+
+{% endblock %}

@@ -63,18 +63,36 @@ class RideRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
-    
-    // public function findDriverRidesByStatuses(User $driver, array $rideStatuses):array
-    //     {
-    //         $now = new \DateTime();
-    
-    //         return $this->createQueryBuilder('r')
-    //             ->andWhere('r.driver = :driver')
-    //             ->andWhere('r.status IN (:ride_statuses)')
-    //             ->setParameter('driver', $driver)
-    //             ->setParameter('ride_statuses', $rideStatuses)
-    //             ->orderBy('r.departure_time', 'ASC')
-    //             ->getQuery()
-    //             ->getResult();
-    //     }
+
+    public function countRidesGroupedByDay(): array
+    {
+        $rides = $this->createQueryBuilder('r')
+            ->select('r.departure_time')
+            ->getQuery()
+            ->getResult();
+
+        $grouped = [];
+        foreach ($rides as $ride) {
+            /** @var \DateTimeInterface $date */
+            $date = $ride['departure_time'];
+            $formatter = new \IntlDateFormatter('fr_FR', \IntlDateFormatter::NONE, \IntlDateFormatter::NONE, null, null, 'd MMM');
+            $day = $formatter->format($date);
+            if (!isset($grouped[$day])) {
+                $grouped[$day] = 0;
+            }
+            $grouped[$day]++;
+        }
+
+        $result = [];
+        $today = new \DateTimeImmutable();
+        for ($i = 6; $i >= 0; $i--) {
+            $day = $formatter->format($today->modify("-$i days"));
+            $result[] = [
+                'date' => $day,
+                'count' => $grouped[$day] ?? 0,
+            ];
+        }
+
+        return $result;
+    }
 }
