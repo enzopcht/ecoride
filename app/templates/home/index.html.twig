@@ -12,7 +12,8 @@
 		</div>
 	{% endfor %}
 
-	<div id="hero" class="gradient pb-3 mb-2">
+	<div id="hero" class="position-relative mb-3">
+		<div class="gradient"></div>
 		<div class="box-hero">
 			<h1 class="text-white text-center col-10 mx-auto py-4">
 				<span class="fw-bold">EcoRide</span>
@@ -21,26 +22,26 @@
 				{{ form_start(searchForm, {
 			    'action': path('app_search_results'),
 			    'method': 'POST',
-			    'attr': {'class': 'row g-3 justify-content-center'}
+			    'attr': {'class': 'row gap-3 justify-content-center'}
 			}) }}
-				<div class="col-12 col-lg-3">
+				<div class="col-10 col-lg-3 position-relative p-0">
 					{{ form_label(searchForm.departure) }}
 					{{ form_widget(searchForm.departure, {'attr': {'class': 'form-control' }}) }}
 					<div class="suggestion-box w-100">
 						<ul id="departure_suggestions" class="list-group"></ul>
 					</div>
 				</div>
-				<div class="col-12 col-lg-3">
+				<div class="col-10 col-lg-3 position-relative p-0">
 					{{ form_label(searchForm.arrival) }}
 					{{ form_widget(searchForm.arrival, {'attr': {'class': 'form-control' }}) }}
 					<div class="suggestion-box w-100">
 						<ul id="arrival_suggestions" class="list-group"></ul>
 					</div>
 				</div>
-				<div class="col-12 col-lg-3">
+				<div class="col-10 col-lg-3 p-0">
 					{{ form_row(searchForm.date) }}
 				</div>
-				<div class="text-center col-lg-2 align-self-end">
+				<div class="text-center col-10 col-lg-2 align-self-end p-0">
 					{{ form_row(searchForm.rechercher, {'attr': {'class': 'btn btn-primary w-100'}}) }}
 				</div>
 				{{ form_end(searchForm) }}
@@ -51,7 +52,7 @@
 
 	<main class="container-xl">
 
-		<article id="who-we-are" class=" mb-4">
+		<section id="who-we-are" class=" mb-4">
 			<h2 class="text-center text-primary mb-3">Qui sommes nous ?
 			</h2>
 			<div class="row align-items-center">
@@ -61,8 +62,7 @@
 				</div>
 
 				<div class="col-12 col-lg-8 order-lg-1 text-body-tertiary">
-					<p>EcoRide est une plateforme de covoiturage écoresponsable conçue pour rendre les déplacements plus durables et accessibles à tous.
-																														                    Nous mettons en relation des conducteurs et des passagers partageant un même trajet, avec un objectif clair : réduire les émissions de CO₂ et favoriser une mobilité plus économique et écologique.</p>
+					<p>EcoRide est une plateforme de covoiturage écoresponsable conçue pour rendre les déplacements plus durables et accessibles à tous. Nous mettons en relation des conducteurs et des passagers partageant un même trajet, avec un objectif clair : réduire les émissions de CO₂ et favoriser une mobilité plus économique et écologique.</p>
 					<h3 class="text-primary fs-3 mb-2">Nos valeurs</h3>
 					<ul>
 						<li class="mb-3">
@@ -78,9 +78,9 @@
 				</div>
 
 			</div>
-		</article>
+		</section>
 
-		<article class=" mb-4">
+		<section class=" mb-4">
 			<h2 class="text-center text-primary mb-3">Pourquoi choisir EcoRide ?</h2>
 			<div class="row align-items-center">
 
@@ -103,7 +103,7 @@
 				</div>
 
 			</div>
-		</article>
+		</section>
 
 	</main>
 	{% block javascripts %}

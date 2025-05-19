@@ -88,9 +88,14 @@
 }
 
 .gradient {
-  min-height: 320px;
+  height: 320px;
   background: -webkit-gradient(linear, left top, left bottom, from(#2196F3), to(#64B5F6));
   background: linear-gradient(#2196F3, #64B5F6);
+  position: absolute;
+  width: 100%;
+  z-index: 0;
+  top: 0;
+  left: 0;
 }
 .gradient h1 {
   font-size: 22px;
@@ -99,6 +104,11 @@
   .gradient h1 {
     font-size: 36px;
   }
+}
+
+.box-hero {
+  min-height: 320px;
+  position: relative;
 }
 
 .line {
@@ -189,11 +199,14 @@ article ul {
   color: white;
 }
 
-.suggestion-container {
+.position-relative {
   position: relative;
 }
-.suggestion-container .suggestion-box {
+
+.suggestion-box {
   position: absolute;
+  z-index: 1050;
+  cursor: pointer;
 }
 
 .star {
