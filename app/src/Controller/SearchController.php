@@ -22,14 +22,16 @@ final class SearchController extends AbstractController
     }
 
     #[Route('/search/results', name: 'app_search_results', methods: ['GET', 'POST'])]
-    public function results(Request $request, RideRepository $rideRepository): Response
+    public function results(
+        Request $request,
+        RideRepository $rideRepository
+        ): Response
     {
         $form = $this->createForm(SearchRideType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-        
             if ($data['date'] < (new \DateTime())->setTime(0, 0)) {
                 $this->addFlash('warning', 'Impossible de rechercher un trajet dans le passé.');
                 return $this->redirectToRoute('app_search');
@@ -41,9 +43,11 @@ final class SearchController extends AbstractController
                 $data['date']
             );
 
-            $rides = $rideRepository->findRidesBySearchData($data['departure'], $data['arrival'], $data['date']);
-
-            $alternateRide = $rideRepository->findNextRideAfterDate($data['departure'], $data['arrival'], $data['date']);
+            $alternateRide = $rideRepository->findNextRideAfterDate(
+                $data['departure'],
+                $data['arrival'],
+                $data['date']
+            );
 
             $alternateForm = $this->createForm(SearchRideType::class, [
                 'departure' => $data['departure'],

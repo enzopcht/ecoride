@@ -16,9 +16,15 @@ class SearchRideType extends AbstractType
         $builder
             ->add('departure', TextType::class, [
                 'label' => 'Ville de départ',
+                'attr' => [
+                    'autocomplete' => 'off'
+                ]
             ])
             ->add('arrival', TextType::class, [
                 'label' => 'Ville d\'arrivée',
+                'attr' => [
+                    'autocomplete' => 'off'
+                ]
             ])
             ->add('date', DateType::class, [
                 'label' => 'Date du trajet',

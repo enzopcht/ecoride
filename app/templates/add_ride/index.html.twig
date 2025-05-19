@@ -5,7 +5,7 @@
 
 {% block body %}
 	<main class="container-xl">
-    <div id="liveAlertPlaceholder"></div>
+		<div id="liveAlertPlaceholder"></div>
 		<h1 class="text-dark">Publier un nouveau trajet</h1>
 
 		<div class="container-xl mx-auto">
@@ -14,8 +14,7 @@
 				{{ form_label(addRideForm.departureAddress) }}
 				{{ form_widget(addRideForm.departureAddress, {'attr': {'class': 'form-control', 'aria-describedby': 'addressDepartureHelp'}}) }}
 				<div class="suggestion-box w-100">
-					<ul id="departure_suggestions" class="list-group">
-					</ul>
+					<ul id="departure_suggestions" class="list-group"></ul>
 				</div>
 				<div id="addressDepartureHelp" class="form-text">Merci de renseigner l'adresse au format complet grâce à l'autocomplétion.</div>
 				{% for error in addRideForm.departureAddress.vars.errors %}
@@ -28,9 +27,8 @@
 			<div class="mb-3">
 				{{ form_label(addRideForm.arrivalAddress) }}
 				{{ form_widget(addRideForm.arrivalAddress, {'attr': {'class': 'form-control', 'aria-describedby': 'addressArrivalHelp'}}) }}
-                <div class="suggestion-box w-100">
-					<ul id="arrival_suggestions" class="list-group">
-					</ul>
+				<div class="suggestion-box w-100">
+					<ul id="arrival_suggestions" class="list-group"></ul>
 				</div>
 				<div id="addressArrivalHelp" class="form-text">Merci de renseigner l'adresse au format complet grâce à l'autocomplétion.</div>
 				{% for error in addRideForm.arrivalAddress.vars.errors %}
@@ -75,7 +73,7 @@
 					<div id="errorVehicle" class="text-danger small">{{ error.message }}</div>
 				{% endfor %}
 				<div class="invalid-feedback">
-					Vous devez à minima avoir un siège de libre et pas plus de 8. 
+					Vous devez à minima avoir un siège de libre et pas plus de 8.
 				</div>
 			</div>
 			<div class="mb-3">
@@ -95,5 +93,7 @@
 			{{ form_end(addRideForm) }}
 		</div>
 	</main>
-    <script src="{{ asset('js/modules/autocompleteFormAddress.js') }}"></script>
+	{% block javascripts %}
+		<script src="{{ asset('js/modules/autocompleteFormAddress.js') }}"></script>
+	{% endblock %}
 {% endblock %}

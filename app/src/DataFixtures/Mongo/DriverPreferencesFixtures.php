@@ -4,7 +4,7 @@ namespace App\DataFixtures\Mongo;
 
 use App\Document\DriverPreference;
 use App\Entity\User;
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Bundle\MongoDBBundle\Fixture\Fixture;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -18,8 +18,9 @@ class DriverPreferenceFixtures extends Fixture
         $this->registry = $registry;
     }
 
-    public function load(ObjectManager $manager): void
+    public function load(\Doctrine\Persistence\ObjectManager $manager): void
     {
+        /** @var DocumentManager $manager */
         $entityManager = $this->registry->getManager();
         $users = $entityManager->getRepository(User::class)->findAll();
 
