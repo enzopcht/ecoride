@@ -1,0 +1,196 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gérer les comptes - EcoRde
+{% endblock %}
+
+{% block body %}
+
+	<main class="container-xl">
+		<a href="{{path('app_dashboard')}}" class="btn text-dark">
+			<i class="bi bi-arrow-left-circle fs-3"></i>
+		</a>
+		<h1 class="text-dark">Gérer les comptes</h1>
+
+		<section class="mt-3">
+			<h2 class="text-primary mb-3">Vos employés : </h2>
+			<form method="get" class="mb-3">
+				<div class="input-group">
+					<input type="text" name="searchEmployes" class="form-control" placeholder="Rechercher un employé" value="{{ app.request.query.get('searchEmployes') }}">
+					<button class="btn btn-outline-secondary" type="submit">Rechercher</button>
+				</div>
+			</form>
+			<div class="table-responsive">
+				<table class="table mt-3">
+					<thead>
+						<tr>
+							<th>
+								<a class="text-dark text-decoration-none" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({ sortEmployes: 'id', directionEmployes: sortEmployes == 'id' and directionEmployes == 'asc' ? 'desc' : 'asc', pageEmployes: employes.currentPageNumber })) }}">
+									Id
+									{% if sortEmployes == 'id' %}
+										<i class="bi bi-caret-{{ directionEmployes == 'asc' ? 'up' : 'down' }}-fill"></i>
+									{% endif %}
+								</a>
+							</th>
+							<th>
+								<a class="text-dark text-decoration-none" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({ sortEmployes: 'pseudo', directionEmployes: sortEmployes == 'pseudo' and directionEmployes == 'asc' ? 'desc' : 'asc', pageEmployes: employes.currentPageNumber })) }}">
+									Pseudo
+									{% if sortEmployes == 'pseudo' %}
+										<i class="bi bi-caret-{{ directionEmployes == 'asc' ? 'up' : 'down' }}-fill"></i>
+									{% endif %}
+								</a>
+							</th>
+							<th>
+								<a class="text-dark text-decoration-none" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({ sortEmployes: 'email', directionEmployes: sortEmployes == 'email' and directionEmployes == 'asc' ? 'desc' : 'asc', pageEmployes: employes.currentPageNumber })) }}">
+									Email
+									{% if sortEmployes == 'email' %}
+										<i class="bi bi-caret-{{ directionEmployes == 'asc' ? 'up' : 'down' }}-fill"></i>
+									{% endif %}
+								</a>
+							</th>
+							<th>
+								<a class="text-dark text-decoration-none" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({ sortEmployes: 'suspended', directionEmployes: sortEmployes == 'suspended' and directionEmployes == 'asc' ? 'desc' : 'asc', pageEmployes: employes.currentPageNumber })) }}">
+									Etat
+									{% if sortEmployes == 'suspended' %}
+										<i class="bi bi-caret-{{ directionEmployes == 'asc' ? 'up' : 'down' }}-fill"></i>
+									{% endif %}
+								</a>
+							</th>
+							<th class="text-dark" scope="col"></th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for user in employes %}
+							<tr>
+								<th class="text-primary" scope="row">{{user.id}}</th>
+								<td>{{ user.pseudo }}</td>
+								<td>{{ user.email }}</td>
+								<td class="{{ user.suspended ? 'text-danger' : 'text-success'}}">{{ user.suspended ? 'Suspendu' : 'Non suspendu'}}</td>
+								<td>
+									<div class="d-flex justify-content-evenly">
+										{% if user.suspended == false %}
+											<form method="POST" action="{{path('user_suspend', {id: user.id }) }}">
+												<input type="hidden" name="_token" value="{{ csrf_token('user_suspend_' ~ user.id) }}">
+												<button type="submit" class="btn btn-warning">
+													Suspendre
+												</button>
+											</form>
+										{% else %}
+											<form method="POST" action="{{path('user_reactivate', {id: user.id }) }}">
+												<input type="hidden" name="_token" value="{{ csrf_token('user_reactivate_' ~ user.id) }}">
+												<button type="submit" class="btn btn-dark">
+													Réactiver
+												</button>
+											</form>
+										{% endif %}
+									</div>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				<nav>
+					<ul class="pagination justify-content-center">
+						{% for page in 1..employes.pageCount %}
+							<li class="page-item {{ page == employes.currentPageNumber ? 'active' : '' }}">
+								<a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({ pageEmployes: page })) }}">{{ page }}</a>
+							</li>
+						{% endfor %}
+					</ul>
+				</nav>
+			</div>
+		</section>
+
+		<hr>
+
+		<section class="mt-3">
+			<h2 class="text-primary mb-3">Utilisateur :</h2>
+			<form method="get" class="mb-3">
+				<div class="input-group">
+					<input type="text" name="searchUsers" class="form-control" placeholder="Rechercher un utilisateur" value="{{ app.request.query.get('searchUsers') }}">
+					<button class="btn btn-outline-secondary" type="submit">Rechercher</button>
+				</div>
+			</form>
+			<div class="table-responsive">
+				<table class="table mt-3">
+					<thead>
+						<tr>
+							<th>
+								<a class="text-dark text-decoration-none" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({ sortUsers: 'id', directionUsers: sortUsers == 'id' and directionUsers == 'asc' ? 'desc' : 'asc', pageUsers: users.currentPageNumber })) }}">
+									Id
+									{% if sortUsers == 'id' %}
+										<i class="bi bi-caret-{{ directionUsers == 'asc' ? 'up' : 'down' }}-fill"></i>
+									{% endif %}
+								</a>
+							</th>
+							<th>
+								<a class="text-dark text-decoration-none" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({ sortUsers: 'pseudo', directionUsers: sortUsers == 'pseudo' and directionUsers == 'asc' ? 'desc' : 'asc', pageUsers: users.currentPageNumber })) }}">
+									Pseudo
+									{% if sortUsers == 'pseudo' %}
+										<i class="bi bi-caret-{{ directionUsers == 'asc' ? 'up' : 'down' }}-fill"></i>
+									{% endif %}
+								</a>
+							</th>
+							<th>
+								<a class="text-dark text-decoration-none" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({ sortUsers: 'email', directionUsers: sortUsers == 'email' and directionUsers == 'asc' ? 'desc' : 'asc', pageUsers: users.currentPageNumber })) }}">
+									Email
+									{% if sortUsers == 'email' %}
+										<i class="bi bi-caret-{{ directionUsers == 'asc' ? 'up' : 'down' }}-fill"></i>
+									{% endif %}
+								</a>
+							</th>
+							<th>
+								<a class="text-dark text-decoration-none" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({ sortUsers: 'suspended', directionUsers: sortUsers == 'suspended' and directionUsers == 'asc' ? 'desc' : 'asc', pageUsers: users.currentPageNumber })) }}">
+									Etat
+									{% if sortUsers == 'suspended' %}
+										<i class="bi bi-caret-{{ directionUsers == 'asc' ? 'up' : 'down' }}-fill"></i>
+									{% endif %}
+								</a>
+							</th>
+							<th class="text-dark" scope="col">Rôle</th>
+							<th class="text-dark" scope="col"></th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for user in users %}
+							<tr>
+								<th class="text-primary" scope="row">{{user.id}}</th>
+								<td>{{ user.pseudo }}</td>
+								<td>{{ user.email }}</td>
+								<td class="{{ user.suspended ? 'text-danger' : 'text-success'}}">{{ user.suspended ? 'Suspendu' : 'Non suspendu'}}</td>
+								<td class="{{ 'ROLE_DRIVER' in user.roles ? 'text-primary' : 'text-dark' }}">{{ 'ROLE_DRIVER' in user.roles ? 'Chauffeur' : 'Passager' }}</td>
+								<td>
+									<div class="d-flex justify-content-evenly">
+										{% if user.suspended == false %}
+											<form method="POST" action="{{path('user_suspend', {id: user.id }) }}">
+												<input type="hidden" name="_token" value="{{ csrf_token('user_suspend_' ~ user.id) }}">
+												<button type="submit" class="btn btn-warning">
+													Suspendre
+												</button>
+											</form>
+										{% else %}
+											<form method="POST" action="{{path('user_reactivate', {id: user.id }) }}">
+												<input type="hidden" name="_token" value="{{ csrf_token('user_reactivate_' ~ user.id) }}">
+												<button type="submit" class="btn btn-dark">
+													Réactiver
+												</button>
+											</form>
+										{% endif %}
+									</div>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				<nav>
+					<ul class="pagination justify-content-center">
+						{% for page in 1..users.pageCount %}
+							<li class="page-item {{ page == users.currentPageNumber ? 'active' : '' }}">
+								<a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({ pageUsers: page })) }}">{{ page }}</a>
+							</li>
+						{% endfor %}
+					</ul>
+				</nav>
+			</div>
+		</section>
+	</main>
+{% endblock %}

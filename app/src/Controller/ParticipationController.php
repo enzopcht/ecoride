@@ -99,7 +99,7 @@ class ParticipationController extends AbstractController
 
 
         $creditTransactionRepository->createTransaction($participation->getUser(), $ride, $ride->getPrice() - 2, 'Refund');
-        $creditTransactionRepository->createTransaction($participation->getUser(), $ride, 2, 'Commission');
+        $creditTransactionRepository->createTransaction($participation->getUser(), $ride, 2, 'Refund Commission');
         $em->flush();
 
         $this->addFlash('success', 'Votre réservation a bien été annulée.');
@@ -163,7 +163,7 @@ class ParticipationController extends AbstractController
         $participation->setStatus('rejected');
 
         $creditTransactionRepository->createTransaction($participation->getUser(), $ride, $ride->getPrice() - 2, 'Refund');
-        $creditTransactionRepository->createTransaction($participation->getUser(), $ride, 2, 'Commission');
+        $creditTransactionRepository->createTransaction($participation->getUser(), $ride, 2, 'Refund Commission');
 
         $em->flush();
 

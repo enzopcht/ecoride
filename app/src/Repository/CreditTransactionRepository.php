@@ -34,10 +34,20 @@ class CreditTransactionRepository extends ServiceEntityRepository
         return (int) $qb;
     }
 
-    public function refund() 
+    public function calculateEcoRideRevenue(): float
     {
-        
+        $qb = $this->createQueryBuilder('t');
+
+        return $qb
+            ->select('SUM(t.amount) as total')
+            ->where('t.reason = :commission OR t.reason = :commissionRefund')
+            ->setParameter('commission', 'Commission')
+            ->setParameter('commissionRefund', 'Refund Commission')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
+
+
 
     /**
      * Create and persist a credit transaction for a user and ride.
@@ -54,5 +64,43 @@ class CreditTransactionRepository extends ServiceEntityRepository
         $this->em->persist($transaction);
 
         return $transaction;
+    }
+
+    public function countCreditsGroupedByDay(int $range = 7): array
+    {
+        $since = (new \DateTimeImmutable())->modify("-$range days");
+
+        $credits = $this->createQueryBuilder('t')
+            ->select('t.created_at, t.amount, t.reason')
+            ->where('t.created_at >= :since')
+            ->andWhere('t.reason = :commission OR t.reason = :commissionRefund')
+            ->setParameter('since', $since)
+            ->setParameter('commission', 'Commission')
+            ->setParameter('commissionRefund', 'Refund Commission')
+            ->getQuery()
+            ->getResult();
+
+        $grouped = [];
+        $formatter = new \IntlDateFormatter('fr_FR', \IntlDateFormatter::NONE, \IntlDateFormatter::NONE, null, null, 'd MMM');
+        foreach ($credits as $credit) {
+            $date = $credit['created_at'];
+            $day = $formatter->format($date);
+            if (!isset($grouped[$day])) {
+                $grouped[$day] = 0;
+            }
+            $grouped[$day] += $credit['amount'];
+        }
+
+        $result = [];
+        $today = new \DateTimeImmutable();
+        for ($i = $range - 1; $i >= 0; $i--) {
+            $day = $formatter->format($today->modify("-$i days"));
+            $result[] = [
+                'date' => $day,
+                'amount' => $grouped[$day] ?? 0,
+            ];
+        }
+
+        return $result;
     }
 }

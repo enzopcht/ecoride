@@ -29,6 +29,7 @@ class RegistrationController extends AbstractController
             $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
             $user->setRoles(['ROLE_PASSENGER']);
+            $user->setSuspended(false);
 
             $em->persist($user);
             

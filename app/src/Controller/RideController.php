@@ -89,7 +89,7 @@ class RideController extends AbstractController
             foreach ($participations as $participation) {
                 $participation->setStatus('rejected');
                 $creditTransactionRepository->createTransaction($participation->getUser(), $ride, $ride->getPrice() - 2, 'Refund');
-                $creditTransactionRepository->createTransaction($participation->getUser(), $ride, 2, 'Commission');
+                $creditTransactionRepository->createTransaction($participation->getUser(), $ride, 2, 'Refund Commission');
             }
         }
 
@@ -126,7 +126,7 @@ class RideController extends AbstractController
                 $participation->setStatus('rejected');
 
                 $creditTransactionRepository->createTransaction($participation->getUser(), $ride, $ride->getPrice() - 2, 'Refund');
-                $creditTransactionRepository->createTransaction($participation->getUser(), $ride, 2, 'Commission');
+                $creditTransactionRepository->createTransaction($participation->getUser(), $ride, 2, 'Refund Commission');
             }
         }
 
