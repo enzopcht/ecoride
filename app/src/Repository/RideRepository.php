@@ -64,18 +64,21 @@ class RideRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function countRidesGroupedByDay(): array
+    public function countRidesGroupedByDay(int $range = 7): array
     {
+        $since = (new \DateTimeImmutable())->modify("-$range days");
+
         $rides = $this->createQueryBuilder('r')
             ->select('r.departure_time')
+            ->where('r.departure_time >= :since')
+            ->setParameter('since', $since)
             ->getQuery()
             ->getResult();
 
         $grouped = [];
+        $formatter = new \IntlDateFormatter('fr_FR', \IntlDateFormatter::NONE, \IntlDateFormatter::NONE, null, null, 'd MMM');
         foreach ($rides as $ride) {
-            /** @var \DateTimeInterface $date */
             $date = $ride['departure_time'];
-            $formatter = new \IntlDateFormatter('fr_FR', \IntlDateFormatter::NONE, \IntlDateFormatter::NONE, null, null, 'd MMM');
             $day = $formatter->format($date);
             if (!isset($grouped[$day])) {
                 $grouped[$day] = 0;
@@ -85,7 +88,7 @@ class RideRepository extends ServiceEntityRepository
 
         $result = [];
         $today = new \DateTimeImmutable();
-        for ($i = 6; $i >= 0; $i--) {
+        for ($i = $range - 1; $i >= 0; $i--) {
             $day = $formatter->format($today->modify("-$i days"));
             $result[] = [
                 'date' => $day,

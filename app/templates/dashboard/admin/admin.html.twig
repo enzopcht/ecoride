@@ -36,6 +36,14 @@
 
 		<hr>
 		<section class="mb-3">
+			<form method="get" class="mb-2 text-end">
+				<label for="rangeRides" class="form-label me-2">Période :</label>
+				<select name="rangeRides" id="rangeRides" class="form-select d-inline w-auto" onchange="this.form.submit()">
+					<option value="7" {{ app.request.get('rangeRides') == 7 ? 'selected' : '' }}>7 jours</option>
+					<option value="14" {{ app.request.get('rangeRides') == 14 ? 'selected' : '' }}>14 jours</option>
+					<option value="30" {{ app.request.get('rangeRides') == 30 ? 'selected' : '' }}>30 jours</option>
+				</select>
+			</form>
 			<h2 class="text-primary mb-3">Nombre de trajet par jour :</h2>
 			<div class="row justify-content-md-center">
 				<div class="col-12 col-md-10">
@@ -47,6 +55,14 @@
 		</section>
 		<hr>
 		<section class="mb-3">
+			<form method="get" class="mb-2 text-end">
+				<label for="rangeCredits" class="form-label me-2">Période :</label>
+				<select name="rangeCredits" id="rangeCredits" class="form-select d-inline w-auto" onchange="this.form.submit()">
+					<option value="7" {{ app.request.get('rangeCredits') == 7 ? 'selected' : '' }}>7 jours</option>
+					<option value="14" {{ app.request.get('rangeCredits') == 14 ? 'selected' : '' }}>14 jours</option>
+					<option value="30" {{ app.request.get('rangeCredits') == 30 ? 'selected' : '' }}>30 jours</option>
+				</select>
+			</form>
 			<h2 class="text-primary mb-3">Nombre de crédits gagné par jour :</h2>
 			<div class="row justify-content-md-center">
 				<div class="col-12 col-md-10">

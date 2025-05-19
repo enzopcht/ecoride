@@ -66,36 +66,34 @@ class CreditTransactionRepository extends ServiceEntityRepository
         return $transaction;
     }
 
-    public function countCreditsGroupedByDay(): array
+    public function countCreditsGroupedByDay(int $range = 7): array
     {
+        $since = (new \DateTimeImmutable())->modify("-$range days");
+
         $credits = $this->createQueryBuilder('t')
             ->select('t.created_at, t.amount, t.reason')
-            ->where('t.reason = :commission OR t.reason = :commissionRefund')
+            ->where('t.created_at >= :since')
+            ->andWhere('t.reason = :commission OR t.reason = :commissionRefund')
+            ->setParameter('since', $since)
             ->setParameter('commission', 'Commission')
             ->setParameter('commissionRefund', 'Refund Commission')
             ->getQuery()
             ->getResult();
 
-            
-            $grouped = [];
-            $formatter = new \IntlDateFormatter('fr_FR', \IntlDateFormatter::NONE, \IntlDateFormatter::NONE, null, null, 'd MMM');
-            
-            foreach ($credits as $credit) {
-                /** @var \DateTimeInterface $date */
-                $date = $credit['created_at'];
-                $day = $formatter->format($date);
-                
-                if (!isset($grouped[$day])) {
-                    $grouped[$day] = 0;
-                }
-                
-                $grouped[$day] += ($credit['reason'] === 'Commission' ? 2 : -2);
+        $grouped = [];
+        $formatter = new \IntlDateFormatter('fr_FR', \IntlDateFormatter::NONE, \IntlDateFormatter::NONE, null, null, 'd MMM');
+        foreach ($credits as $credit) {
+            $date = $credit['created_at'];
+            $day = $formatter->format($date);
+            if (!isset($grouped[$day])) {
+                $grouped[$day] = 0;
             }
-            
+            $grouped[$day] += $credit['amount'];
+        }
 
         $result = [];
         $today = new \DateTimeImmutable();
-        for ($i = 6; $i >= 0; $i--) {
+        for ($i = $range - 1; $i >= 0; $i--) {
             $day = $formatter->format($today->modify("-$i days"));
             $result[] = [
                 'date' => $day,

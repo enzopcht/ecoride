@@ -25,12 +25,16 @@ final class AdminDashboardController extends AbstractController
     public function admin(
         CreditTransactionRepository $creditTransactionRepository,
         RideRepository $rideRepository,
+        Request $request
     ): Response {
-        $ridesPerDay = $rideRepository->countRidesGroupedByDay();
+        $rangeRides = $request->query->getInt('rangeRides', 7);
+        $rangeCredits = $request->query->getInt('rangeCredits', 7);
+
+        $ridesPerDay = $rideRepository->countRidesGroupedByDay($rangeRides);
         $labelsRide = array_column($ridesPerDay, 'date');
         $dataRide = array_column($ridesPerDay, 'count');
 
-        $creditsPerDay = $creditTransactionRepository->countCreditsGroupedByDay();
+        $creditsPerDay = $creditTransactionRepository->countCreditsGroupedByDay($rangeCredits);
         $labelsCredit = array_column($creditsPerDay, 'date');
         $dataCredit = array_column($creditsPerDay, 'amount');
 
