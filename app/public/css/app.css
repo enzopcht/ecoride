@@ -189,11 +189,14 @@ article ul {
   color: white;
 }
 
-.suggestion-container {
+.position-relative {
   position: relative;
 }
-.suggestion-container .suggestion-box {
+
+.suggestion-box {
   position: absolute;
+  z-index: 1050;
+  cursor: pointer;
 }
 
 .star {

@@ -29,26 +29,26 @@
 						{{ form_start(searchForm, {
 			    'action': path('app_search_results'),
 			    'method': 'POST',
-			    'attr': {'class': 'row g-3 justify-content-center'}
+			    'attr': {'class': 'row gap-3 justify-content-center'}
 			}) }}
-						<div class="col-12 col-lg-3">
+						<div class="col-10 col-lg-3 position-relative p-0">
 							{{ form_label(searchForm.departure) }}
 							{{ form_widget(searchForm.departure, {'attr': {'class': 'form-control' }}) }}
 							<div class="suggestion-box w-100">
 								<ul id="departure_suggestions" class="list-group"></ul>
 							</div>
 						</div>
-						<div class="col-12 col-lg-3">
+						<div class="col-10 col-lg-3 position-relative p-0">
 							{{ form_label(searchForm.arrival) }}
 							{{ form_widget(searchForm.arrival, {'attr': {'class': 'form-control' }}) }}
 							<div class="suggestion-box w-100">
 								<ul id="arrival_suggestions" class="list-group"></ul>
 							</div>
 						</div>
-						<div class="col-12 col-lg-3">
+						<div class="col-10 col-lg-3 p-0">
 							{{ form_row(searchForm.date) }}
 						</div>
-						<div class="text-center col-lg-2 align-self-end">
+						<div class="text-center col-10 col-lg-2 align-self-end p-0">
 							{{ form_row(searchForm.rechercher, {'attr': {'class': 'btn btn-primary w-100'}}) }}
 						</div>
 						{{ form_end(searchForm) }}
@@ -62,7 +62,6 @@
 			</button>
 		</div>
 
-		<!-- Modal filters -->
 		<div id="filters-form-wrapper" class="d-none">
 			<form method="POST" action="{{ path('app_search_results') }}">
 
@@ -113,7 +112,6 @@
 				</div>
 
 
-				<!-- Résultat de la recherche CARD -->
 				<div id="carpooling-results" class="col-12 col-md-10 col-lg-7">
 
 					{% set exact_match = 0 %}
