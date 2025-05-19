@@ -23,7 +23,7 @@
 			<nav id="nav" class="navbar navbar-expand-lg shadow">
 				<div class="container-fluid">
 					<a href="{{ path('app_home') }}" class="navbar-brand">
-						<img src="/assets/images/logo.png" alt="Logo" height="40" class="d-inline-block align-text-top">
+						<img src="/assets/images/logo.png" alt="Logo" height="40" class="d-inline-block align-text-top ">
 					</a>
 					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 						<span class="navbar-toggler-icon"></span>
@@ -39,13 +39,21 @@
 								<a class="nav-link text-secondary" aria-current="page" href="#">Contact</a>
 							</li>
 						</ul>
-						<div class="text-end">
+						<div class="ms-auto ms-lg-0 d-flex flex-column flex-lg-row gap-2">
 						{% if app.user %}
-							<a href="{{ path('app_dashboard') }}" class="btn btn-primary">Tableau de bord</a>
-							<a href="{{ path('app_logout') }}" class="btn btn-danger">Déconnexion</a>
+							<div>
+								<a href="{{ path('app_dashboard') }}" class="btn btn-primary">Tableau de bord</a>
+							</div>
+							<div>
+								<a href="{{ path('app_logout') }}" class="btn btn-danger">Déconnexion</a>
+							</div>
 						{% else %}
-							<a href="{{ path('app_login') }}" class="btn btn-primary">Connexion</a>
-							<a href="{{ path('app_registration') }}" class="btn btn-dark">S'inscrire</a>
+							<div>
+								<a href="{{ path('app_login') }}" class="btn btn-primary">Connexion</a>
+							</div>
+							<div>
+								<a href="{{ path('app_registration') }}" class="btn btn-dark">S'inscrire</a>
+							</div>
 						{% endif %}
 						</div>
 					</div>
