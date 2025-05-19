@@ -29,6 +29,7 @@ class UserFixtures extends Fixture
             $user->setEmail($email);
             $user->setPseudo($pseudo);
             $user->setRoles(['ROLE_PASSENGER']);
+            $user->setSuspended(false);
             $user->setCreatedAt(new \DateTimeImmutable());
 
             $hashedPassword = $this->passwordHasher->hashPassword($user, 'password');
@@ -51,6 +52,7 @@ class UserFixtures extends Fixture
         $employee->setEmail('employe@ecoride.fr');
         $employee->setPseudo('employe');
         $employee->setRoles(['ROLE_EMPLOYE']);
+        $employee->setSuspended(false);
         $employee->setCreatedAt(new \DateTimeImmutable());
         $employee->setPassword($this->passwordHasher->hashPassword($employee, 'password'));
         $manager->persist($employee);
@@ -61,6 +63,7 @@ class UserFixtures extends Fixture
         $admin->setEmail('admin@ecoride.fr');
         $admin->setPseudo('admin');
         $admin->setRoles(['ROLE_ADMIN']);
+        $admin->setSuspended(false);
         $admin->setCreatedAt(new \DateTimeImmutable());
         $admin->setPassword($this->passwordHasher->hashPassword($admin, 'password'));
         $manager->persist($admin);

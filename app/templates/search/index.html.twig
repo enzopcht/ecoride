@@ -17,10 +17,20 @@
 			    'attr': {'class': 'row g-3 justify-content-center'}
 			}) }}
 			<div class="col-12 col-lg-3">
-				{{ form_row(searchForm.departure, {'attr': {'class': 'form-control'}}) }}
+				{{ form_label(searchForm.departure) }}
+				{{ form_widget(searchForm.departure, {'attr': {'class': 'form-control' }}) }}
+				<div class="suggestion-box w-100">
+					<ul id="departure_suggestions" class="list-group">
+					</ul>
+				</div>
 			</div>
 			<div class="col-12 col-lg-3">
-				{{ form_row(searchForm.arrival, {'attr': {'class': 'form-control'}}) }}
+				{{ form_label(searchForm.arrival) }}
+				{{ form_widget(searchForm.arrival, {'attr': {'class': 'form-control' }}) }}
+				<div class="suggestion-box w-100">
+					<ul id="arrival_suggestions" class="list-group">
+					</ul>
+				</div>
 			</div>
 			<div class="col-12 col-lg-3">
 				{{ form_row(searchForm.date) }}
@@ -31,4 +41,7 @@
 			{{ form_end(searchForm) }}
 		</div>
 	</main>
+	{% block javascripts %}
+		<script src="{{ asset('js/modules/searchAutocompleteFormAddress.js') }}"></script>
+	{% endblock %}
 {% endblock %}

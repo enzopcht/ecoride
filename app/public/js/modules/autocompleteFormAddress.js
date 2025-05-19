@@ -180,10 +180,8 @@ function checkPrice() {
 
 departureTimeInput.addEventListener('change', () => {
     const today = new Date()
-    console.log(today)
     if (departureTimeInput.value) {
         const departure = new Date(departureTimeInput.value)
-        console.log(departure)
         if (departure > today) {
             departureTimeInput.classList.add('is-valid')
             departureTimeInput.classList.remove('is-invalid')
