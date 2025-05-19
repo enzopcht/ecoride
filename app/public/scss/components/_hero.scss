@@ -1,7 +1,12 @@
 
 .gradient {
-    min-height: 320px;
+    height: 320px;
     background: linear-gradient($primary, $secondary);
+    position: absolute;
+    width: 100%;
+    z-index: 0;
+    top: 0;
+    left: 0;
 
     h1 {
         font-size: $headline;
@@ -10,4 +15,8 @@
             font-size: $headline-desktop;
         }
     }
+}
+.box-hero {
+    min-height: 320px;
+    position: relative;
 }
