@@ -94,6 +94,6 @@
 		</div>
 	</main>
 	{% block javascripts %}
-		<script src="{{ asset('js/modules/autocompleteFormAddress.js') }}"></script>
+		<script id="map-script" src="{{ asset('js/modules/autocompleteFormAddress.js') }}" data-api-key="{{ ors_api_key }}"></script>
 	{% endblock %}
 {% endblock %}

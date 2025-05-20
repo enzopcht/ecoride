@@ -47,6 +47,7 @@ final class AddRideController extends AbstractController
         }
         return $this->render('add_ride/index.html.twig', [
             'addRideForm' => $form->createView(),
+            'ors_api_key' => $_ENV['ORS_API_KEY'],
         ]);
     }
 }
