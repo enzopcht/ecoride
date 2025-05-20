@@ -88,9 +88,14 @@ class CreditTransactionRepository extends ServiceEntityRepository
             if (!isset($grouped[$day])) {
                 $grouped[$day] = 0;
             }
-            $grouped[$day] += $credit['amount'];
+            $amount = null;
+            if ($credit['amount'] === 2) {
+                $amount = -2;
+            } else {
+                $amount = 2;
+            }
+            $grouped[$day] += $amount;
         }
-
         $result = [];
         $today = new \DateTimeImmutable();
         for ($i = $range - 1; $i >= 0; $i--) {
