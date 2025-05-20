@@ -36,7 +36,7 @@ class ReportsController extends AbstractController
 
         $ride = $participation->getRide();
         $creditTransactionRepository->createTransaction($participation->getUser(), $ride, $ride->getPrice() - 2, 'Refund');
-        $creditTransactionRepository->createTransaction($participation->getUser(), $ride, 2, 'Commission');
+        $creditTransactionRepository->createTransaction($participation->getUser(), $ride, 2, 'Refund Commission');
 
         $em->flush();
 
