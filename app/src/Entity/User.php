@@ -43,6 +43,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?\DateTimeImmutable $created_at = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $photo = null;
+
     public function __construct()
     {
         $this->created_at = new \DateTimeImmutable();
@@ -167,6 +170,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->created_at = $created_at;
 
+        return $this;
+    }
+
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+    
+    public function setPhoto(?string $photo): static
+    {
+        $this->photo = $photo;
         return $this;
     }
 }
