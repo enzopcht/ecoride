@@ -22,6 +22,8 @@ class ParticipationFixtures extends Fixture implements DependentFixtureInterface
             return !in_array('ROLE_ADMIN', $roles, true) && !in_array('ROLE_EMPLOYE', $roles, true);
         });
 
+        $usedUsers = [];
+
         foreach ($rides as $ride) {
             $availableSeats = $ride->getSeatsAvailable();
             $possibleUsers = array_filter($users, fn($u) => $u !== $ride->getDriver());
@@ -29,6 +31,9 @@ class ParticipationFixtures extends Fixture implements DependentFixtureInterface
             $participants = $faker->randomElements($possibleUsers, min($availableSeats, $faker->numberBetween(0, 3)));
 
             foreach ($participants as $user) {
+                if ($ride->getStatus() === 'active' && in_array($user, $usedUsers, true)) {
+                    continue;
+                }
                 if ($availableSeats <= 0) break;
 
                 $participation = new Participation();
@@ -47,6 +52,10 @@ class ParticipationFixtures extends Fixture implements DependentFixtureInterface
                     $status = $faker->randomElement(['waiting_passenger_review', 'validated']);
                 }
                 $participation->setStatus($status);
+
+                if ($status === 'active') {
+                    $usedUsers[] = $user;
+                }
 
                 $manager->persist($participation);
 

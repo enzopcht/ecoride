@@ -35,9 +35,20 @@ class RideFixtures extends Fixture implements DependentFixtureInterface
         ];
         $statuts = ['pending', 'active', 'completed'];
 
+        $usedDrivers = [];
+
         foreach ($statuts as $statut) {
             for ($i = 0; $i < 10; $i++) {
-                $driver = $faker->randomElement($drivers);
+                if ($statut === 'active') {
+                    $availableDrivers = array_filter($drivers, fn($d) => !in_array($d, $usedDrivers, true));
+                    if (empty($availableDrivers)) {
+                        continue;
+                    }
+                    $driver = $faker->randomElement($availableDrivers);
+                    $usedDrivers[] = $driver;
+                } else {
+                    $driver = $faker->randomElement($drivers);
+                }
                 $userVehicles = array_filter($vehicles, fn($v) => $v->getOwner() === $driver);
 
                 if (empty($userVehicles)) {
