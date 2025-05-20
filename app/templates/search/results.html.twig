@@ -133,8 +133,14 @@
 												<div class="fs-5">{{ ride.driver }}</div>
 											</div>
 											<div class="col text-end">
-												4.5/5
-												<i class='bi bi-star-fill text-warning'></i>
+											{% set driverNote = ratings_by_driver[ride.driver.id] %}
+												{% if driverNote is defined and driverNote > 0 %}
+													<p class="mb-0">{{ driverNote|number_format(1) }}/5
+														<i class="bi bi-star-fill text-warning"></i>
+													</p>
+												{% else %}
+													<p class="text-muted">Pas encore noté</p>
+												{% endif %}
 											</div>
 										</div>
 										<hr>
