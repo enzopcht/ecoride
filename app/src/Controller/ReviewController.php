@@ -22,6 +22,21 @@ final class ReviewController extends AbstractController
         Participation $participation,
         EntityManagerInterface $em,
     ): Response {
+        if (!$this->getUser()) {
+            $this->addFlash('warning', 'Vous devez être connecté pour déposer un avis.');
+            return $this->redirectToRoute('app_login');
+        }
+        if (
+            (!$this->isGranted('ROLE_PASSENGER') &&
+            !$this->isGranted('ROLE_DRIVER')) ||
+            $this->getUser() !== $participation->getUser() 
+        ) {
+            throw $this->createAccessDeniedException();
+        }
+        if (!in_array($participation->getRide()->getStatus(), ['completed', 'canceled'])) {
+            $this->addFlash('danger', 'Votre course n\'est pas terminée, vous ne pouvez pas encore déposer d\'avis.');
+            return $this->redirectToRoute('app_home');
+        }
         $review = new Review();
         $review->setAuthor($this->getUser());
         $review->setTarget($participation->getRide()->getDriver());
