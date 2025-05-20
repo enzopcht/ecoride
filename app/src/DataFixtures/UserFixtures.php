@@ -17,10 +17,12 @@ class UserFixtures extends Fixture
     {
         $faker = Factory::create('fr_FR');
 
-        // 10 utilisateurs aléatoires avec un mot de passe commun
+        // 10 passagers aléatoires avec un mot de passe commun
         for ($i = 0; $i < 10; $i++) {
             $firstName = $faker->firstName();
             $lastName = $faker->lastName();
+            $firstName = iconv('UTF-8', 'ASCII//TRANSLIT', $firstName);
+            $lastName = iconv('UTF-8', 'ASCII//TRANSLIT', $lastName);
 
             $email = strtolower($firstName . '.' . $lastName) . '@mail.com';
             $pseudo = strtolower($firstName) . $faker->numberBetween(10, 99);
@@ -40,7 +42,39 @@ class UserFixtures extends Fixture
             $welcome = new CreditTransaction();
             $welcome->setUser($user);
             $welcome->setAmount(20);
-            $welcome->setReason('Bonus de bienvenue');
+            $welcome->setReason('Welcome Bonus');
+            $welcome->setCreatedAt(new \DateTimeImmutable());
+            $manager->persist($welcome);
+
+            echo "Ajouté : $email | Pseudo : $pseudo | Mot de passe : password\n";
+        }
+
+        // 10 conducteurs aléatoires avec un mot de passe commun
+        for ($i = 0; $i < 10; $i++) {
+            $firstName = $faker->firstName();
+            $lastName = $faker->lastName();
+            $firstName = iconv('UTF-8', 'ASCII//TRANSLIT', $firstName);
+            $lastName = iconv('UTF-8', 'ASCII//TRANSLIT', $lastName);
+
+            $email = strtolower($firstName . '.' . $lastName) . '@mail.com';
+            $pseudo = strtolower($firstName) . $faker->numberBetween(10, 99);
+
+            $user = new User();
+            $user->setEmail($email);
+            $user->setPseudo($pseudo);
+            $user->setRoles(['ROLE_DRIVER']);
+            $user->setSuspended(false);
+            $user->setCreatedAt(new \DateTimeImmutable());
+
+            $hashedPassword = $this->passwordHasher->hashPassword($user, 'password');
+            $user->setPassword($hashedPassword);
+
+            $manager->persist($user);
+
+            $welcome = new CreditTransaction();
+            $welcome->setUser($user);
+            $welcome->setAmount(20);
+            $welcome->setReason('Welcome Bonus');
             $welcome->setCreatedAt(new \DateTimeImmutable());
             $manager->persist($welcome);
 

@@ -25,6 +25,11 @@ class DriverPreferenceFixtures extends Fixture
         $users = $entityManager->getRepository(User::class)->findAll();
 
         foreach ($users as $user) {
+            $roles = $user->getRoles();
+            if (in_array('ROLE_ADMIN', $roles, true) || in_array('ROLE_EMPLOYE', $roles, true)) {
+                continue;
+            }
+
             $pref = new DriverPreference();
             $pref->setUserId($user->getId())
                 ->setMusicAllowed((bool) random_int(0, 1))

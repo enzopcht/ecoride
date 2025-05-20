@@ -17,7 +17,10 @@ class ParticipationFixtures extends Fixture implements DependentFixtureInterface
         $faker = Factory::create('fr_FR');
 
         $rides = $manager->getRepository(Ride::class)->findAll();
-        $users = $manager->getRepository(User::class)->findAll();
+        $users = array_filter($manager->getRepository(User::class)->findAll(), function (User $user) {
+            $roles = $user->getRoles();
+            return !in_array('ROLE_ADMIN', $roles, true) && !in_array('ROLE_EMPLOYE', $roles, true);
+        });
 
         foreach ($rides as $ride) {
             $availableSeats = $ride->getSeatsAvailable();
@@ -34,7 +37,15 @@ class ParticipationFixtures extends Fixture implements DependentFixtureInterface
                 $participation->setCreditsUsed($ride->getPrice());
 
                 // Aléatoire entre confirmée ou annulée
-                $status = $faker->randomElement(['confirmed', 'canceled', 'pending']);
+                if ($ride->getStatus() === 'pending') {
+                    $status = $faker->randomElement(['confirmed', 'canceled', 'pending']);
+                }
+                if ($ride->getStatus() === 'active') {
+                    $status = 'active';
+                }
+                if ($ride->getStatus() === 'completed') {
+                    $status = $faker->randomElement(['waiting_passenger_review', 'validated']);
+                }
                 $participation->setStatus($status);
 
                 $manager->persist($participation);
