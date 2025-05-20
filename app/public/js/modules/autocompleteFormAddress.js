@@ -18,7 +18,8 @@ const arrivalSuggestions = document.getElementById('arrival_suggestions')
 
 const validateButton = document.getElementById('validate_button')
 
-const APIKEY = '5b3ce3597851110001cf6248addfcadb019b4478a7be4c7384531caf'
+const APIKEY = document.getElementById('map-script').dataset.apiKey
+
 
 let departureCoords = null
 let arrivalCoords = null
