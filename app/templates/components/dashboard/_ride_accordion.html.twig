@@ -29,7 +29,7 @@
 			class="accordion-body">
 			<div class="row align-items-center">
 				<div class="align-items-center d-flex col">
-					<img src="/assets/images/user.png" alt="" height="40" class="rounded-circle border border-dark me-2">
+					<img src="{{ asset(ride.driver.photo ?? '/assets/images/user.png') }}" alt="Photo de profil" class="img-fluid rounded-circle border border-3 border-primary me-2" style="width: 60px; height: 60px; object-fit: cover;">
 					<div class="fs-5">{{ ride.driver.pseudo }}</div>
 				</div>
 				<div class="col text-end">
