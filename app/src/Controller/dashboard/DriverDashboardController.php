@@ -98,6 +98,7 @@ final class DriverDashboardController extends AbstractController
         ]);
     }
     #[Route('/driver/dashboard/your-rides', name: 'app_driver_your_rides')]
+    #[IsGranted('ROLE_DRIVER')]
     public function yourRides(
         RideRepository $rideRepository,
         ReviewRepository $reviewRepository,
@@ -135,6 +136,7 @@ final class DriverDashboardController extends AbstractController
         ]);
     }
     #[Route('/driver/dashboard/manage-your-bookings', name: 'app_driver_manage_your_bookings')]
+    #[IsGranted('ROLE_DRIVER')]
     public function manageYourBookings(
         RideRepository $rideRepository,
         ParticipationRepository $participationRepository,

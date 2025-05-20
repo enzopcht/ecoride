@@ -14,7 +14,6 @@ final class MyBookingsController extends AbstractController
     #[Route('/dashboard/my-bookings', name: 'app_driver_dashboard_bookings')]
     public function myBookings(
         ParticipationRepository $participationRepository,
-        RideRepository $rideRepository,
         ReviewRepository $reviewRepository,
         ): Response
     {
