@@ -6,6 +6,7 @@
 parameters:
     env(MONGODB_URL): ''
     env(MONGODB_DB): ''
+    photos_directory: '%kernel.project_dir%/public/uploads/users'
 
 services:
     App\DataFixtures\Mongo\DriverPreferenceFixtures:

@@ -5,66 +5,91 @@
 
 {% block body %}
 
-	<main class="container-xl">
-
-		<div class="d-flex align-items-center mb-3">
-			<h1 class="text-dark">
-				Tableau de bord
-				<span class="text-primary">{{user}}</span>
-			</h1>
-			<div class="text-white text-center d-flex bg-dark fs-5 ms-auto shadow p-3 rounded">{{balance}}<i class="bi bi-coin text-warning"></i>
+<main class="container-xl">
+		
+	<div class="d-flex align-items-center mb-3">
+		<button class="btn p-0" data-bs-toggle="modal" data-bs-target="#profilPicModal-{{ user }}">
+			<img src="{{ asset(user.photo ?? 'uploads/users/default.jpg') }}" alt="Photo de profil" class="img-fluid rounded-circle border border-3 border-primary me-2" style="width: 60px; height: 60px; object-fit: cover;">
+		</button>
+		<span class="text-primary fs-1">{{user}}</span>
+		<div class="modal fade" id="profilPicModal-{{ user }}" tabindex="-1" aria-labelledby="profilPicModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Modifier votre photo de profil</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						{{ form_start(form) }}
+						{{ form_row(form.photo) }}
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Annuler</button>
+						<button type="submit" class="btn btn-primary">Mettre à jour</button>
+						{{ form_end(form) }}
+					</div>
+				</div>
 			</div>
 		</div>
-		
-
-		<div class="list-group mb-4">
-			<div class="fw-bold text-uppercase small text-dark px-3 py-2 border border-bottom-0 rounded-top">Chauffeur</div>
-			<a class="list-group-item" href="{{ path('app_driver_preferences')}}">Gérer mes préférences</a>
-			<a class="list-group-item" href="{{path('app_driver_your_rides')}}">Mes covoiturages</a>
-			{% set pendingParticipations = participations|filter(p => p.status == 'pending') %}
-			<a class="list-group-item" href="{{path('app_driver_manage_your_bookings')}}">Réservations pour mes covoiturages<span class="badge bg-danger ms-2 {{ pendingParticipations|length > 0 ? '' : 'd-none'}}">{{ pendingParticipations|length }}</span></a>
-			<a class="list-group-item" href="{{path('app_your_vehicles')}}">Vos véhicules</a>
+		<div class="text-white text-center d-flex bg-dark fs-5 shadow p-3 rounded ms-auto">
+		{{balance}}<i class="bi bi-coin text-warning"></i>
 		</div>
-		<div class="list-group mb-4">
-			<div class="fw-bold text-uppercase small text-dark px-3 py-2 border border-bottom-0 rounded-top">Passager</div>
-			<a class="list-group-item" href="{{path('app_driver_dashboard_bookings')}}">Mes réservations</a>
-		</div>
-
-		
-		<div class="d-flex flex-column flex-md-row justify-content-center">
-			<a href="{{path('app_add_ride')}}" class="btn btn-primary">
-				<i class="bi bi-plus-circle"></i>
-				Publier un trajet</a>
-		</div>
+	</div>
+	
+	<h1 class="text-dark mb-3">
+			Tableau de bord
+	</h1>
 
 
-		{% if rides_active|length > 0 %}
-			<hr>
-			<section class="mb-3">
-				<h3 class="text-primary">
-					<i class="bi bi-exclamation-circle-fill text-danger me-2"></i>
-					{{ rides_active|length > 1 ? 'Voyages' : 'Voyage'}}
-					en cours en tant que chauffeur :</h3>
-				<p class="text-secondary">
-					<i class="bi bi-info-circle"></i>
-					Une fois votre trajet terminé nous vous invitons à venir valider le trajet dans votre tableau de bord. Vos passager pourront ensuite indiquer si le voyage s'est bien passé et ainsi débloquer vos paiements.</p>
-				<div class="accordion shadow-sm mt-3" id="active_rides">
-					{% for ride in rides_active %}
+	<div class="list-group mb-4">
+		<div class="fw-bold text-uppercase small text-dark px-3 py-2 border border-bottom-0 rounded-top">Chauffeur</div>
+		<a class="list-group-item" href="{{ path('app_driver_preferences')}}">Gérer mes préférences</a>
+		<a class="list-group-item" href="{{path('app_driver_your_rides')}}">Mes covoiturages</a>
+		{% set pendingParticipations = participations|filter(p => p.status == 'pending') %}
+		<a class="list-group-item" href="{{path('app_driver_manage_your_bookings')}}">Réservations pour mes covoiturages<span class="badge bg-danger ms-2 {{ pendingParticipations|length > 0 ? '' : 'd-none'}}">{{ pendingParticipations|length }}</span>
+		</a>
+		<a class="list-group-item" href="{{path('app_your_vehicles')}}">Vos véhicules</a>
+	</div>
+	<div class="list-group mb-4">
+		<div class="fw-bold text-uppercase small text-dark px-3 py-2 border border-bottom-0 rounded-top">Passager</div>
+		<a class="list-group-item" href="{{path('app_driver_dashboard_bookings')}}">Mes réservations</a>
+	</div>
 
-						{% set dynamic_block %}
-							{% if ride.driver.id == user.id and ride.status == 'active' %}
-								<div class="d-flex flex-column flex-md-row justify-content-center gap-3">
-									<form method="POST" action="{{ path('ride_complete', { id: ride.id }) }}" onsubmit="return confirm('Vous êtes arrivé à bon port ?');">
-										<input type="hidden" name="_token" value="{{ csrf_token('complete_ride_' ~ ride.id) }}">
-										<button type="submit" class="btn btn-outline-success w-100">
-											Voyage terminé
-										</button>
-									</form>
-								</div>
-							{% endif %}
-						{% endset %}
 
-						{% include 'components/dashboard/_ride_accordion.html.twig' with {
+	<div class="d-flex flex-column flex-md-row justify-content-center">
+		<a href="{{path('app_add_ride')}}" class="btn btn-primary">
+			<i class="bi bi-plus-circle"></i>
+			Publier un trajet</a>
+	</div>
+
+
+	{% if rides_active|length > 0 %}
+		<hr>
+		<section class="mb-3">
+			<h3 class="text-primary">
+				<i class="bi bi-exclamation-circle-fill text-danger me-2"></i>
+				{{ rides_active|length > 1 ? 'Voyages' : 'Voyage'}}
+				en cours en tant que chauffeur :</h3>
+			<p class="text-secondary">
+				<i class="bi bi-info-circle"></i>
+				Une fois votre trajet terminé nous vous invitons à venir valider le trajet dans votre tableau de bord. Vos passager pourront ensuite indiquer si le voyage s'est bien passé et ainsi débloquer vos paiements.</p>
+			<div class="accordion shadow-sm mt-3" id="active_rides">
+				{% for ride in rides_active %}
+
+					{% set dynamic_block %}
+					{% if ride.driver.id == user.id and ride.status == 'active' %}
+						<div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+							<form method="POST" action="{{ path('ride_complete', { id: ride.id }) }}" onsubmit="return confirm('Vous êtes arrivé à bon port ?');">
+								<input type="hidden" name="_token" value="{{ csrf_token('complete_ride_' ~ ride.id) }}">
+								<button type="submit" class="btn btn-outline-success w-100">
+									Voyage terminé
+								</button>
+							</form>
+						</div>
+					{% endif %}
+					{% endset %}
+
+					{% include 'components/dashboard/_ride_accordion.html.twig' with {
 					    ride: ride,
 					    loop_index: 'active-ride' ~ loop.index,
 						accordion_id: '#active_rides',
@@ -74,30 +99,30 @@
 					    ratings_by_driver: user_rating,
 					    dynamic_block: dynamic_block
 					} %}
-					{% endfor %}
+				{% endfor %}
 
-				</div>
-			</section>
-		{% endif %}
+			</div>
+		</section>
+	{% endif %}
 
 
-		{% if participations_active_passenger|length > 0 %}
-			<hr>
-			<section class="mb-3">
-				<h3 class="text-primary">
-					<i class="bi bi-exclamation-circle-fill text-danger me-2"></i>
-					{{ participations_active_passenger|length > 1 ? 'Voyages' : 'Voyage'}}
-					en cours en tant que passager :
-				</h3>
-				<div class="accordion shadow-sm mt-3" id="active_participations">
-					{% for participation in participations_active_passenger %}
-						{% set ride = participation.ride %}
-						{% set statusContent = '' %}
-						{% if participation.status == 'active' %}
-							{% set statusContent = 'En cours...' %}
-							{% set statusNotif = false %}
-						{% else %}
-							{% set statusContent = 'Veuillez confirmer si tout s\'est bien passé.' %}
+	{% if participations_active_passenger|length > 0 %}
+		<hr>
+		<section class="mb-3">
+			<h3 class="text-primary">
+				<i class="bi bi-exclamation-circle-fill text-danger me-2"></i>
+				{{ participations_active_passenger|length > 1 ? 'Voyages' : 'Voyage'}}
+				en cours en tant que passager :
+			</h3>
+			<div class="accordion shadow-sm mt-3" id="active_participations">
+				{% for participation in participations_active_passenger %}
+					{% set ride = participation.ride %}
+					{% set statusContent = '' %}
+					{% if participation.status == 'active' %}
+						{% set statusContent = 'En cours...' %}
+						{% set statusNotif = false %}
+					{% else %}
+						{% set statusContent = 'Veuillez confirmer si tout s\'est bien passé.' %}
 							{% set statusNotif = true %}
 						{% endif %}
 						

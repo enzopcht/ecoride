@@ -2,11 +2,14 @@
 
 namespace App\Controller\dashboard;
 
+use App\Form\DriverProfilePicType;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\CreditTransactionRepository;
 use App\Repository\ParticipationRepository;
 use App\Repository\ReviewRepository;
 use App\Repository\RideRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -20,6 +23,8 @@ final class DriverDashboardController extends AbstractController
         ParticipationRepository $participationRepository,
         ReviewRepository $reviewRepository,
         RideRepository $rideRepository,
+        EntityManagerInterface $em,
+        Request $request,
     ): Response {
         $user = $this->getUser();
         /** @var \App\Entity\User $user */
@@ -55,6 +60,31 @@ final class DriverDashboardController extends AbstractController
             ]));
         }
 
+        $form = $this->createForm(DriverProfilePicType::class, null);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $photoFile = $form->get('photo')->getData();
+
+            if ($photoFile) {
+                $newFilename = uniqid() . '.' . $photoFile->guessExtension();
+
+                $photoFile->move(
+                    $this->getParameter('photos_directory'),
+                    $newFilename
+                );
+                $oldPhoto = $user->getPhoto();
+                if ($oldPhoto && strpos($oldPhoto, 'default.jpg') === false) {
+                    $filesystem = new \Symfony\Component\Filesystem\Filesystem();
+                    $filesystem->remove($this->getParameter('kernel.project_dir') . '/public/' . $oldPhoto);
+                }
+                $user->setPhoto('uploads/users/' . $newFilename);
+            }
+
+            $em->flush();
+            $this->addFlash('success', 'Photo de profil mise à jour.');
+        }
+
         return $this->render('dashboard/driver/index.html.twig', [
             'user' => $user,
             'balance' => $balance,
@@ -64,6 +94,7 @@ final class DriverDashboardController extends AbstractController
             'user_rating' => $userRating,
             'rides' => $rides,
             'participations' => $participations,
+            'form' => $form->createView(),
         ]);
     }
     #[Route('/driver/dashboard/your-rides', name: 'app_driver_your_rides')]

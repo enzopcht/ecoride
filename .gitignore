@@ -8,6 +8,9 @@ app/.phpunit.result.cache
 app/config/secrets/prod/prod.decrypt.private.php
 app/public/bundles/
 
+# User-uploaded images
+app/public/uploads/
+
 # Node
 node_modules/
 
