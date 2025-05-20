@@ -27,8 +27,8 @@
 				<div class="text-center bg-dark  text-white p-3 rounded rounded-bottom-0 border border-bottom-0">
 					Gains de EcoRide
 				</div>
-				<div class="text-center d-flex align-items-center justify-content-center  fs-4 text-{{ balance > 0 ? 'white' : 'danger' }} p-3 border border-top-0 rounded rounded-top-0">
-					{{ balance }}
+				<div class="text-center d-flex align-items-center justify-content-center  fs-4 text-{{ balance > 0 ? 'dark' : 'danger' }} p-3 border border-top-0 rounded rounded-top-0">
+					{{ balance ?? 0 }}
 					<i class="bi bi-coin text-warning ms-1"></i>
 				</div>
 			</div>

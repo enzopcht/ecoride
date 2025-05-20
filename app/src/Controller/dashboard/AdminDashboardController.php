@@ -38,7 +38,13 @@ final class AdminDashboardController extends AbstractController
         $labelsCredit = array_column($creditsPerDay, 'date');
         $dataCredit = array_column($creditsPerDay, 'amount');
 
-        $balance = $creditTransactionRepository->calculateEcoRideRevenue();
+        $commissions = $creditTransactionRepository->findBy([
+            'reason' => 'Commission'
+        ]);
+        $refundCommissions = $creditTransactionRepository->findBy([
+            'reason' => 'Refund Commission'
+        ]);
+        $balance = (count($commissions) * 2) - (count($refundCommissions) * 2);
         return $this->render('dashboard/admin/admin.html.twig', [
             'user' => $this->getUser(),
             'balance' => $balance,
