@@ -9,7 +9,7 @@
 		
 	<div class="d-flex align-items-center mb-3">
 		<button class="btn p-0" data-bs-toggle="modal" data-bs-target="#profilPicModal-{{ user }}">
-			<img src="{{ asset(user.photo ?? 'uploads/users/default.jpg') }}" alt="Photo de profil" class="img-fluid rounded-circle border border-3 border-primary me-2" style="width: 60px; height: 60px; object-fit: cover;">
+			<img src="{{ asset(user.photo ?? '/assets/images/user.png') }}" alt="Photo de profil" class="img-fluid rounded-circle border border-3 border-primary me-2" style="width: 60px; height: 60px; object-fit: cover;">
 		</button>
 		<span class="text-primary fs-1">{{user}}</span>
 		<div class="modal fade" id="profilPicModal-{{ user }}" tabindex="-1" aria-labelledby="profilPicModalLabel" aria-hidden="true">

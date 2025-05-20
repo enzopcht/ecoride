@@ -22,7 +22,7 @@
 					<hr class="mt-0">
 					<div class="row align-items-center px-3 py-2">
 						<div class="d-flex align-items-center col">
-							<img src="/assets/images/user.png" alt="" height="50" width="50" class="rounded-circle border border-dark me-2 bg-white">
+							<img src="{{ asset(ride.driver.photo ?? '/assets/images/user.png') }}" alt="Photo de profil" class="img-fluid rounded-circle border border-3 border-primary me-2" style="width: 60px; height: 60px; object-fit: cover;">
 							<div class="fs-5">{{ride.driver}}</div>
 						</div>
 						<div class="col text-end">
