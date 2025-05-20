@@ -56,6 +56,7 @@ final class PreferencesController extends AbstractController
     }
 
     #[Route('/driver/dashboard/preferences/custom-add', name: 'app_driver_preferences_custom_add', methods: ['POST'])]
+    #[IsGranted('ROLE_DRIVER')]
     public function addCustomPreference(Request $request, DocumentManager $dm): Response
     {
         $user = $this->getUser();
@@ -83,6 +84,7 @@ final class PreferencesController extends AbstractController
     }
 
     #[Route('/driver/dashboard/preferences/custom-remove', name: 'app_driver_preferences_custom_remove', methods: ['POST'])]
+    #[IsGranted('ROLE_DRIVER')]
     public function removeCustomPreference(Request $request, DocumentManager $dm): Response
     {
         $user = $this->getUser();
