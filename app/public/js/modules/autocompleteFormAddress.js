@@ -1,3 +1,4 @@
+document.addEventListener('DOMContentLoaded', () => {
 const departureFullAddressInput = document.getElementById('add_ride_departureAddress')
 const arrivalFullAddressInput = document.getElementById('add_ride_arrivalAddress')
 const departurePostCodeInput = document.getElementById('add_ride_departurePostCode')
@@ -57,7 +58,7 @@ function checkValidity() {
     }
 }
 async function computeArrivalTime() {
-    if (!departureCoords | !arrivalCoords | !departureTimeInput.value) {
+    if (!departureCoords || !arrivalCoords || !departureTimeInput.value) {
         arrivalTimeInput.value = ''
         return
     }
@@ -91,6 +92,7 @@ function setupAddressAutocomplete(input, suggestionBox, cityInput, postcodeInput
         input.dataset.valid = "false"
         input.classList.remove('is-valid')
         if (query.length > 3) {
+            suggestionBox.innerHTML = '<li class="list-group-item disabled">Chargement...</li>'
             try {
                 const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5&type=housenumber`)
                 const data = await response.json()
@@ -235,3 +237,4 @@ priceInput.addEventListener('input', checkPrice)
 
 setupAddressAutocomplete(departureFullAddressInput, departureSuggestions, departureCityInput, departurePostCodeInput)
 setupAddressAutocomplete(arrivalFullAddressInput, arrivalSuggestions, arrivalCityInput, arrivalPostCodeInput)
+})

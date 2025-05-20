@@ -50,7 +50,7 @@ class ParticipationController extends AbstractController
         }
 
         $transactionRepository->createTransaction($user, $ride, - ($ride->getPrice() - 2), 'Booking a trip');
-        $transactionRepository->createTransaction($user, $ride, -2, 'Commmission');
+        $transactionRepository->createTransaction($user, $ride, -2, 'Commission');
 
         $participation = new Participation();
         $participation->setUser($user);
@@ -121,7 +121,7 @@ class ParticipationController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        if ($participation->getRide()->getDriver() !== $user ||  $participation->getStatus() !== 'pending') {
+        if ($participation->getRide()->getDriver() !== $user ||  $participation->getStatus() !== 'pending' || $participation->getRide()->getStatus() !== 'pending') {
             throw $this->createAccessDeniedException();
         }
 
@@ -155,7 +155,7 @@ class ParticipationController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        if ($participation->getRide()->getDriver() !== $user || $participation->getStatus() !== 'pending') {
+        if ($participation->getRide()->getDriver() !== $user || $participation->getStatus() !== 'pending' || $participation->getRide()->getStatus() !== 'pending') {
             throw $this->createAccessDeniedException();
         }
 
@@ -187,7 +187,7 @@ class ParticipationController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        if ($participation->getUser() !== $user || $participation->getStatus() !== 'waiting_passenger_review') {
+        if ($participation->getUser() !== $user || $participation->getStatus() !== 'waiting_passenger_review' || $participation->getRide()->getStatus() !== 'completed') {
             throw $this->createAccessDeniedException();
         }
 
@@ -211,7 +211,7 @@ class ParticipationController extends AbstractController
     ): RedirectResponse {
         $user = $this->getUser();
 
-        if ($participation->getUser() !== $user || $participation->getStatus() !== 'waiting_passenger_review') {
+        if ($participation->getUser() !== $user || $participation->getStatus() !== 'waiting_passenger_review' || $participation->getRide()->getStatus() !== 'completed') {
             throw $this->createAccessDeniedException();
         }
 

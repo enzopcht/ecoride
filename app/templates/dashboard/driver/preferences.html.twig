@@ -5,6 +5,9 @@
 
 {% block body %}
 	<main class="container-xl">
+		<a href="{{path('app_dashboard')}}" class="btn text-dark">
+			<i class="bi bi-arrow-left-circle fs-3"></i>
+		</a>
 		<h1 class="text-dark mb-3">Vos préférences de conducteur</h1>
 		<section class="mb-3">
 			<form method="POST" action="{{ path('app_driver_preferences_update') }}">

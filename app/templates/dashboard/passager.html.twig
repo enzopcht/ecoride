@@ -5,46 +5,46 @@
 
 {% block body %}
 
-	<main class="container-xl">
+<main class="container-xl">
 
-		<div class="d-flex align-items-center mb-3">
-			<h1 class="text-dark">
-				Tableau de bord
-				<span class="text-primary">{{user}}</span>
-			</h1>
-			<div class="text-white text-center d-flex bg-dark fs-5 ms-auto shadow p-3 rounded">{{balance}}<i class="bi bi-coin text-warning"></i>
-			</div>
+	<div class="d-flex align-items-center mb-3">
+		<h1 class="text-dark">
+			Tableau de bord
+			<span class="text-primary">{{user}}</span>
+		</h1>
+		<div class="text-white text-center d-flex bg-dark fs-5 ms-auto shadow p-3 rounded">{{balance}}<i class="bi bi-coin text-warning"></i>
 		</div>
+	</div>
 
-		<div class="list-group mb-4">
-			<div class="fw-bold text-uppercase small text-dark px-3 py-2 border border-bottom-0 rounded-top">Passager</div>
-			<a class="list-group-item" href="{{path('app_driver_dashboard_bookings')}}">Mes réservations</a>
-		</div>
+	<div class="list-group mb-4">
+		<div class="fw-bold text-uppercase small text-dark px-3 py-2 border border-bottom-0 rounded-top">Passager</div>
+		<a class="list-group-item" href="{{path('app_driver_dashboard_bookings')}}">Mes réservations</a>
+	</div>
 
-		<div class="text-center my-3">
-			<p>Vous souhaitez pouvoir organiser vos propres covoiturages ? Devenez un driver pour
-				<span class="text-dark">EcoRide</span>
-				dès maintenant !</p>
-			<a href="{{path('become_driver')}}" class="btn btn-primary">Devenir un driver</a>
-		</div>
+	<div class="text-center my-3">
+		<p>Vous souhaitez pouvoir organiser vos propres covoiturages ? Devenez un driver pour
+			<span class="text-dark">EcoRide</span>
+			dès maintenant !</p>
+		<a href="{{path('become_driver')}}" class="btn btn-primary">Devenir un driver</a>
+	</div>
 
-		{% if participations_active|length > 0 %}
-			<hr>
-			<section class="mb-3">
-				<h3 class="text-primary">
-					<i class="bi bi-exclamation-circle-fill text-danger me-2"></i>
-					{{ participations_active|length > 1 ? 'Voyages' : 'Voyage'}}
-					en cours en tant que passager :
-				</h3>
-				<div class="accordion shadow-sm mt-3" id="active_participations">
-					{% for participation in participations_active %}
-						{% set ride = participation.ride %}
-						{% set statusContent = '' %}
-						{% if participation.status == 'active' %}
-							{% set statusContent = 'En cours...' %}
-							{% set statusNotif = false %}
-						{% else %}
-							{% set statusContent = 'Veuillez confirmer si tout s\'est bien passé.' %}
+	{% if participations_active|length > 0 %}
+		<hr>
+		<section class="mb-3">
+			<h3 class="text-primary">
+				<i class="bi bi-exclamation-circle-fill text-danger me-2"></i>
+				{{ participations_active|length > 1 ? 'Voyages' : 'Voyage'}}
+				en cours en tant que passager :
+			</h3>
+			<div class="accordion shadow-sm mt-3" id="active_participations">
+				{% for participation in participations_active %}
+					{% set ride = participation.ride %}
+					{% set statusContent = '' %}
+					{% if participation.status == 'active' %}
+						{% set statusContent = 'En cours...' %}
+						{% set statusNotif = false %}
+					{% else %}
+						{% set statusContent = 'Veuillez confirmer si tout s\'est bien passé.' %}
 							{% set statusNotif = true %}
 						{% endif %}
 						
@@ -63,12 +63,34 @@
                                         <i class="bi bi-check-circle me-2"></i>Trajet OK
                                     </button>
                                 </form>
-                                <form method="post" action="{{ path('participations_report', {id: participation.id}) }}" onsubmit="return confirm('Souhaitez-vous signaler un problème sur ce trajet ?');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('report' ~ participation.id) }}">
-                                    <button class="btn btn-outline-danger w-100" type="submit">
-                                        <i class="bi bi-exclamation-octagon me-2"></i>Signaler un souci
-                                    </button>
-                                </form>
+                                <div>
+									<button class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#reportModal-{{ participation.id }}">
+										<i class="bi bi-exclamation-octagon me-2"></i>Signaler un souci
+									</button>
+								</div>
+								<div class="modal fade" id="reportModal-{{ participation.id }}" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+									<div class="modal-dialog">
+										<div class="modal-content">
+											<form method="post" action="{{ path('participations_report', { id: participation.id }) }}">
+												<div class="modal-header">
+													<h5 class="modal-title" id="reportModalLabel">Signaler un souci</h5>
+													<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+												</div>
+												<div class="modal-body">
+													<div class="mb-3">
+														<label for="description-{{ participation.id }}" class="form-label">Décrivez le problème :</label>
+														<textarea class="form-control" id="description-{{ participation.id }}" name="description" rows="4" required></textarea>
+													</div>
+												</div>
+												<div class="modal-footer">
+													<input type="hidden" name="_token" value="{{ csrf_token('participation_report' ~ participation.id) }}">
+													<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Annuler</button>
+													<button type="submit" class="btn btn-primary">Envoyer le signalement</button>
+												</div>
+											</form>
+										</div>
+									</div>
+								</div>
                             </div>
 						{% endif %}
 						{% endset %}
@@ -88,100 +110,5 @@
 				</div>
 			</section>
 		{% endif %}
-	{# {% if participations_active|length > 0 %}
-			<hr>
-			<div class="mb-3">
-				<h3 class="text-primary">
-					<i class="bi bi-exclamation-circle-fill text-danger me-2"></i>
-					{{ participations_active|length > 1 ? 'Voyages' : 'Voyage'}}
-					en cours en tant que passager :</h3>
-				<p class="text-secondary">
-					<i class="bi bi-info-circle"></i>
-					Merci de bien vouloir attendre que le trajet soit terminé à la suite de quoi le chauffeur validera l'arrivé du covoiturage. Un mail vous sera ensuite envoyé pour confirmer que tout s'est bien passé.</p>
-			<div class="accordion shadow-sm" id="active_participations">
-				{% for participation in participations_active %}
-					{% set ride = participation.ride %}
-					{% set statusColor = '' %}
-					{% set statusContent = '' %}
-					{% if ride.status == 'active' %}
-						{% set statusColor = 'primary' %}
-						{% set statusContent = 'En cours...' %}
-					{% elseif ride.status == 'completed' %}
-						{% set statusColor = 'success' %}
-						{% set statusContent = 'Terminé' %}
-					{% endif %}
-
-					{% set dynamic_block %}
-					{% if ride.status == 'active' %}
-						<p class="text-primary">Une fois le trajet terminé, vous pourrez le confirmer.</p>
-					{% else %}
-						<p>Voyage terminé. Veuillez confirmer.</p>
-						<button class="btn btn-primary">Valider</button>
-						<button class="btn btn-danger">Signaler un problème</button>
-					{% endif %}
-					{% endset %}
-
-					{% include 'components/dashboard/_ride_accordion.html.twig' with {
-					    ride: ride,
-					    loop_index: 'active' ~ loop.index,
-						accordion_id: '#active_participations',
-					    status_color: statusColor,
-					    status_message: statusContent,
-					    ratings_by_driver: ratings_by_driver,
-					    dynamic_block: dynamic_block
-					} %}
-				{% endfor %}
-			</div>
-		</div>
-		<hr>
-	{% endif %} #}
-
-	{# <div class="mb-3">
-		<h3 class="text-primary">Covoiturages prévus :
-			<span class="text-secondary">{{participations_pending|length}}</span>
-		</h3>
-		{% if participations_pending|length > 0 %}
-			<div class="accordion shadow-sm" id="next_participations">
-				{% for participation in participations_pending %}
-					{% set ride = participation.ride %}
-					{% set statusColor = '' %}
-					{% set statusContent = '' %}
-					{% if participation.status == 'pending' %}
-						{% set statusColor = 'warning' %}
-						{% set statusContent = 'Votre réservation n\'a pas encore été acceptée par ' ~ ride.driver.pseudo %}
-						{% elseif participation.status == 'confirmed' %}
-							{% set statusColor = 'success'%}
-							{% set statusContent = 'Votre réservation a été acceptée par ' ~ ride.driver.pseudo %}
-						{% endif %}
-						{% set dynamic_block %}
-						<div>
-							<form method="post" action="{{ path('participations_canceled', {id: participation.id}) }}" onsubmit="return confirm('Confirmez l\'annulation ?');">
-								<input type="hidden" name="_token" value="{{ csrf_token('canceled' ~ participation.id) }}">
-								<div class='text-center'>
-									<button class="btn btn-danger" type="submit">Annuler la réservation</button>
-								</div>
-							</form>
-						</div>
-						{% endset %}
-
-						{% include 'components/dashboard/_ride_accordion.html.twig' with {
-						ride: ride,
-						loop_index: 'pending' ~ loop.index,
-						accordion_id: '#next_participations',
-						status_color: statusColor,
-						status_message: statusContent,
-						ratings_by_driver: ratings_by_driver,
-						dynamic_block: dynamic_block
-					} %}
-
-					{% endfor %}
-				</div>
-			{% else %}
-				<div class="text-center">
-					<p class="text-center mt-4">Pas de covoiturages prévus</p>
-				</div>
-			{% endif %}
-		</div>
-		#}
 	</main>
 {% endblock %}
