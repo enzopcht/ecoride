@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\CreditTransaction;
 use App\Entity\Participation;
 use App\Entity\Ride;
 use App\Entity\User;
@@ -36,6 +37,14 @@ class ParticipationFixtures extends Fixture implements DependentFixtureInterface
                 }
                 if ($availableSeats <= 0) break;
 
+                /** @var \App\Repository\CreditTransactionRepository $creditRepo */
+                $creditRepo = $manager->getRepository(CreditTransaction::class);
+                $balance = $creditRepo->calculateUserBalance($user);
+
+                if ($balance === null || $balance < $ride->getPrice()) {
+                    echo "$user a plus assez de sous";
+                    break;
+                }
                 $participation = new Participation();
                 $participation->setUser($user);
                 $participation->setRide($ride);
