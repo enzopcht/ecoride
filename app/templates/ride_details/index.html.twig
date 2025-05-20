@@ -82,7 +82,7 @@
 					<span class="text-dark">{{ride.arrivalAddress}}</span>
 				</div>
 				<hr>
-				<a href="{{path('app_driver_reviews', { pseudo: ride.driver.pseudo })}}" class="text-decoration-none">
+				<a href="{{path('app_driver_reviews', { pseudo: ride.driver.pseudo|url_encode })}}" class="text-decoration-none">
 					<div class="d-flex my-3 text-dark">
 						<h5 class="text-primary me-2">Avis({{number_of_reviews_driver|length}}) :
 						</h5>
