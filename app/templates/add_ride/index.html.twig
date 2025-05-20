@@ -10,7 +10,7 @@
 
 		<div class="container-xl mx-auto">
 			{{ form_start(addRideForm) }}
-			<div class="mb-3 suggestion-container">
+			<div class="mb-3 position-relative p-0">
 				{{ form_label(addRideForm.departureAddress) }}
 				{{ form_widget(addRideForm.departureAddress, {'attr': {'class': 'form-control', 'aria-describedby': 'addressDepartureHelp'}}) }}
 				<div class="suggestion-box w-100">
@@ -24,7 +24,7 @@
 					Votre adresse n'est pas au bon format.
 				</div>
 			</div>
-			<div class="mb-3">
+			<div class="mb-3 position-relative p-0">
 				{{ form_label(addRideForm.arrivalAddress) }}
 				{{ form_widget(addRideForm.arrivalAddress, {'attr': {'class': 'form-control', 'aria-describedby': 'addressArrivalHelp'}}) }}
 				<div class="suggestion-box w-100">
