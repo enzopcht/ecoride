@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -11,8 +12,13 @@ class RideFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $faker = \Faker\Factory::create('fr_FR');
+        $userRepo = $manager->getRepository(User::class);
 
         $users = $manager->getRepository(\App\Entity\User::class)->findAll();
+        $drivers = array_filter($userRepo->findAll(), function (User $user) {
+            $roles = $user->getRoles();
+            return in_array('ROLE_DRIVER', $roles, true) && !in_array('ROLE_ADMIN', $roles, true) && !in_array('ROLE_EMPLOYE', $roles, true);
+        });
         $vehicles = $manager->getRepository(\App\Entity\Vehicle::class)->findAll();
 
         $towns = [
@@ -29,9 +35,20 @@ class RideFixtures extends Fixture implements DependentFixtureInterface
         ];
         $statuts = ['pending', 'active', 'completed'];
 
+        $usedDrivers = [];
+
         foreach ($statuts as $statut) {
-            for ($i = 0; $i < 4; $i++) {
-                $driver = $faker->randomElement($users);
+            for ($i = 0; $i < 10; $i++) {
+                if ($statut === 'active') {
+                    $availableDrivers = array_filter($drivers, fn($d) => !in_array($d, $usedDrivers, true));
+                    if (empty($availableDrivers)) {
+                        continue;
+                    }
+                    $driver = $faker->randomElement($availableDrivers);
+                    $usedDrivers[] = $driver;
+                } else {
+                    $driver = $faker->randomElement($drivers);
+                }
                 $userVehicles = array_filter($vehicles, fn($v) => $v->getOwner() === $driver);
 
                 if (empty($userVehicles)) {

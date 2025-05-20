@@ -18,7 +18,9 @@ class VehicleFixtures extends Fixture implements DependentFixtureInterface
         $carModelRepo = $manager->getRepository(CarModel::class);
         $userRepo = $manager->getRepository(User::class);
 
-        $users = $userRepo->findAll();
+        $users = array_filter($userRepo->findAll(), function (User $user) {
+            return in_array('ROLE_DRIVER', $user->getRoles(), true);
+        });
         $models = $carModelRepo->findAll();
 
         if (empty($models)) {
@@ -40,7 +42,7 @@ class VehicleFixtures extends Fixture implements DependentFixtureInterface
 
         $manager->flush();
     }
-    
+
     public function getDependencies(): array
     {
         return [
@@ -48,4 +50,3 @@ class VehicleFixtures extends Fixture implements DependentFixtureInterface
         ];
     }
 }
-

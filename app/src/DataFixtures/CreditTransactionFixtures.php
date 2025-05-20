@@ -25,8 +25,8 @@ class CreditTransactionFixtures extends Fixture implements DependentFixtureInter
             if ($status === 'confirmed' && in_array($rideStatus, ['active', 'completed'])) {
                 $debit = new CreditTransaction();
                 $debit->setUser($user);
-                $debit->setAmount(-$price);
-                $debit->setReason('Réservation trajet');
+                $debit->setAmount(-($price - 2));
+                $debit->setReason('Booking a trip');
                 $debit->setRide($ride);
                 $debit->setCreatedAt(new \DateTimeImmutable());
                 $manager->persist($debit);
@@ -34,7 +34,7 @@ class CreditTransactionFixtures extends Fixture implements DependentFixtureInter
                 $commission = new CreditTransaction();
                 $commission->setUser($user);
                 $commission->setAmount(-2);
-                $commission->setReason('Commission EcoRide');
+                $commission->setReason('Commission');
                 $commission->setRide($ride);
                 $commission->setCreatedAt(new \DateTimeImmutable());
                 $manager->persist($commission);
@@ -44,11 +44,19 @@ class CreditTransactionFixtures extends Fixture implements DependentFixtureInter
             if ($status === 'confirmed' && $rideStatus === 'canceled') {
                 $refund = new CreditTransaction();
                 $refund->setUser($user);
-                $refund->setAmount($price);
-                $refund->setReason('Remboursement trajet annulé');
+                $refund->setAmount(($price - 2));
+                $refund->setReason('Refund');
                 $refund->setRide($ride);
                 $refund->setCreatedAt(new \DateTimeImmutable());
                 $manager->persist($refund);
+
+                $refundCommission = new CreditTransaction();
+                $refundCommission->setUser($user);
+                $refundCommission->setAmount(2);
+                $refundCommission->setReason('Refund Commission');
+                $refundCommission->setRide($ride);
+                $refundCommission->setCreatedAt(new \DateTimeImmutable());
+                $manager->persist($refundCommission);
             }
         }
 
