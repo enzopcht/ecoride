@@ -77,7 +77,7 @@
 					<label for="driver-min-rating" class="form-label">Note min du chauffeur
 						<span id="driver-rating-range-value" class="text-secondary"></span>
 					</label>
-					<input type="range" class="form-range" min="1" max="5" id="driver-min-rating" value="" name="filters[min_rating]">
+					<input type="range" class="form-range" min="0" max="5" id="driver-min-rating" value="" name="filters[min_rating]">
 				</div>
 
 				<div class="mb-3 form-check">
@@ -121,7 +121,7 @@
 							{% if ride.departureTime|date('Y-m-d') == data.date|date('Y-m-d') %}
 								{% set exact_match = exact_match + 1 %}
 								<a class="text-black" href="{{path('app_ride_details', { id: ride.id })}}">
-									<div class="carpooling-item bg-white shadow rounded  p-3 mb-3" data-price="{{ ride.price }}" data-rating="4.5" data-eco="{{ ride.ecological ? '1' : '0' }}">
+									<div class="carpooling-item bg-white shadow rounded  p-3 mb-3" data-price="{{ ride.price }}" data-rating="{{ratings_by_driver[ride.driver.id] ?? 0 }}" data-eco="{{ ride.ecological ? '1' : '0' }}">
 
 										<h3 class="text-primary">{{ ride.departureCity }}
 											→

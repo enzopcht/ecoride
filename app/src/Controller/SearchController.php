@@ -58,13 +58,6 @@ final class SearchController extends AbstractController
                 $data['arrival'],
                 $data['date']
             );
-            // foreach ($alternateRide as $ride) {
-            //     $driver = $ride->getDriver();
-            //     $driverId = $driver->getId();
-            //     if (!isset($ratingsByDriver[$driverId])) {
-            //         $ratingsByDriver[$driverId] = $reviewRepository->getAverageRatingForUser($driver);
-            //     }
-            // }
             $alternateForm = $this->createForm(SearchRideType::class, [
                 'departure' => $data['departure'],
                 'arrival' => $data['arrival'],
