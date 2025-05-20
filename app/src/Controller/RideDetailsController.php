@@ -28,7 +28,8 @@ final class RideDetailsController extends AbstractController
 
         $driverRating = $reviewRepository->getAverageRatingForUser($driver);
         $numberOfReviewsDriver = $reviewRepository->findBy([
-            'target' => $driver
+            'target' => $driver,
+            'validated' => true,
         ]);
 
         return $this->render('ride_details/index.html.twig', [
