@@ -37,6 +37,7 @@ final class AdminDashboardController extends AbstractController
         $creditsPerDay = $creditTransactionRepository->countCreditsGroupedByDay($rangeCredits);
         $labelsCredit = array_column($creditsPerDay, 'date');
         $dataCredit = array_column($creditsPerDay, 'amount');
+        // dd($creditsPerDay);
 
         $commissions = $creditTransactionRepository->findBy([
             'reason' => 'Commission'
