@@ -43,6 +43,10 @@ class ParticipationController extends AbstractController
             $this->addFlash('danger', 'Ce trajet est complet.');
             return $this->redirect($request->headers->get('referer'));
         }
+        if ($ride->getStatus() !== 'pending') {
+            $this->addFlash('danger', 'Ce trajet n\'est plus réservable.');
+            return $this->redirect($request->headers->get('referer'));
+        }
         $balance = $transactionRepository->calculateUserBalance($this->getUser());
         if ($ride->getPrice() > $balance) {
             $this->addFlash('danger', 'Vous n\'avez pas assez de jetons.');
