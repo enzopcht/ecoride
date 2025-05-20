@@ -17,12 +17,11 @@ class CreditTransactionFixtures extends Fixture implements DependentFixtureInter
         foreach ($participations as $participation) {
             $ride = $participation->getRide();
             $user = $participation->getUser();
-            $status = $participation->getStatus();
-            $rideStatus = $ride->getStatus();
+            $driver = $ride->getDriver();
             $price = $participation->getCreditsUsed();
 
             // Si la participation est confirmée et le trajet actif ou terminé → débit et commission
-            if ($status === 'confirmed' && in_array($rideStatus, ['active', 'completed'])) {
+            
                 $debit = new CreditTransaction();
                 $debit->setUser($user);
                 $debit->setAmount(-($price - 2));
@@ -31,6 +30,14 @@ class CreditTransactionFixtures extends Fixture implements DependentFixtureInter
                 $debit->setCreatedAt(new \DateTimeImmutable());
                 $manager->persist($debit);
 
+                $credit = new CreditTransaction();
+                $credit->setUser($driver);
+                $credit->setAmount($price - 2);
+                $credit->setReason('Driver payment');
+                $credit->setRide($ride);
+                $credit->setCreatedAt(new \DateTimeImmutable());
+                $manager->persist($credit);
+
                 $commission = new CreditTransaction();
                 $commission->setUser($user);
                 $commission->setAmount(-2);
@@ -38,26 +45,7 @@ class CreditTransactionFixtures extends Fixture implements DependentFixtureInter
                 $commission->setRide($ride);
                 $commission->setCreatedAt(new \DateTimeImmutable());
                 $manager->persist($commission);
-            }
-
-            // Si participation confirmée mais trajet annulé → remboursement
-            if ($status === 'confirmed' && $rideStatus === 'canceled') {
-                $refund = new CreditTransaction();
-                $refund->setUser($user);
-                $refund->setAmount(($price - 2));
-                $refund->setReason('Refund');
-                $refund->setRide($ride);
-                $refund->setCreatedAt(new \DateTimeImmutable());
-                $manager->persist($refund);
-
-                $refundCommission = new CreditTransaction();
-                $refundCommission->setUser($user);
-                $refundCommission->setAmount(2);
-                $refundCommission->setReason('Refund Commission');
-                $refundCommission->setRide($ride);
-                $refundCommission->setCreatedAt(new \DateTimeImmutable());
-                $manager->persist($refundCommission);
-            }
+            
         }
 
         $manager->flush();
