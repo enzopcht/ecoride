@@ -10,6 +10,7 @@ Elle vise à encourager le covoiturage en mettant en avant des trajets écorespo
 - Réduire l'empreinte carbone des trajets en voiture
 - Proposer une plateforme simple et intuitive pour les passagers et les chauffeurs
 - Fournir des fonctionnalités de gestion de trajets, profils, avis, crédits, filtres…
+- Assurer une sécurité robuste et une expérience utilisateur fluide
 
 ---
 
@@ -31,33 +32,53 @@ Elle vise à encourager le covoiturage en mettant en avant des trajets écorespo
 ```bash
 git clone https://github.com/enzopcht/ecoride.git
 cd ecoride
-docker compose up -d
+
+# Construction de l’image Docker et lancement des conteneurs
+docker compose up --build
+
+# (optionnel) Script de bascule entre dev/prod
+./ecoride-switch.sh
+
+# Puis accès à l’application
+http://localhost:8080
 ```
+
+Un script permet de basculer facilement entre le mode développement et le mode production pour ajuster rapidement l’environnement d’exécution.
+
+ℹ️ Pour une exécution plus rapide (sans reconstruction), une fois le projet buildé une première fois :  
+docker compose up
 
 🔗 L’application Symfony sera disponible sur :  
 [http://localhost:8080](http://localhost:8080)  
 
 🔗 phpMyAdmin est disponible sur :  
 [http://localhost:8081](http://localhost:8081)  
-→ Identifiants : `root` / `root` ou `user` / `userpass`
+> Identifiants par défaut (en local uniquement) :  
+> - **Utilisateur** : root  
+> - **Mot de passe** : root
 
 ---
 
-## 📁 Arborescence simplifiée
+## 🔄 Bascule environnement Dev/Prod
 
-```
-ecoride/
-├── app/                # Projet Symfony
-├── apache/             # Configuration Apache
-│   └── vhost.conf
-├── docker-compose.yml  # Stack de services (Apache, MySQL, MongoDB)
-├── .gitignore
-└── README.md
-```
+Un script bash `./ecoride-switch.sh` permet de basculer rapidement entre les environnements de développement et de production.
+
+➤ Avant d'exécuter ce script, il faut modifier manuellement la variable `APP_ENV` dans le fichier `.env` :  
+- `APP_ENV=dev` et `APP_DEBUG=1` pour le développement  
+- `APP_ENV=prod` et `APP_DEBUG=0` pour la production
+
+Le script :  
+- Arrête les containers existants  
+- Supprime les volumes persistants  
+- Reconstruit les containers avec ou sans `--build` selon le mode  
+- Relance l’application sur le bon port
 
 ---
 
-## 🧪 Commandes utiles (dans le container Apache)
+## 🧪 Commandes utiles pour le développement
+
+> ℹ️ Ces commandes Symfony sont à utiliser uniquement dans le cadre du développement local.  
+> En production, la base de données est déjà créée manuellement et les fixtures ne sont pas utilisées.
 
 ```bash
 # Entrer dans le container
@@ -78,6 +99,39 @@ php bin/console doctrine:migrations:migrate
 
 ---
 
+## 📦 Fichier SQL
+
+Le fichier `database/ecoride_database.sql` contient :
+
+- la structure complète de la base de données relationnelle `ecoride`
+- les clés primaires, étrangères, et contraintes d’intégrité
+- des exemples de requêtes SQL permettant de démontrer la maîtrise de :
+  - création de trajets (`INSERT INTO`)
+  - réservation de trajets (`INSERT INTO participation`)
+  - validation de réservations avec mise à jour (`UPDATE`, `JOIN`)
+  - recherche de trajets (`SELECT`, `WHERE`, `JOIN`, `ORDER BY`, `LIMIT`)
+  - gestion transactionnelle avec vérification des places disponibles
+
+- 💡 Ce fichier SQL est fourni à titre de démonstration technique.  
+- Il prouve la capacité à manipuler manuellement le langage SQL (création de tables, requêtes avancées, contraintes, etc.).  
+- Il n’est **pas destiné à remplacer** le système officiel de migration utilisé par Symfony (Doctrine Migrations).  
+Le projet Symfony s’appuie uniquement sur `php bin/console doctrine:migrations:migrate` pour créer et synchroniser la base.
+
+---
+
+## 🧱 Données & Fixtures
+
+Le projet contient des fixtures permettant de générer :
+- des utilisateurs de rôles variés (passager, conducteur, admin, employé)
+- des trajets types, véhicules, avis et réservations
+- des préférences MongoDB
+- des transactions
+
+⚠️ Ces fixtures **ne doivent pas être exécutées en production**.  
+En prod, l’admin est créé manuellement via phpMyAdmin.
+
+---
+
 ## 📌 Liens à venir
 
 - [Maquette Figma](#)
@@ -86,7 +140,30 @@ php bin/console doctrine:migrations:migrate
 
 ---
 
+## 🔐 Accès & Sécurité
+
+- Les routes sont protégées par rôles (`ROLE_PASSENGER`, `ROLE_DRIVER`, `ROLE_EMPLOYE`, `ROLE_ADMIN`)
+- Les tokens CSRF sont utilisés pour sécuriser tous les formulaires sensibles (réservations, suppressions…)
+- Les utilisateurs ne peuvent pas accéder à des sections qui ne correspondent pas à leur rôle
+- L’inscription est sécurisée via contraintes serveur (`Regex`, `NotBlank`, validation Twig)
+- Les identifiants sensibles (clé API ORS, connexions DB) sont stockés dans `.env` ou variables d’environnement au moment du déploiement
+- Pour des raisons de sécurité, phpMyAdmin est **inaccessible en production**
+
+---
+
 ## 👤 Auteur
 
 **Enzo Pauchet**  
 Développeur Web & ancien joueur pro – passionné par la tech & le sport ⚽💻
+
+---
+
+## 🧪 Phase de test
+
+Le projet a été testé manuellement selon les cas suivants :
+- Création de trajets
+- Réservations avec validation et paiements simulés
+- Cycle complet passager/driver (inscription, validation, litige)
+- Restrictions d’accès par rôle
+- Gestion de préférences utilisateur avec MongoDB
+- Suppression protégée (voiture, trajets)
