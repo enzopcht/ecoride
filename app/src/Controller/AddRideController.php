@@ -35,6 +35,7 @@ final class AddRideController extends AbstractController
                 $ride->setEcological(false);
             }
             $ride->setStatus('pending');
+            dd($ride);
 
             $em->persist($ride);
             $em->flush();
