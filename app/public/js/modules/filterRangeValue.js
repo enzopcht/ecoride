@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const displayElement = document.getElementById(displayElementId)
 
         if (!rangeInput || !displayElement) {
-            console.error(`Erreur: Impossible de trouver l'élément avec ID ${rangeInputId} ou ${displayElementId}`)
             return
         }
 

@@ -107,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	
 					})
 					.catch(error => {
-						console.error('Erreur lors du chargement des modèles :', error)
 						modelSelect.innerHTML = '<option value="">Erreur de chargement</option>'
 					})
 			}
