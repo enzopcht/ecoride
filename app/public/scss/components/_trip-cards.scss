@@ -1,0 +1,56 @@
+.line {
+    border: 1px solid $primary;
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background-color: white;
+        border: 2px solid $primary;
+        border-radius: 50%;
+        left: 0;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background-color: white;
+        border: 2px solid $primary;
+        border-radius: 50%;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    &::before {
+        left: 0;
+        transform: translate(-50%, -50%);
+    }
+
+    &::after {
+        right: 0;
+        transform: translate(50%, -50%);
+    }
+}
+#carpooling-results {
+    a {
+        text-decoration: none;
+    }
+}
+
+.carpooling-item {
+    border: 1px solid transparent;
+    transition: border-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+
+    &:hover {
+        border-color: $secondary;
+        transform: scale(1.02);
+    }
+}
+

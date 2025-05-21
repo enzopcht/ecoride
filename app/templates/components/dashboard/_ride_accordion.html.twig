@@ -1,0 +1,73 @@
+<div class="accordion-item">
+	<h2 class="accordion-header">
+		{% set is_first = loop_index ends with '1' and open_first is defined and open_first %}
+		<button class="accordion-button {{ is_first ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ loop_index }}" aria-expanded="{{ is_first ? 'true' : 'false' }}" aria-controls="collapse-{{ loop_index }}">
+			{% if ride.driver.id == user.id %}
+				<span class="text-primary"> Chauffeur</span>
+			{% else %}
+				<span class="text-primary"> Passager</span>
+			{% endif %}
+			<span class="ms-3">
+			{{ ride.departureCity }}
+			->
+			{{ ride.arrivalCity }}
+			le
+			{{ ride.departureTime|date('d/m/Y')  }}
+			</span>
+			{% if status_color and status_message %}
+				<span class="text-{{ status_color }} ms-3">
+					{% if status_notif is defined and status_notif %}
+						<i class="bi bi-exclamation-circle-fill text-danger"></i>
+					{% endif %}
+					{{ status_message|raw }}
+				</span>
+			{% endif %}
+		</button>
+	</h2>
+	<div id="collapse-{{ loop_index }}" class="accordion-collapse collapse {{ is_first ? 'show' : '' }}"  data-bs-parent="{{ accordion_id }}">
+		<div
+			class="accordion-body">
+			<div class="row align-items-center">
+				<div class="align-items-center d-flex col">
+					<img src="{{ asset(ride.driver.photo ?? '/assets/images/user.png') }}" alt="Photo de profil" class="img-fluid rounded-circle border border-3 border-primary me-2" style="width: 60px; height: 60px; object-fit: cover;">
+					<div class="fs-5">{{ ride.driver.pseudo }}</div>
+				</div>
+				<div class="col text-end">
+					{% if ratings_by_driver is defined and ratings_by_driver > 0 %}
+						<p class="mb-0">{{ ratings_by_driver|number_format(1) }}/5
+							<i class="bi bi-star-fill text-warning"></i>
+						</p>
+					{% else %}
+						<p class="text-muted">Pas encore noté</p>
+					{% endif %}
+				</div>
+			</div>
+			<hr>
+			<div class="row align-items-center mx-auto">
+				<div class="col fs-5 text-dark text-end">{{ ride.departureTime|date('H:i') }}</div>
+				<div class="col-6 line"></div>
+				<div class="col fs-5 text-dark">{{ ride.arrivalTime|date('H:i') }}</div>
+			</div>
+			<hr>
+			<div class="row align-items-center mx-auto">
+				<div class="col-8">
+					{% if ride.ecological %}
+						<p class="text-secondary mb-0">Voyage écologique
+							<i class="bi bi-lightning-charge"></i>
+						</p>
+					{% endif %}
+					<p class="mb-0">Places restante(s) :
+						{{ ride.seatsAvailable }}</p>
+				</div>
+				<div class="text-dark col text-end fs-2">{{ ride.price }}
+					<i class="bi bi-coin text-warning"></i>
+				</div>
+			</div>
+			<hr>
+			<!-- Zone dynamique -->
+			<div class="text-center">
+				{{ dynamic_block|raw }}
+			</div>
+		</div>
+	</div>
+</div>

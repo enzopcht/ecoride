@@ -1,0 +1,208 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Résultat de la recherche - EcoRide
+{% endblock %}
+
+{% block body %}
+	<main class="container-xl">
+		<h1 class="text-primary">Résultat(s) de la recherche</h1>
+		<p class="text-body-tertiary">{{ rides|length }}
+			trajet{{ rides|length > 1 ? 's' : '' }}
+			trouvé{{ rides|length > 1 ? 's' : '' }}
+			de
+			{{data.departure}}
+			à
+			{{data.arrival}}
+			le
+			{{data.date|date('d/m/Y')}}
+			:</p>
+
+		<div class="accordion mb-4 shadow" id="accordionFlushExample">
+			<div class="accordion-item">
+				<h2 class="accordion-header">
+					<button class="accordion-button collapsed text-white bg-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+						Effectuer une nouvelle recherche
+					</button>
+				</h2>
+				<div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+					<div class="accordion-body">
+						{{ form_start(searchForm, {
+			    'action': path('app_search_results'),
+			    'method': 'POST',
+			    'attr': {'class': 'row gap-3 justify-content-center'}
+			}) }}
+						<div class="col-10 col-lg-3 position-relative p-0">
+							{{ form_label(searchForm.departure) }}
+							{{ form_widget(searchForm.departure, {'attr': {'class': 'form-control' }}) }}
+							<div class="suggestion-box w-100">
+								<ul id="departure_suggestions" class="list-group"></ul>
+							</div>
+						</div>
+						<div class="col-10 col-lg-3 position-relative p-0">
+							{{ form_label(searchForm.arrival) }}
+							{{ form_widget(searchForm.arrival, {'attr': {'class': 'form-control' }}) }}
+							<div class="suggestion-box w-100">
+								<ul id="arrival_suggestions" class="list-group"></ul>
+							</div>
+						</div>
+						<div class="col-10 col-lg-3 p-0">
+							{{ form_row(searchForm.date) }}
+						</div>
+						<div class="text-center col-10 col-lg-2 align-self-end p-0">
+							{{ form_row(searchForm.rechercher, {'attr': {'class': 'btn btn-primary w-100'}}) }}
+						</div>
+						{{ form_end(searchForm) }}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="text-center">
+			<button type="button" class="btn btn-dark mb-3 d-lg-none" data-bs-toggle="modal" data-bs-target="#filtersModal">
+				Filtrer la recherche
+			</button>
+		</div>
+
+		<div id="filters-form-wrapper" class="d-none">
+			<form method="POST" action="{{ path('app_search_results') }}">
+
+				<div class="mb-3 text-start">
+					<label for="max-price" class="form-label">Prix max :
+						<span id="price-range-value" class="text-secondary"></span>
+					</label>
+					{% set ridePrices = rides|map(r => r.price) %}
+					<input type="range" class="form-range" min="1" {% if ridePrices|length > 0 %} max="{{ max(rides|map(r => r.price)) }}" {% else %} max="100" {% endif %} id="max-price" value="">
+				</div>
+
+				<div class="mb-3 text-start">
+					<label for="driver-min-rating" class="form-label">Note min du chauffeur
+						<span id="driver-rating-range-value" class="text-secondary"></span>
+					</label>
+					<input type="range" class="form-range" min="0" max="5" id="driver-min-rating" value="" name="filters[min_rating]">
+				</div>
+
+				<div class="mb-3 form-check">
+					<label class="form-check-label" for="eco-trip-only">
+						Voyage écologique seulement
+						<i class="bi bi-lightning-charge text-secondary"></i>
+						<input class="form-check-input" type="checkbox" value="1" id="eco-trip-only" name="filters[eco_only]">
+					</div>
+				</form>
+			</div>
+
+			<div class="modal fade" id="filtersModal" tabindex="-1" aria-labelledby="filtersModal" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5 text-primary" id="filtersModalLabel">Filtres</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+
+						<div class="modal-body text-black">
+							<div id="filters-modal-container"></div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="row justify-content-center">
+				<div class="d-none d-lg-block col-4 bg-white shadow rounded p-5 align-self-start sticky-top">
+					<h2 class="text-primary text-center">Filtres</h2>
+					<div id="filters-sidebar-container"></div>
+				</div>
+
+
+				<div id="carpooling-results" class="col-12 col-md-10 col-lg-7">
+
+					{% set exact_match = 0 %}
+
+					{% for ride in rides %}
+						{% if ride.departureCity is same as(data.departure) and ride.arrivalCity is same as(data.arrival) %}
+							{% if ride.departureTime|date('Y-m-d') == data.date|date('Y-m-d') %}
+								{% set exact_match = exact_match + 1 %}
+								<a class="text-black" href="{{path('app_ride_details', { id: ride.id })}}">
+									<div class="carpooling-item bg-white shadow rounded  p-3 mb-3" data-price="{{ ride.price }}" data-rating="{{ratings_by_driver[ride.driver.id] ?? 0 }}" data-eco="{{ ride.ecological ? '1' : '0' }}">
+
+										<h3 class="text-primary">{{ ride.departureCity }}
+											→
+											{{ ride.arrivalCity }}</h3>
+										<hr>
+										<div class="row align-items-center">
+											<div class="align-items-center d-flex col">
+												<img src="{{ asset(ride.driver.photo ?? '/assets/images/user.png') }}" alt="Photo de profil" class="img-fluid rounded-circle border border-3 border-primary me-2" style="width: 60px; height: 60px; object-fit: cover;">
+												<div class="fs-5">{{ ride.driver }}</div>
+											</div>
+											<div class="col text-end">
+											{% set driverNote = ratings_by_driver[ride.driver.id] %}
+												{% if driverNote is defined and driverNote > 0 %}
+													<p class="mb-0">{{ driverNote|number_format(1) }}/5
+														<i class="bi bi-star-fill text-warning"></i>
+													</p>
+												{% else %}
+													<p class="text-muted">Pas encore noté</p>
+												{% endif %}
+											</div>
+										</div>
+										<hr>
+										<div class="row align-items-center mx-auto">
+											<div class="col fs-5 text-dark text-end">{{ ride.departureTime|date('H:i') }}</div>
+											<div class="col-6 line"></div>
+											<div class="col fs-5 text-dark">{{ ride.arrivalTime|date('H:i') }}</div>
+										</div>
+										<hr>
+										<div class="row align-items-center mx-auto">
+											<div class="col-8">
+												{% if ride.ecological %}
+													<p class="text-secondary mb-0">Voyage écologique
+														<i class="bi bi-lightning-charge"></i>
+													</p>
+												{% endif %}
+												<p class="mb-0">Places restante(s) :
+													{{ ride.seatsAvailable }}</p>
+											</div>
+											<div class="text-dark col text-end fs-2">{{ ride.price }}
+												<i class="bi bi-coin text-warning"></i>
+											</div>
+										</div>
+									</div>
+								</a>
+							{% endif %}
+						{% endif %}
+					{% endfor %}
+
+					{% if exact_match == 0 and alternateRide is not null %}
+						<h3 class="text-center">Pas de covoiturage disponible pour cette date... Mais le
+							{{ alternateRide.departureTime|date('d/m/Y') }}
+							oui !</h3>
+
+						{{ form_start(alternateForm, {
+    action: path('app_search_results'),
+    method: 'POST'
+}) }}
+						{{ form_widget(alternateForm.departure, {'type': 'hidden'}) }}
+						{{ form_widget(alternateForm.arrival, {'type': 'hidden'}) }}
+						{{ form_widget(alternateForm.date, {'type': 'hidden'}) }}
+						<div class="text-center mt-3">
+
+							{{ form_row(alternateForm.rechercher, {
+									'attr': {'class': 'btn btn-outline-primary'},
+									'label': 'Voir les trajets pour cette date'
+								}) }}
+						</div>
+						{{ form_end(alternateForm) }}
+					{% elseif exact_match == 0 %}
+						<h3 class="text-center">Pas de covoiturage disponible pour ce trajet...</h3>
+					{% endif %}
+
+					<div id="no-results-message" class="text-center text-secondary d-none mt-4">
+						Aucun covoiturage ne correspond à vos critères...
+					</div>
+				</div>
+
+			</div>
+		</main>
+		{% block javascripts %}
+			<script src="{{ asset('/js/modules/filterRangeValue.js') }}"></script>
+			<script src="{{ asset('js/modules/searchAutocompleteFormAddress.js') }}"></script>
+		{% endblock %}
+	{% endblock %}

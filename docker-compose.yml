@@ -1,8 +1,8 @@
-version: '3.8'
-
 services:
   apache:
-    image: php:8.2-apache
+    build:
+      context: .
+      dockerfile: apache/Dockerfile
     container_name: ecoride_apache
     ports:
       - "8080:80"

@@ -1,0 +1,51 @@
+@import 'variables';
+@import 'layout';
+@import 'buttons';
+@import 'components/hero';
+@import 'components/trip-cards';
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    font-family: var(--bs-font-sans-serif);
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+article {
+    text-align: justify;
+
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+}
+
+.list-group-item {
+    color: $primary;
+
+    &:hover {
+        background: $primary;
+        color: white;
+    }
+}
+
+.position-relative {
+    position: relative;
+}
+
+.suggestion-box {
+    position: absolute;
+    z-index: 1050;
+    cursor: pointer;
+}
+
+
+.star {
+    cursor: pointer;
+}

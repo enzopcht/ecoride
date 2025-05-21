@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord - EcoRde
+{% endblock %}
+
+{% block body %}
+
+	<main class="container-xl">
+
+		<div class="d-flex align-items-center mb-3">
+			<h1 class="text-dark">
+				Tableau de bord -
+				<span class="text-primary">{{user}}</span>
+			</h1>
+		</div>
+
+		<div class="row">
+			<div class="col-12 col-md-8">
+				<div class="list-group mb-4">
+					<div class="fw-bold text-uppercase small text-dark px-3 py-2 border border-bottom-0 rounded-top">Administrateur</div>
+					<a class="list-group-item" href="{{ path('app_create_employee') }}">Créer un employé</a>
+					<a class="list-group-item" href="{{ path('app_manage_accounts') }}">Gérer les comptes</a>
+				</div>
+			</div>
+
+			<div class="col-md-4">
+				<div class="text-center bg-dark  text-white p-3 rounded rounded-bottom-0 border border-bottom-0">
+					Gains de EcoRide
+				</div>
+				<div class="text-center d-flex align-items-center justify-content-center  fs-4 text-{{ balance > 0 ? 'dark' : 'danger' }} p-3 border border-top-0 rounded rounded-top-0">
+					{{ balance ?? 0 }}
+					<i class="bi bi-coin text-warning ms-1"></i>
+				</div>
+			</div>
+		</div>
+
+		<hr>
+		<section class="mb-3">
+			<form method="get" class="mb-2 text-end">
+				<label for="rangeRides" class="form-label me-2">Période :</label>
+				<select name="rangeRides" id="rangeRides" class="form-select d-inline w-auto" onchange="this.form.submit()">
+					<option value="7" {{ app.request.get('rangeRides') == 7 ? 'selected' : '' }}>7 jours</option>
+					<option value="14" {{ app.request.get('rangeRides') == 14 ? 'selected' : '' }}>14 jours</option>
+					<option value="30" {{ app.request.get('rangeRides') == 30 ? 'selected' : '' }}>30 jours</option>
+				</select>
+			</form>
+			<h2 class="text-primary mb-3">Nombre de trajet par jour :</h2>
+			<div class="row justify-content-md-center">
+				<div class="col-12 col-md-10">
+					<div class="border p-2 rounded">
+						<canvas id="ridesChart" data-labels="{{ rideLabels|json_encode }}" data-data="{{ rideCounts|json_encode }}" height="150"></canvas>
+					</div>
+				</div>
+			</div>
+		</section>
+		<hr>
+		<section class="mb-3">
+			<form method="get" class="mb-2 text-end">
+				<label for="rangeCredits" class="form-label me-2">Période :</label>
+				<select name="rangeCredits" id="rangeCredits" class="form-select d-inline w-auto" onchange="this.form.submit()">
+					<option value="7" {{ app.request.get('rangeCredits') == 7 ? 'selected' : '' }}>7 jours</option>
+					<option value="14" {{ app.request.get('rangeCredits') == 14 ? 'selected' : '' }}>14 jours</option>
+					<option value="30" {{ app.request.get('rangeCredits') == 30 ? 'selected' : '' }}>30 jours</option>
+				</select>
+			</form>
+			<h2 class="text-primary mb-3">Nombre de crédits gagné par jour :</h2>
+			<div class="row justify-content-md-center">
+				<div class="col-12 col-md-10">
+					<div class="border p-2 rounded">
+						<canvas id="creditsChart" data-labels="{{ creditLabels|json_encode }}" data-data="{{ creditCounts|json_encode }}" height="150"></canvas>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+	{% block javascripts %}
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script src="/js/charts/chart-ride.js"></script>
+		<script src="/js/charts/chart-credits.js"></script>
+	{% endblock %}
+
+{% endblock %}

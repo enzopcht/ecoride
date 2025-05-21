@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord - EcoRde
+{% endblock %}
+
+{% block body %}
+
+	<main class="container-xl">
+
+		<div class="d-flex align-items-center mb-3">
+			<h1 class="text-dark">
+				Tableau de bord - Employé
+				<span class="text-primary">{{user}}</span>
+			</h1>
+        </div>
+		<div class="list-group mb-4">
+			<div class="fw-bold text-uppercase small text-dark px-3 py-2 border border-bottom-0 rounded-top">Employé</div>
+			<a class="list-group-item" href="{{path('app_manage_reviews')}}">Gérer les avis<span class="badge bg-danger ms-2 {{ reviews|length > 0 ? '' : 'd-none'}}">{{ reviews|length }}</span></a>
+			<a class="list-group-item" href="{{path('app_manage_reports')}}">Litiges<span class="badge bg-danger ms-2 {{ reports|length > 0 ? '' : 'd-none'}}">{{ reports|length }}</span></a>
+		</div>
+    </main>
+
+{% endblock %}

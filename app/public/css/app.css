@@ -1,0 +1,214 @@
+/* Texte */
+.text-primary {
+  color: #2196F3 !important;
+}
+
+.text-secondary {
+  color: #64B5F6 !important;
+}
+
+.text-dark {
+  color: #002E6B !important;
+}
+
+/* Fond */
+.bg-primary {
+  background-color: #2196F3 !important;
+}
+
+.bg-secondary {
+  background-color: #64B5F6 !important;
+}
+
+.bg-dark {
+  background-color: #002E6B !important;
+}
+
+.btn-primary {
+  background-color: #2196F3 !important;
+  border-color: #2196F3 !important;
+  color: #fff;
+}
+
+.btn-outline-primary {
+  border-color: #2196F3 !important;
+  color: #2196F3;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: #1976d2 !important;
+  border-color: #1976d2 !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+  background-color: #1976d2 !important;
+  border-color: #1976d2 !important;
+}
+
+.btn-secondary {
+  background-color: #64B5F6 !important;
+  border-color: #64B5F6 !important;
+  color: #fff;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus,
+.btn-secondary:active {
+  background-color: #4a90e2 !important;
+  border-color: #4a90e2 !important;
+}
+
+.btn-dark {
+  background-color: #002E6B !important;
+  border-color: #002E6B !important;
+  color: #fff;
+}
+
+.btn-outline-dark {
+  border-color: #002E6B !important;
+  color: #002E6B;
+}
+
+.btn-dark:hover,
+.btn-dark:focus,
+.btn-dark:active {
+  background-color: #021c42 !important;
+  border-color: #021c42 !important;
+}
+
+.btn-outline-dark:hover,
+.btn-outline-dark:focus,
+.btn-outline-dark:active {
+  background-color: #021c42 !important;
+  border-color: #021c42 !important;
+}
+
+.gradient {
+  height: 320px;
+  background: -webkit-gradient(linear, left top, left bottom, from(#2196F3), to(#64B5F6));
+  background: linear-gradient(#2196F3, #64B5F6);
+  position: absolute;
+  width: 100%;
+  z-index: 0;
+  top: 0;
+  left: 0;
+}
+.gradient h1 {
+  font-size: 22px;
+}
+@media (min-width: 767px) {
+  .gradient h1 {
+    font-size: 36px;
+  }
+}
+
+.box-hero {
+  min-height: 320px;
+  position: relative;
+}
+
+.line {
+  border: 1px solid #2196F3;
+  position: relative;
+}
+.line::before {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  border: 2px solid #2196F3;
+  border-radius: 50%;
+  left: 0;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+}
+.line::before, .line::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  border: 2px solid #2196F3;
+  border-radius: 50%;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+}
+.line::before {
+  left: 0;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+}
+.line::after {
+  right: 0;
+  -webkit-transform: translate(50%, -50%);
+          transform: translate(50%, -50%);
+}
+
+#carpooling-results a {
+  text-decoration: none;
+}
+
+.carpooling-item {
+  border: 1px solid transparent;
+  -webkit-transition: border-color 0.3s ease-in-out, -webkit-transform 0.2s ease-in-out;
+  transition: border-color 0.3s ease-in-out, -webkit-transform 0.2s ease-in-out;
+  transition: border-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+  transition: border-color 0.3s ease-in-out, transform 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;
+}
+.carpooling-item:hover {
+  border-color: #64B5F6;
+  -webkit-transform: scale(1.02);
+          transform: scale(1.02);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--bs-font-sans-serif);
+}
+
+main {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 0 auto;
+          flex: 1 0 auto;
+}
+
+article {
+  text-align: justify;
+}
+article ul {
+  list-style: none;
+  padding: 0;
+}
+
+.list-group-item {
+  color: #2196F3;
+}
+.list-group-item:hover {
+  background: #2196F3;
+  color: white;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.suggestion-box {
+  position: absolute;
+  z-index: 1050;
+  cursor: pointer;
+}
+
+.star {
+  cursor: pointer;
+}/*# sourceMappingURL=app.css.map */
