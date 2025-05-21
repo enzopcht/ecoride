@@ -33,45 +33,54 @@ Elle vise à encourager le covoiturage en mettant en avant des trajets écorespo
 git clone https://github.com/enzopcht/ecoride.git
 cd ecoride
 
-# Construction de l’image Docker et lancement des conteneurs
-docker compose up --build
+# Créez et configurez votre fichier .env.local avec : 
+# MAILER_DSN="..."
+# DATABASE_URL="..."
+# MONGODB_URL="..."
+# ORS_API_KEY=""
+# APP_SECRET=VOTRE_CLE
 
-# (optionnel) Script de bascule entre dev/prod
-./ecoride-switch.sh
-
-# Puis accès à l’application
-http://localhost:8080
+docker compose up --build -d
+docker compose exec apache bash
+composer install
 ```
 
-Un script permet de basculer facilement entre le mode développement et le mode production pour ajuster rapidement l’environnement d’exécution.
-
 ℹ️ Pour une exécution plus rapide (sans reconstruction), une fois le projet buildé une première fois :  
-docker compose up
+`docker compose up -d`
 
 🔗 L’application Symfony sera disponible sur :  
 [http://localhost:8080](http://localhost:8080)  
 
 🔗 phpMyAdmin est disponible sur :  
 [http://localhost:8081](http://localhost:8081)  
-> Identifiants par défaut (en local uniquement) :  
-> - **Utilisateur** : root  
-> - **Mot de passe** : root
 
 ---
 
-## 🔄 Bascule environnement Dev/Prod
+## 🔄 Switcher entre environnements dev et prod
 
-Un script bash `./ecoride-switch.sh` permet de basculer rapidement entre les environnements de développement et de production.
+Pour basculer entre les environnements de développement et de production, procédez comme suit :
 
-➤ Avant d'exécuter ce script, il faut modifier manuellement la variable `APP_ENV` dans le fichier `.env` :  
-- `APP_ENV=dev` et `APP_DEBUG=1` pour le développement  
-- `APP_ENV=prod` et `APP_DEBUG=0` pour la production
+1. Modifiez manuellement la variable `APP_ENV` dans votre fichier `.env` ou `.env.local` :  
+   - `APP_ENV=dev` et `APP_DEBUG=1` pour le développement  
+   - `APP_ENV=prod` et `APP_DEBUG=0` pour la production
 
-Le script :  
-- Arrête les containers existants  
-- Supprime les volumes persistants  
-- Reconstruit les containers avec ou sans `--build` selon le mode  
-- Relance l’application sur le bon port
+2. Arrêtez les conteneurs Docker en cours d'exécution :  
+   ```bash
+   docker compose down
+   ```
+
+3. Relancez les conteneurs avec la configuration mise à jour :  
+   ```bash
+   docker compose up --build -d
+   ```
+
+4. Entrez dans le conteneur Apache pour installer ou mettre à jour les dépendances si nécessaire :  
+   ```bash
+   docker compose exec apache bash
+   composer install ou composer install --no-dev --optimized-autoloader
+   ```
+
+Cette méthode vous permet de gérer les environnements sans scripts additionnels, en respectant les bonnes pratiques Docker et Symfony.
 
 ---
 
@@ -82,7 +91,7 @@ Le script :
 
 ```bash
 # Entrer dans le container
-docker exec -it ecoride_apache bash
+docker exec -it apache bash
 
 # Créer la base de données
 php bin/console doctrine:database:create

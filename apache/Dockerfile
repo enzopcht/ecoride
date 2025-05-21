@@ -21,10 +21,6 @@ COPY ./apache/vhost.conf /etc/apache2/sites-enabled/000-default.conf
 
 WORKDIR /var/www/html
 
-RUN composer install --no-dev --optimize-autoloader
-
-RUN chown -R www-data:www-data var vendor public
-
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
 EXPOSE 80
