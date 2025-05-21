@@ -42,4 +42,8 @@ class CarBrandFixtures extends Fixture
 
         $manager->flush();
     }
+    public static function getGroups(): array
+    {
+        return ['prod_init'];
+    }
 }
