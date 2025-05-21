@@ -45,6 +45,19 @@ docker compose exec apache bash
 composer install
 ```
 
+### 📥 Créer la base de données avec les migrations
+
+Après avoir installé les dépendances, exécutez la migration pour créer la base de données et insérer les données essentielles :
+
+```bash
+php bin/console doctrine:migrations:migrate
+```
+
+Cette commande :
+- crée toutes les tables et contraintes de la base
+- insère les données initiales prévues dans les migrations (marques & modèles, etc.)
+```
+
 ℹ️ Pour une exécution plus rapide (sans reconstruction), une fois le projet buildé une première fois :  
 `docker compose up -d`
 
