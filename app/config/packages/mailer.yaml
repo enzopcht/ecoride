@@ -1,4 +1,5 @@
 framework:
     mailer:
         dsn: '%env(MAILER_DSN)%'
-        default_sender: '%env(MAILER_FROM)%'
+        envelope:
+            sender: '%env(MAILER_FROM)%'
