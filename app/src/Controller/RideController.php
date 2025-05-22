@@ -6,11 +6,11 @@ use App\Entity\Ride;
 use App\Repository\CreditTransactionRepository;
 use App\Repository\ParticipationRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -44,7 +44,7 @@ class RideController extends AbstractController
         foreach ($participations as $participation) {
             $participation->setStatus('waiting_passenger_review');
 
-            $email = (new TemplatedEmail())
+            $email = (new Email())
                 ->from($this->getParameter('mailer.envelope.sender'))
                 ->to($participation->getUser()->getEmail())
                 ->subject('Votre trajet est terminé – Confirmez son bon déroulé !')
