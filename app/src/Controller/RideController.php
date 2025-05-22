@@ -6,8 +6,8 @@ use App\Entity\Ride;
 use App\Repository\CreditTransactionRepository;
 use App\Repository\ParticipationRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,8 +44,8 @@ class RideController extends AbstractController
         foreach ($participations as $participation) {
             $participation->setStatus('waiting_passenger_review');
 
-            $email = (new Email())
-                ->from('noreply@ecoride.fr')
+            $email = (new TemplatedEmail())
+                ->from($this->getParameter('mailer.envelope.sender'))
                 ->to($participation->getUser()->getEmail())
                 ->subject('Votre trajet est terminé – Confirmez son bon déroulé !')
                 ->html($this->renderView('emails/review_request.html.twig', [
