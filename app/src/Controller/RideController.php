@@ -45,7 +45,7 @@ class RideController extends AbstractController
             $participation->setStatus('waiting_passenger_review');
 
             $email = (new Email())
-                ->from($this->getParameter('%env(MAILER_FROM)%'))
+                ->from($this->getParameter('no-reply@ecoride.fr'))
                 ->to($participation->getUser()->getEmail())
                 ->subject('Votre trajet est terminé – Confirmez son bon déroulé !')
                 ->html($this->renderView('emails/review_request.html.twig', [
