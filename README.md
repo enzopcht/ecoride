@@ -34,11 +34,14 @@ git clone https://github.com/enzopcht/ecoride.git
 cd ecoride
 
 # Créez et configurez votre fichier .env.local avec : 
-# MAILER_DSN="..."
-# DATABASE_URL="..."
-# MONGODB_URL="..."
+#MAILER_DSN="smtp://cfec3e1b5852f3:8085fcf4f672bc@sandbox.smtp.mailtrap.io:2525"
+# DATABASE_URL=""
+# MONGODB_URL=""
 # ORS_API_KEY=""
-# APP_SECRET=VOTRE_CLE
+# APP_SECRET=""
+# MAILGUN_API_KEY=""
+# MAILGUN_DOMAIN=""
+# MAILER_FROM=""
 
 docker compose up --build -d
 docker compose exec apache bash
@@ -104,7 +107,7 @@ Cette méthode vous permet de gérer les environnements sans scripts additionnel
 
 ```bash
 # Entrer dans le container
-docker exec -it apache bash
+docker compose exec apache bash
 
 # Créer la base de données
 php bin/console doctrine:database:create
@@ -152,15 +155,6 @@ Le projet contient des fixtures permettant de générer :
 ⚠️ Ces fixtures **ne doivent pas être exécutées en production**.  
 En prod, l’admin est créé manuellement via phpMyAdmin.
 
----
-
-## 📌 Liens à venir
-
-- [Maquette Figma](#)
-- [Tableau Trello](#)
-- [Documentation technique](#)
-
----
 
 ## 🔐 Accès & Sécurité
 

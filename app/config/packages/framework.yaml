@@ -1,10 +1,6 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
     secret: '%env(APP_SECRET)%'
-    mailer:
-        dsn: 'mailgun+api://%env(MAILGUN_API_KEY)%@%env(MAILGUN_DOMAIN)%?host=api.mailgun.net'
-        envelope:
-            sender: '%env(MAILER_FROM)%'
 
     # Note that the session will be started ONLY if you read or write from it.
     session: true
