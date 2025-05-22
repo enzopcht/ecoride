@@ -1,5 +1,5 @@
 framework:
     mailer:
-        dsn: 'mailgun+api://%env(MAILGUN_API_KEY)%@%env(MAILGUN_DOMAIN)%?host=api.mailgun.net'
+        dsn: '%env(MAILER_DSN)%'
         envelope:
             sender: '%env(MAILER_FROM)%'
