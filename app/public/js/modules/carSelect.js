@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		previousPlateValue = value
 	})
 
-	plate.addEventListener('change', checkPlate)
+	plate.addEventListener('input', checkPlate)
 	firstRegistrationDate.addEventListener('change', checkFirstRegistrationDate)
 	brandSelect.addEventListener('change', checkBrand)
 	modelSelect.addEventListener('change', checkModel)
