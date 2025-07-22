@@ -13,44 +13,46 @@
 			<div>
 				<p>Voici la liste de tous vos véhicules :</p>
 			</div>
-			<table class="table">
-				<thead>
-					<tr>
-						<th scope="col">Modèle</th>
-						<th scope="col">Marque</th>
-						<th scope="col">Plaque d'immatriculation</th>
-						<th scope="col">Couleur</th>
-						<th scope="col">Energie</th>
-						<th scope="col"></th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for vehicle in vehicles %}
-						{% if not vehicle.isArchived %}
+			<div class="table-responsive">
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">Modèle</th>
+							<th scope="col">Marque</th>
+							<th scope="col">Plaque d'immatriculation</th>
+							<th scope="col">Couleur</th>
+							<th scope="col">Energie</th>
+							<th scope="col"></th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for vehicle in vehicles %}
+							{% if not vehicle.isArchived %}
 
-							<tr>
-								<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">
-									<span class="{{vehicle.carModel.energy == 'electric' ? '' : 'd-none'}} me-2">
-										<i class="bi bi-lightning"></i>
-									</span>
-									{{vehicle.carModel.label}}</td>
-								<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">{{vehicle.carModel.brand.label}}</td>
-								<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">{{vehicle.plate}}</td>
-								<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">{{vehicle.color}}</td>
-								<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">{{vehicle.carModel.energy == 'electric' ? 'Électrique' : 'Thermique'}}</td>
-								<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">
-									<form method="POST" action="{{ path('vehicle_delete', { id: vehicle.id }) }}">
-										<input type="hidden" name="_token" value="{{ csrf_token('vehicle_delete_' ~ vehicle.id) }}">
-										<button type="submit" class="btn btn-danger">
-											<i class="bi bi-trash"></i>
-										</button>
-									</form>
-								</td>
-							</tr>
-						{% endif %}
-					{% endfor %}
-				</tbody>
-			</table>
+								<tr>
+									<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">
+										<span class="{{vehicle.carModel.energy == 'electric' ? '' : 'd-none'}} me-2">
+											<i class="bi bi-lightning"></i>
+										</span>
+										{{vehicle.carModel.label}}</td>
+									<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">{{vehicle.carModel.brand.label}}</td>
+									<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">{{vehicle.plate}}</td>
+									<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">{{vehicle.color}}</td>
+									<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">{{vehicle.carModel.energy == 'electric' ? 'Électrique' : 'Thermique'}}</td>
+									<td class="align-middle {{vehicle.carModel.energy == 'electric' ? 'text-primary' : ''}}">
+										<form method="POST" action="{{ path('vehicle_delete', { id: vehicle.id }) }}">
+											<input type="hidden" name="_token" value="{{ csrf_token('vehicle_delete_' ~ vehicle.id) }}">
+											<button type="submit" class="btn btn-danger">
+												<i class="bi bi-trash"></i>
+											</button>
+										</form>
+									</td>
+								</tr>
+							{% endif %}
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
 		</section>
 
 		<hr class="mb-3">

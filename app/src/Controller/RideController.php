@@ -7,10 +7,10 @@ use App\Repository\CreditTransactionRepository;
 use App\Repository\ParticipationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -45,7 +45,7 @@ class RideController extends AbstractController
             $participation->setStatus('waiting_passenger_review');
 
             $email = (new Email())
-                ->from('noreply@ecoride.fr')
+                ->from('no-reply@ecoride.fr')
                 ->to($participation->getUser()->getEmail())
                 ->subject('Votre trajet est terminé – Confirmez son bon déroulé !')
                 ->html($this->renderView('emails/review_request.html.twig', [

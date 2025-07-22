@@ -24,8 +24,8 @@ final class ContactController extends AbstractController
             $formData = $form->getData();
 
             $email = (new Email())
-                ->from('support@ecoride.fr')
-                ->to('support@ecoride.fr')
+                ->from($formData['email'])
+                ->to('contact.team.ecoride@gmail.com')
                 ->subject('Nouveau message de contact')
                 ->text(
                     "Nom : {$formData['first_name']} {$formData['last_name']}\n" .
